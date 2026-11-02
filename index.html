@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- Posti letto · Ospedale di Stato RSM · versione 3.5.3 (02/11/2026)
+<!-- Posti letto · Ospedale di Stato RSM · versione 3.5.4 (02/11/2026)
      Nuova grafica chiara, accesso per reparto, registro attività completo per l'amministratore. -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<meta name="version" content="3.5.3">
+<meta name="version" content="3.5.4">
 <title>Posti letto · Ospedale di Stato RSM</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f4f7f9">
@@ -681,10 +681,13 @@ dialog.wide{width:min(640px,calc(100vw - 24px))}
 </form></dialog>
 
 <dialog id="installDlg"><div class="dlg">
-  <div class="dlg-h"><div><small>App sul computer</small><h2>Installa Posti letto</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
-  <p>Il programma si aprirà in una finestra sua, con l’icona sul desktop. Dati e accesso restano gli stessi.</p>
-  <ol id="installSteps" style="margin:14px 0 0;padding-left:20px;line-height:1.75;color:var(--text2)"></ol>
-  <div class="actions"><button class="btn primary" onclick="closeDlg(this)">Ho capito</button></div>
+  <div class="dlg-h"><div><small>Programma sul computer</small><h2>Installa Posti letto</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <p id="installIntro"></p>
+  <button class="btn primary block" id="dlShortcut" style="margin-top:16px" onclick="downloadShortcut()"><svg class="ico" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Scarica l’icona per il desktop</button>
+  <p class="small" id="dlHint" style="margin-top:8px"></p>
+  <details style="margin-top:16px"><summary style="cursor:pointer;font-weight:700;color:var(--text2)">Oppure installalo dal browser</summary>
+  <ol id="installSteps" style="margin:10px 0 0;padding-left:20px;line-height:1.75;color:var(--text2)"></ol></details>
+  <div class="actions"><button class="btn" onclick="closeDlg(this)">Chiudi</button></div>
 </div></dialog>
 
 <dialog id="helpDlg" class="wide"><div class="dlg">
@@ -714,7 +717,7 @@ const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomai
 // Deve coincidere con l'email scritta in firestore.rules.
 const ADMIN_EMAIL='admin@ospedale.local';
 const ACCOUNT_DOMAIN='ospedale.local';
-const APP_VERSION='3.5.3',APP_DATE='02/11/2026';
+const APP_VERSION='3.5.4',APP_DATE='02/11/2026';
 const PS='__ps',PS_LABEL='Pronto Soccorso',ADMIN='__admin',LEGACY_KEY='beds-rsm-configurable-v3';
 const ADMIN_IDLE_MIN=30;
 const TZ='Europe/San_Marino';
@@ -1382,13 +1385,22 @@ function installSteps(){const ua=navigator.userAgent,ios=/iPad|iPhone|iPod/.test
   if(edge)return ['Apri il menu di Edge (<b>…</b> in alto a destra).','Scegli <b>App</b> › <b>Installa questo sito come app</b>.','Conferma con <b>Installa</b>.'];
   return ['Nella barra degli indirizzi premi l’icona <b>Installa</b> (schermo con la freccia), oppure apri il menu <b>⋮</b>.','Scegli <b>Trasmetti, salva e condividi</b> › <b>Installa pagina come app…</b>','Conferma con <b>Installa</b>.']}
 function refreshInstallBtn(){const h=isStandalone();$$('[data-install]').forEach(b=>b.hidden=h)}
-async function installApp(){const ev=window.__bip;if(ev){window.__bip=null;try{await ev.prompt();const {outcome}=await ev.userChoice;if(outcome==='accepted')toast('Installazione in corso…')}catch(e){console.warn(e)}refreshInstallBtn();return}
-  $('#installSteps').innerHTML=installSteps().map(s=>'<li>'+s+'</li>').join('');$('#installDlg').showModal()}
+// Il browser permette l'installazione con un clic solo in Chrome ed Edge, se l'app non è già installata e il computer non la blocca.
+// Negli altri casi lo stesso pulsante scarica un'icona per il desktop che apre il programma con un doppio clic.
+async function installedHere(){try{if(navigator.getInstalledRelatedApps)return (await navigator.getInstalledRelatedApps()).length>0}catch{}return false}
+function shortcutFile(){const url=location.href.split('#')[0].split('?')[0];if(/Macintosh/.test(navigator.userAgent)&&!(navigator.maxTouchPoints>1))return {name:'Posti letto.webloc',type:'application/xml',text:`<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0"><dict><key>URL</key><string>${url}</string></dict></plist>\n`,hint:'Trascina il file scaricato sulla Scrivania o nel Dock: con un clic si apre Posti letto.'};
+  return {name:'Posti letto.url',type:'application/octet-stream',text:`[InternetShortcut]\r\nURL=${url}\r\nIconFile=${new URL('favicon.ico',url).href}\r\nIconIndex=0\r\n`,hint:'Sposta il file scaricato (lo trovi in Download) sul desktop: con un doppio clic si apre Posti letto.'}}
+function downloadShortcut(){const f=shortcutFile();download(f.name,f.text,f.type);$('#dlHint').innerHTML='<b style="color:var(--free)">✓ Scaricato.</b> '+esc(f.hint);if(user)audit('sistema',isAdmin?'':myDept,'Scaricata l’icona per il desktop')}
+async function installApp(){const ev=window.__bip;if(ev){window.__bip=null;try{await ev.prompt();const {outcome}=await ev.userChoice;if(outcome==='accepted'){toast('Installazione in corso…');return}}catch(e){console.warn(e)}refreshInstallBtn()}
+  const mobile=/Android|iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),installed=await installedHere();
+  $('#installIntro').innerHTML=installed?'<b>Posti letto è già installato su questo computer.</b> Cercalo nel menu Start o sul desktop. Se vuoi, scarica comunque l’icona.':mobile?'Su telefono e tablet aggiungi il programma alla schermata Home seguendo questi passaggi.':'Il browser non ha permesso l’installazione con un clic: succede se usi Firefox o Safari, se è già installato o se il computer dell’ospedale lo blocca. <b>Nessun problema:</b> scarica l’icona per il desktop, si apre con un doppio clic.';
+  $('#dlShortcut').hidden=mobile;$('#dlHint').textContent=mobile?'':shortcutFile().hint;
+  $('#installSteps').innerHTML=installSteps().map(s=>'<li>'+s+'</li>').join('');const det=$('#installDlg details');det.open=mobile;$('#installDlg').showModal()}
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.__bip=e;refreshInstallBtn()});
 addEventListener('appinstalled',()=>{window.__bip=null;toast('Posti letto è installato');if(user)audit('sistema',isAdmin?'':myDept,'Programma installato come app');setTimeout(refreshInstallBtn,500)});
 
 // ================= AVVIO =================
-Object.assign(window,{$,go,toggleFullscreen,setMonitorAuto,exitMonitor,setStatsRange,setStatsDept,loadStats,exportStatsCsv,togglePasswords,copyPw,openHelp,helpGo,helpNext,helpPrev,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,saveRoom,toggleBedName,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
+Object.assign(window,{$,go,downloadShortcut,toggleFullscreen,setMonitorAuto,exitMonitor,setStatsRange,setStatsDept,loadStats,exportStatsCsv,togglePasswords,copyPw,openHelp,helpGo,helpNext,helpPrev,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,saveRoom,toggleBedName,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
 window.render=render;
 refreshInstallBtn();$('#gateVer').textContent='Versione '+APP_VERSION+' · '+APP_DATE;tick();setInterval(tick,1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();beat();if(page==='monitor')keepAwake(true)}});
