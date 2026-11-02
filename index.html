@@ -1,220 +1,897 @@
-<!doctype html><!-- Posti letto · Ospedale di Stato RSM · versione 2.1.0 (02/11/2026): Firebase, accessi per reparto, area amministratore, icona e installazione come app --><html lang="it"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Posti letto | Ospedale di Stato</title><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#102f3c"><link rel="icon" href="favicon.ico" sizes="32x32"><link rel="icon" href="icons/icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Posti letto"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="application-name" content="Posti letto"><script>window.__bip=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.__bip=e});if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(e=>console.warn('sw',e)))</script><meta name="version" content="2.1.0"><style>
-*{box-sizing:border-box}body{margin:0;background:#f3f6f8;color:#182f3b;font:15px system-ui}button,input,select{font:inherit}button{cursor:pointer}aside{width:238px;background:#102f3c;color:white;position:fixed;inset:0 auto 0 0;padding:28px 19px}.brand{font-size:20px;font-weight:700;letter-spacing:-.6px}.cross{display:inline-grid;place-items:center;width:33px;height:33px;background:#30b5a0;border-radius:9px;margin-right:8px}aside small{display:block;color:#9fb8c1;margin:9px 0 35px}nav button{display:block;width:100%;border:0;text-align:left;background:none;color:#c2d2d8;border-radius:8px;padding:12px;margin:3px 0}nav button.active{background:#28505d;color:white}.asidefoot{position:absolute;bottom:25px;color:#9fb8c1;font-size:12px}main{margin-left:238px;padding:0 38px 40px;min-width:800px}header{height:88px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #dce4e8}header span{color:#6c7e87}button{border:1px solid #d7e1e5;border-radius:7px;background:white;color:#294552;padding:9px 14px}button.primary{background:#087e72;color:white;border-color:#087e72}h1{font-size:30px;margin:29px 0 6px;letter-spacing:-1px}p{color:#71828b;margin:0 0 24px}.tag{font-size:11px;font-weight:700;letter-spacing:.6px;border-radius:4px;background:#fff2d8;color:#90631b;padding:5px 8px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin:25px 0}.stat{background:white;border:1px solid #e0e7eb;padding:21px;border-radius:10px}.stat small{color:#72838c}.stat strong{display:block;font-size:32px;margin:8px 0}.stat em{font-size:12px;font-style:normal;color:#83949d}.green{color:#087e72}.amber{color:#b77b24}.purple{color:#805c9f}.panel{background:white;border:1px solid #dfe7eb;border-radius:11px;overflow:hidden}.toolbar{padding:20px;display:flex;align-items:center;justify-content:space-between;gap:12px}.toolbar h2{font-size:17px;margin:0}.muted{color:#7b8e98;font-size:12px}input,select{border:1px solid #d7e1e5;border-radius:6px;padding:9px;background:white;color:#294552}table{border-collapse:collapse;width:100%;text-align:left}th{background:#f8fafb;color:#7a8b94;font-size:11px;text-transform:uppercase;letter-spacing:.65px;font-weight:600}td,th{padding:17px 18px;border-top:1px solid #edf1f3}td{font-size:13px}td:first-child{font-weight:600}td b{font-size:17px}.pill{display:inline-block;background:#e4f4ed;color:#168260;border-radius:5px;padding:5px 10px;font-weight:600}.pill.zero{background:#fbeae7;color:#b25b50}.bar{width:75px;height:5px;background:#edf1f3;border-radius:5px;margin-top:5px}.bar i{display:block;height:100%;background:#668d9b;border-radius:5px}.note{margin-top:20px;display:flex;gap:12px;background:#e9f1f5;border:1px solid #d7e5ed;padding:17px;border-radius:8px;font-size:13px;color:#527080}.rooms{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:22px 0}.room{background:white;border:1px solid #dce5e9;border-radius:10px;padding:20px}.room h3{margin:0 0 5px;font-size:16px}.beds{display:flex;gap:8px;margin:20px 0}.bed{border-radius:7px;padding:13px 9px;background:#e5f4ed;color:#17815e;font-size:12px;flex:1;text-align:center}.bed.occupied{background:#e7edf1;color:#506c7a}.bed.blocked{background:#f0e9f6;color:#805c9f}.bed.closed{background:#e6e6e6;color:#60666a;border:1px dashed #9a9fa1}.bed.reserved{background:#fff2da;color:#a77725}.room footer{font-size:12px;color:#7b8e98}.room button{margin-top:15px;width:100%}dialog{max-height:90vh;overflow-y:auto;border:0;border-radius:14px;padding:28px;width:530px;box-shadow:0 20px 80px #1235}dialog::backdrop{background:#102f3c70}dialog h2{margin-top:0}label{display:block;font-size:13px;margin:14px 0 5px}dialog input,dialog select{width:100%}.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:24px}.hidden{display:none}.datebar{display:flex;align-items:center;gap:12px;margin-top:24px}.toast{position:fixed;bottom:25px;right:30px;background:#123f3b;color:white;padding:15px 24px;border-radius:8px}.legend{display:flex;gap:20px;font-size:12px;color:#69808b;margin-top:18px}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;background:#91a8b4}
-.room.isolation-room{border:3px solid #8643b5;box-shadow:0 0 0 3px #8643b51a}.isolation-room h3{color:#743399}.check-reminder{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 22px;margin-top:18px;background:#fff0d0;border:2px solid #d79b30;border-radius:9px;color:#744d0a}.check-reminder small{display:block;margin-top:5px}.check-reminder button{white-space:nowrap}
-aside{display:flex;flex-direction:column;overflow-y:auto}.asidefoot{position:static;margin-top:auto;padding-top:24px;line-height:1.5}.asidefoot b{color:#fff}
-.adm{margin-bottom:24px}.adm .toolbar{border-bottom:1px solid #edf1f3;flex-wrap:wrap}.adm td{vertical-align:middle}.btnrow{display:flex;gap:8px;flex-wrap:wrap;padding:20px}.danger{color:#ad3838;border-color:#efc9c4}.err{color:#ad3838;margin-top:12px;min-height:1.2em;font-size:13px}.pwbox{display:flex;gap:8px}.pwbox input{flex:1;font:600 17px ui-monospace,monospace;letter-spacing:1px}.toast{z-index:1000}.gate{max-width:560px;margin:60px auto;text-align:center}.gate .panel{padding:34px}.stale{color:#b25b50;font-weight:600}dialog .check{display:flex;gap:8px;align-items:center;margin-top:14px;font-size:13px}dialog .check input{width:auto}.install{background:#e6f5f2;border-color:#9fd9cd;color:#06675d;font-weight:600;margin-right:8px}.install img{width:18px;height:18px;vertical-align:-4px;margin-right:7px;border-radius:4px}.brand img{width:33px;height:33px;border-radius:9px;margin-right:8px;vertical-align:middle}.steps{margin:6px 0 0;padding-left:22px;color:#294552;line-height:1.7;font-size:14px}.steps b{color:#102f3c}[hidden]{display:none!important}</style>
-<aside><div class="brand"><img src="icons/icon-192.png" alt="">Posti letto</div><small>OSPEDALE DI STATO · RSM</small><nav id="nav"></nav><div class="asidefoot" id="asidefoot">Versione 2.1.0 · 02/11/2026</div></aside>
-<main><header><div><div>Gestione ospedaliera <span> / Disponibilità letti</span></div><time id="liveclock" style="display:block;margin-top:7px;font-size:14px;font-variant-numeric:tabular-nums;font-weight:600"></time></div><div><button class="install" id="installBtn" data-install hidden onclick="installApp()" title="Installa Posti letto come app sul computer"><img src="icons/icon-192.png" alt="">Installa sul desktop</button><button onclick="profileClick()" id="profile">Accedi</button></div></header><div id="checkReminder" role="status" aria-live="polite"></div><div class="muted" style="text-align:right;padding-top:10px">Controllo posti letto · ogni giorno alle 12:00 e alle 21:00</div><div id="content"><div class="gate"><p>Connessione al server…</p></div></div></main>
+<!doctype html>
+<!-- Posti letto · Ospedale di Stato RSM · versione 3.0.0 (02/11/2026)
+     Nuova grafica chiara, accesso per reparto, registro attività completo per l'amministratore. -->
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="version" content="3.0.0">
+<title>Posti letto · Ospedale di Stato RSM</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#f4f7f9">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Posti letto">
+<meta name="application-name" content="Posti letto">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>window.__bip=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.__bip=e});if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(e=>console.warn('sw',e)))</script>
+<style>
+:root{
+  --bg:#f4f7f9;--surface:#fff;--line:#e4e9ef;--line2:#eef2f6;
+  --text:#14232f;--text2:#3a4a58;--muted:#687887;--soft:#9aa7b3;
+  --accent:#0f9b8e;--accent-d:#0b7d72;--accent-50:#effaf8;--accent-100:#d2f1eb;
+  --free:#0b9467;--free-bg:#ebfaf3;--free-bd:#b5ead0;
+  --occ:#2c6bd8;--occ-bg:#eff4fe;--occ-bd:#cadbfa;
+  --res:#b9740b;--res-bg:#fff8e9;--res-bd:#f4dda2;
+  --blk:#7650d3;--blk-bg:#f5f1ff;--blk-bd:#ddd1fb;
+  --cls:#66727e;--cls-bg:#f2f4f6;--cls-bd:#cfd6dd;
+  --danger:#cf3f3f;--danger-bg:#fdf1f1;
+  --shadow:0 1px 2px rgba(16,40,60,.04),0 6px 20px rgba(16,40,60,.05);
+  --shadow-lg:0 30px 70px rgba(16,40,60,.2);
+  --r:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:14.5px/1.5 "Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+h1,h2,h3{margin:0;letter-spacing:-.4px}
+.ico{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
 
-<dialog id="login"><h2>Accedi</h2><p>Scegli il tuo profilo e inserisci la password ricevuta dall'amministratore.</p><form onsubmit="event.preventDefault();doLogin()"><label for="loginProfile">Profilo</label><select id="loginProfile"></select><label for="loginPw">Password</label><input id="loginPw" type="password" autocomplete="current-password" required><div id="loginErr" class="err" role="alert"></div><div class="actions"><button type="button" class="install" data-install hidden onclick="installApp()" style="margin-right:auto"><img src="icons/icon-192.png" alt="">Installa sul desktop</button><button type="button" id="loginCancel" onclick="this.closest('dialog').close()">Annulla</button><button class="primary" id="loginBtn">Entra</button></div></form></dialog>
+/* pulsanti e campi */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--text2);border-radius:11px;padding:9px 15px;font-weight:600;font-size:13.5px;line-height:1.2;transition:background .15s,border-color .15s,box-shadow .15s;white-space:nowrap}
+.btn:hover{border-color:#cdd7e0;background:#fafcfd}
+.btn:focus-visible{outline:none;box-shadow:0 0 0 3px var(--accent-100)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent-d);border-color:var(--accent-d)}
+.btn.soft{background:var(--accent-50);border-color:var(--accent-100);color:var(--accent-d)}
+.btn.danger{color:var(--danger);border-color:#f0cbcb}
+.btn.danger:hover{background:var(--danger-bg)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--muted)}
+.btn.ghost:hover{background:#eef2f5;color:var(--text)}
+.btn.sm{padding:6px 11px;font-size:12.5px;border-radius:9px}
+.btn.block{width:100%;padding:13px}
+.btn:disabled{opacity:.55;cursor:default}
+input,select,textarea{border:1px solid var(--line);border-radius:11px;padding:10px 12px;background:#fff;width:100%;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-100)}
+textarea{resize:vertical}
+label,.lbl{display:block;font-size:13px;font-weight:600;color:var(--text2);margin:0 0 7px}
+.field{margin-top:18px}
+.err{color:var(--danger);font-size:13px;min-height:1.2em;margin-top:10px;font-weight:500}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;border-radius:999px;padding:3px 9px;background:var(--line2);color:var(--text2);white-space:nowrap}
+.chip.accent{background:var(--accent-50);color:var(--accent-d)}
+.chip.red{background:var(--danger-bg);color:var(--danger)}
+.chip.amber{background:var(--res-bg);color:var(--res)}
+.chip.violet{background:var(--blk-bg);color:var(--blk)}
+.chip.green{background:var(--free-bg);color:var(--free)}
 
-<dialog id="editor"><h2 id="editTitle">Gestione letto</h2><label for="sex">Sesso dell’occupante / ricovero programmato</label><select id="sex"><option value="">Non indicato</option><option value="M">Uomo</option><option value="F">Donna</option></select><div id="bederror" role="alert" style="color:#ad3838;margin:12px 0"></div><label for="state">Stato del letto</label><select id="state"><option value="free">Libero</option><option value="occupied">Occupato</option><option value="reserved">Riservato a ricovero programmato</option><option value="blocked">Bloccato per isolamento</option><option value="closed">Chiuso / non disponibile</option></select><label for="admit">Data ricovero programmato</label><input type="date" id="admit"><label for="cap">Stanza idonea all’isolamento</label><select id="cap"><option value="yes">Sì</option><option value="no">No</option></select><label for="iso">Isolamento attivo nella stanza</label><select id="iso"><option>Nessuno</option><option>Contatto</option><option>Goccioline</option><option>Via aerea</option><option>Contatto + goccioline</option></select><label for="reason">Motivo del blocco o della chiusura (singolo letto)</label><input id="reason" maxlength="120" placeholder="Es. carenza personale, manutenzione, influenza"><label for="bednotes">Note del posto letto</label><textarea id="bednotes" rows="3" maxlength="300" style="width:100%;font:inherit;padding:9px;border:1px solid #d7e1e5;border-radius:6px" placeholder="Informazioni utili sul posto letto, senza dati identificativi"></textarea><p class="muted" style="margin-top:12px">Non inserire nomi, iniziali, date di nascita o altri dati che identificano il paziente. L’isolamento attivo esclude i letti liberi della stanza dalla disponibilità.</p><div class="actions"><button onclick="this.closest('dialog').close()">Annulla</button><button class="primary" onclick="saveBed()">Salva aggiornamento</button></div></dialog>
+/* schermata di accesso */
+.gate{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:6vh 18px 40px;background:radial-gradient(1100px 600px at 10% -10%,#dff4ef 0,transparent 60%),radial-gradient(900px 500px at 110% 10%,#e4eefb 0,transparent 55%),var(--bg)}
+.gate-wrap{width:100%;max-width:880px}
+.gate-brand{display:flex;align-items:center;gap:14px;margin:0 4px 26px}
+.gate-brand img{width:56px;height:56px;border-radius:15px;box-shadow:var(--shadow)}
+.gate-brand h1{font-size:24px;letter-spacing:-.6px}
+.gate-brand span{color:var(--muted);font-size:13px}
+.gate-card{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:30px}
+.gate-card h2{font-size:21px}
+.gate-card .sub{color:var(--muted);margin:5px 0 22px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.tile{display:flex;align-items:center;gap:12px;text-align:left;border:1px solid var(--line);background:#fff;border-radius:15px;padding:14px;transition:.15s;position:relative}
+.tile:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-50);transform:translateY(-1px)}
+.tile b{display:block;font-size:14px;line-height:1.25}
+.tile small{color:var(--muted);font-size:12px}
+.tile .last{position:absolute;top:-8px;right:10px}
+.avatar{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;flex:none;letter-spacing:.3px}
+.avatar.lg{width:56px;height:56px;border-radius:16px;font-size:19px}
+.avatar .ico{width:24px;height:24px}
+.gate-sel{display:flex;align-items:center;gap:14px;margin:16px 0 22px}
+.gate-sel small{color:var(--muted);font-weight:600}
+.gate-form{max-width:420px}
+.pw{position:relative}
+.pw input{padding-right:48px;font-size:16px;letter-spacing:.5px}
+.pw button{position:absolute;right:5px;top:50%;transform:translateY(-50%)}
+.hint{color:var(--muted);font-size:12.5px;margin:16px 0 0;line-height:1.55}
+.gate-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin:18px 6px 0;color:var(--soft);font-size:12px}
+.gate-foot .lnk{border:0;background:none;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:6px;padding:6px}
+.gate-foot .lnk:hover{color:var(--accent-d)}
+.skel{height:70px;border-radius:15px;background:linear-gradient(90deg,#f1f4f7,#f8fafb,#f1f4f7);background-size:200% 100%;animation:sk 1.2s infinite}
+@keyframes sk{to{background-position:-200% 0}}
+.empty{padding:26px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:15px;grid-column:1/-1}
 
-<dialog id="structure"><h2>Modifica reparto</h2><p>Aggiungi le stanze del reparto. Le stanze e i letti già presenti mantengono i loro dati. Usa i pulsanti per cancellare una stanza o un singolo letto libero, con conferma. Le stanze e i letti successivi vengono rinumerati.</p><label for="roomcount">Numero di stanze</label><input id="roomcount" type="number" min="0" max="50" oninput="structureFields()"><div id="roomfields"></div><div class="actions"><button onclick="this.closest('dialog').close()">Annulla</button><button class="primary" onclick="saveStructure()">Salva configurazione</button></div></dialog>
+/* struttura */
+.shell{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 14px;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:11px;padding:2px 8px 18px}
+.brand img{width:40px;height:40px;border-radius:12px}
+.brand b{display:block;font-size:16px;letter-spacing:-.3px;line-height:1.2}
+.brand small{color:var(--muted);font-size:11.5px}
+.who{display:flex;gap:10px;align-items:center;background:var(--accent-50);border:1px solid var(--accent-100);border-radius:14px;padding:10px 11px;margin:0 2px 8px}
+.who .avatar{width:34px;height:34px;border-radius:10px;font-size:12.5px}
+.who b{display:block;font-size:13.5px;line-height:1.25}
+.who small{color:var(--accent-d);font-size:11.5px;font-weight:600}
+.nav-l{font-size:10.5px;letter-spacing:1.1px;color:var(--soft);font-weight:700;margin:18px 10px 6px;text-transform:uppercase}
+.nav-i{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;text-align:left;padding:8px 10px;border-radius:10px;color:var(--text2);font-weight:500;font-size:13.5px;margin:1px 0}
+.nav-i:hover{background:#f2f5f8}
+.nav-i.on{background:var(--accent-50);color:var(--accent-d);font-weight:700}
+.nav-i .nl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-i .cnt{font-size:11.5px;font-weight:700;color:var(--free);background:var(--free-bg);border-radius:7px;padding:1px 7px;min-width:24px;text-align:center}
+.nav-i .cnt.z{color:var(--danger);background:var(--danger-bg)}
+.nav-i .ndot{width:7px;height:7px;border-radius:50%;background:#cbd5df;margin:0 5px;flex:none}
+.nav-i.on .ndot{background:var(--accent)}
+.side-foot{margin-top:auto;padding:18px 10px 2px;font-size:11.5px;color:var(--soft);line-height:1.6}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 30px;background:rgba(244,247,249,.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top .crumb{font-size:12.5px;color:var(--muted);font-weight:500}
+.top .clock{font-weight:700;font-variant-numeric:tabular-nums;font-size:13.5px}
+.top-act{display:flex;gap:8px;align-items:center}
+.content{padding:26px 30px 56px;max-width:1440px}
+.phead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.title{font-size:27px;letter-spacing:-.8px;line-height:1.2}
+.sub{color:var(--muted);margin:4px 0 0}
+.back{margin:0 0 8px -8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:18px 20px;border-bottom:1px solid var(--line2)}
+.card-h h2{font-size:16px}
+.card-b{padding:18px 20px}
+.datebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0 0;font-size:13px;color:var(--muted)}
+.datebar input{width:auto;padding:7px 10px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:16px 0 22px}
+.kpi{padding:16px 18px}
+.kpi small{color:var(--muted);font-weight:600;font-size:12.5px}
+.kpi strong{display:block;font-size:32px;letter-spacing:-1.2px;line-height:1.1;margin:6px 0 3px}
+.kpi strong span{font-size:16px;color:var(--soft);letter-spacing:0;font-weight:600}
+.kpi em{font-style:normal;font-size:12px;color:var(--soft)}
+.c-free{color:var(--free)}.c-res{color:var(--res)}.c-blk{color:var(--blk)}.c-occ{color:var(--occ)}
+.reminder{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:16px 30px 0;padding:14px 18px;background:var(--res-bg);border:1px solid var(--res-bd);border-radius:14px;color:#7a4d05}
+.reminder b{display:block}
+.reminder small{display:block;margin-top:2px}
+.note{display:flex;gap:10px;align-items:flex-start;margin-top:20px;padding:14px 16px;background:#f0f5f9;border:1px solid #e1e9f0;border-radius:13px;font-size:12.5px;color:var(--text2);line-height:1.6}
+.note .ico{margin-top:2px;color:var(--muted)}
 
-<dialog id="pwdlg"><h2 id="pwTitle">Password</h2><p id="pwText">La password viene salvata solo in forma protetta da Firebase: annotala e comunicala al reparto. La password precedente smette subito di funzionare.</p><label for="pwNew">Nuova password (minimo 8 caratteri)</label><div class="pwbox"><input id="pwNew" autocomplete="off" spellcheck="false" maxlength="64"><button type="button" onclick="genPassword()">Genera</button></div><div id="pwErr" class="err" role="alert"></div><div class="actions"><button onclick="this.closest('dialog').close()">Annulla</button><button class="primary" id="pwSave" onclick="savePassword()">Salva password</button></div></dialog>
+/* quadro generale */
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 14px}
+.toolbar h2{font-size:17px}
+.search{position:relative;width:280px;max-width:100%}
+.search .ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--soft)}
+.search input{padding-left:38px}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.dcard{padding:18px;cursor:pointer;transition:.15s;display:flex;flex-direction:column;gap:12px}
+.dcard:hover{border-color:#c9d6e0;transform:translateY(-1px);box-shadow:0 10px 26px rgba(16,40,60,.08)}
+.dcard:focus-visible{outline:none;box-shadow:0 0 0 3px var(--accent-100)}
+.dcard.own{border-color:var(--accent-100);background:linear-gradient(180deg,#f6fdfb,#fff 60%)}
+.dcard-h{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.dcard-h h3{font-size:15.5px;line-height:1.3}
+.dbig{display:flex;align-items:baseline;gap:8px}
+.dbig strong{font-size:38px;letter-spacing:-1.5px;line-height:1}
+.dbig span{color:var(--muted);font-weight:600;font-size:13px}
+.meter{height:7px;border-radius:9px;background:var(--line2);overflow:hidden;display:flex}
+.meter i{display:block;height:100%}
+.dline{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--muted)}
+.dline b{color:var(--text)}
+.sexrow{display:flex;gap:6px;flex-wrap:wrap}
+.dfoot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line2);padding-top:10px;font-size:12px;color:var(--muted)}
+.stale{color:var(--danger);font-weight:700}
 
-<dialog id="deptdlg"><h2 id="deptTitle">Reparto</h2><label for="deptName">Nome del reparto</label><input id="deptName" maxlength="60"><label for="deptOrder">Ordine nell’elenco (numeri più bassi in alto)</label><input id="deptOrder" type="number" min="0" max="999"><label class="check"><input type="checkbox" id="deptMixed"> Camere miste consentite senza doppia conferma (es. terapia intensiva)</label><div id="deptErr" class="err" role="alert"></div><div class="actions"><button onclick="this.closest('dialog').close()">Annulla</button><button class="primary" onclick="saveDeptSettings()">Salva</button></div></dialog>
+/* reparto */
+.strip{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:14px 18px;margin-bottom:20px}
+.strip b{font-size:15px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:4px;display:inline-block;border:1px solid}
+.rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.room{padding:16px}
+.room.iso{border-color:var(--blk-bd);box-shadow:0 0 0 3px var(--blk-bg)}
+.room-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.room-h h3{font-size:15px}
+.room-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.beds{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:9px}
+.bed{border:1px solid;border-radius:13px;padding:11px 12px;font-size:12.5px;display:flex;flex-direction:column;gap:5px;min-height:98px;transition:.15s;text-align:left}
+.bed.click{cursor:pointer}
+.bed.click:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(16,40,60,.08)}
+.bed.click:focus-visible{outline:none;box-shadow:0 0 0 3px var(--accent-100)}
+.bed-h{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;font-weight:600;opacity:.85}
+.bed-s{font-size:15px;font-weight:800;letter-spacing:-.2px;line-height:1.2}
+.bed-d{line-height:1.45;opacity:.95}
+.bed-a{margin-top:auto;display:flex;gap:6px;flex-wrap:wrap;padding-top:4px}
+.bed-a .btn{padding:5px 9px;font-size:12px}
+.s-free{background:var(--free-bg);border-color:var(--free-bd);color:#0a6b4b}
+.s-occupied{background:var(--occ-bg);border-color:var(--occ-bd);color:#1f4f9f}
+.s-reserved{background:var(--res-bg);border-color:var(--res-bd);color:#8a5608}
+.s-blocked{background:var(--blk-bg);border-color:var(--blk-bd);color:#5a39a8}
+.s-closed{background:var(--cls-bg);border-color:var(--cls-bd);border-style:dashed;color:#56616c}
+.l-free{background:var(--free-bg);border-color:var(--free-bd)!important}.l-occupied{background:var(--occ-bg);border-color:var(--occ-bd)!important}.l-reserved{background:var(--res-bg);border-color:var(--res-bd)!important}.l-blocked{background:var(--blk-bg);border-color:var(--blk-bd)!important}.l-closed{background:var(--cls-bg);border-color:var(--cls-bd)!important}
 
-<dialog id="admpw"><h2>Password amministratore</h2><label for="admCur">Password attuale</label><input id="admCur" type="password" autocomplete="current-password"><label for="admNew">Nuova password (minimo 10 caratteri)</label><input id="admNew" type="password" autocomplete="new-password"><label for="admNew2">Ripeti la nuova password</label><input id="admNew2" type="password" autocomplete="new-password"><div id="admErr" class="err" role="alert"></div><div class="actions"><button onclick="this.closest('dialog').close()">Annulla</button><button class="primary" onclick="saveAdminPw()">Cambia password</button></div></dialog>
+/* finestre */
+dialog{border:0;border-radius:22px;padding:0;width:min(520px,calc(100vw - 24px));max-height:calc(100vh - 32px);box-shadow:var(--shadow-lg);color:var(--text)}
+dialog::backdrop{background:rgba(20,40,55,.35);backdrop-filter:blur(3px)}
+.dlg{padding:24px 26px;overflow-y:auto;max-height:calc(100vh - 32px)}
+.dlg-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:6px}
+.dlg-h small{color:var(--muted);font-weight:600;font-size:12.5px}
+.dlg-h h2{font-size:20px}
+.dlg p{color:var(--muted);margin:6px 0 0}
+.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:24px;flex-wrap:wrap}
+.x{border:0;background:#f1f4f7;border-radius:10px;width:34px;height:34px;display:grid;place-items:center;color:var(--muted);flex:none}
+.x:hover{background:#e6ebf0;color:var(--text)}
+.choices{display:grid;gap:8px}
+.choices.c5{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.choices.c2{grid-template-columns:1fr 1fr}
+.choice{position:relative}
+.choice input{position:absolute;opacity:0;pointer-events:none}
+.choice>span{display:flex;align-items:center;gap:9px;border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;font-weight:600;font-size:13.5px;cursor:pointer;transition:.12s;background:#fff}
+.choice>span:hover{border-color:#c6d2dc}
+.choice>span>i{width:12px;height:12px;border-radius:4px;border:1px solid;flex:none}.choice .ct b{display:block}.choice .ct small{display:block;color:var(--muted);font-weight:500;font-size:11.5px;line-height:1.3}
+.choice>input:checked+span{border-color:var(--accent);background:var(--accent-50);color:var(--accent-d);box-shadow:0 0 0 3px var(--accent-100)}
+.choice>input:focus-visible+span{box-shadow:0 0 0 3px var(--accent-100)}
+.quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.quick button{border:1px solid var(--line);background:#f8fafb;border-radius:999px;padding:4px 10px;font-size:12px;color:var(--text2)}
+.quick button:hover{border-color:var(--accent);color:var(--accent-d)}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;margin-top:10px}
+.switch b{display:block;font-size:13.5px}
+.switch small{color:var(--muted);font-size:12px}
+.switch input{width:44px;height:26px;appearance:none;-webkit-appearance:none;background:#d6dee6;border-radius:99px;position:relative;cursor:pointer;flex:none;padding:0;border:0;transition:.15s}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.15s}
+.switch input:checked{background:var(--accent)}
+.switch input:checked::after{left:21px}
+.linkbtn{border:0;background:none;color:var(--accent-d);font-weight:600;font-size:13px;padding:0;margin-top:16px}
+.rowlist{display:grid;gap:8px;margin-top:14px}
+.rowitem{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;flex-wrap:wrap}
+.rowitem b{min-width:76px}
+.rowitem input{width:80px;padding:7px 9px}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.stepper button{border:0;background:#f6f8fa;width:34px;height:34px;font-size:17px;color:var(--text2)}
+.stepper button:hover{background:#eaf0f4}
+.stepper output{min-width:38px;text-align:center;font-weight:700}
+.pwbox{display:flex;gap:8px}
+.pwbox input{flex:1;font:700 18px ui-monospace,Menlo,Consolas,monospace;letter-spacing:1.5px}
+.bigpw{font:800 26px ui-monospace,Menlo,Consolas,monospace;letter-spacing:2px;background:var(--accent-50);border:1px dashed var(--accent);color:var(--accent-d);border-radius:14px;padding:16px;text-align:center;margin:16px 0 4px;user-select:all}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#15303b;color:#fff;padding:12px 20px;border-radius:12px;box-shadow:var(--shadow-lg);z-index:1000;font-weight:600;font-size:13.5px;animation:tin .2s}
+@keyframes tin{from{opacity:0;transform:translate(-50%,8px)}}
 
-<dialog id="installdlg"><h2>Installa Posti letto</h2><p id="installIntro">Aggiungi il portale come app: si apre in una finestra sua, con l’icona sul desktop e nella barra delle applicazioni.</p><ol class="steps" id="installSteps"></ol><p class="muted" style="margin-top:16px">L’app usa sempre gli stessi dati in tempo reale e lo stesso accesso per reparto. Serve la connessione di rete.</p><div class="actions"><button class="primary" onclick="this.closest('dialog').close()">Ho capito</button></div></dialog><dialog id="message"><h2 id="messageTitle"></h2><p id="messageText" style="white-space:pre-line"></p><div class="actions"><button id="messageNo">Annulla</button><button id="messageYes" class="primary">Conferma</button></div></dialog>
+/* area amministratore */
+.tabs{display:flex;gap:4px;flex-wrap:wrap;background:#e9eef2;padding:4px;border-radius:13px;margin:18px 0 18px;width:fit-content;max-width:100%}
+.tab{border:0;background:none;padding:8px 13px;border-radius:10px;font-weight:600;font-size:13px;color:var(--text2);display:inline-flex;align-items:center;gap:7px}
+.tab:hover{color:var(--text)}
+.tab.on{background:#fff;color:var(--accent-d);box-shadow:0 1px 3px rgba(16,40,60,.1)}
+.tab .badge{background:var(--free);color:#fff;border-radius:99px;font-size:10.5px;padding:0 6px;font-weight:800}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line2)}
+.filters select,.filters input[type=date]{width:auto;padding:7px 10px;font-size:13px}
+.filters .search{width:240px}
+.filters .search input{padding:7px 10px 7px 36px;font-size:13px}
+.logstatus{display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:12.5px;color:var(--muted);border-bottom:1px solid var(--line2)}
+.live{width:8px;height:8px;border-radius:50%;background:var(--free);box-shadow:0 0 0 0 rgba(11,148,103,.5);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 7px rgba(11,148,103,0)}100%{box-shadow:0 0 0 0 rgba(11,148,103,0)}}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;text-align:left}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--soft);font-weight:700;padding:10px 14px;background:#fafbfc;white-space:nowrap}
+td{padding:11px 14px;border-top:1px solid var(--line2);font-size:13px;vertical-align:top}
+tr.day td{background:#f7f9fb;font-weight:700;font-size:12px;color:var(--text2);padding:8px 14px}
+tr.lr{cursor:pointer}
+tr.lr:hover td{background:#fbfcfd}
+tr.lr.open td{background:var(--accent-50)}
+tr.ld td{background:#fbfdfd;border-top:0;padding-top:4px}
+.ld ul{margin:0 0 8px;padding-left:18px;color:var(--text2)}
+.ld .meta{font-size:11.5px;color:var(--soft)}
+.tb{display:inline-block;font-size:11px;font-weight:700;border-radius:7px;padding:2px 8px;white-space:nowrap}
+.tm{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--text2);font-weight:600}
+.who-cell{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.who-cell .avatar{width:26px;height:26px;border-radius:8px;font-size:10.5px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:1px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.row-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.okmark{color:var(--free);font-weight:800}
+.nomark{color:var(--soft)}
+
+@media (max-width:980px){
+  .shell{grid-template-columns:1fr}
+  .side{position:static;height:auto;padding:12px 12px 6px;border-right:0;border-bottom:1px solid var(--line)}
+  .brand{padding:2px 4px 10px}
+  .who{margin-bottom:6px}
+  .nav{display:flex;gap:4px;overflow-x:auto;padding-bottom:6px}
+  .nav-i{width:auto;white-space:nowrap}
+  .nav-l,.side-foot{display:none}
+  .top{position:static;padding:10px 16px}
+  .content{padding:18px 16px 40px}
+  .reminder{margin:14px 16px 0}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .gate-card{padding:22px}
+}
+@media (max-width:560px){
+  .top .crumb{display:none}
+  .btn .bl{display:none}
+  .title{font-size:23px}
+  .kpi strong{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== ACCESSO ===================== -->
+<section id="gate" class="gate">
+  <div class="gate-wrap">
+    <div class="gate-brand"><img src="icons/icon-192.png" alt=""><div><h1>Posti letto</h1><span>Ospedale di Stato · Repubblica di San Marino</span></div></div>
+    <div class="gate-card" id="gateBody"><div class="tiles"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></div>
+    <div class="gate-foot">
+      <span id="gateVer"></span>
+      <span><button class="lnk" data-install hidden onclick="installApp()"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M12 7v6M9.5 10.5 12 13l2.5-2.5"/></svg>Installa sul desktop</button>
+      <button class="lnk" onclick="gatePick('__admin')"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>Accesso amministratore</button></span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PROGRAMMA ===================== -->
+<div id="shell" class="shell" hidden>
+  <aside class="side">
+    <div class="brand"><img src="icons/icon-192.png" alt=""><div><b>Posti letto</b><small>Ospedale di Stato · RSM</small></div></div>
+    <div class="who" id="who"></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot" id="sidefoot"></div>
+  </aside>
+  <div class="main">
+    <header class="top">
+      <div><div class="crumb" id="crumb"></div><div class="clock" id="clock"></div></div>
+      <div class="top-act">
+        <button class="btn soft sm" data-install hidden onclick="installApp()" title="Installa come app sul computer"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M12 7v6M9.5 10.5 12 13l2.5-2.5"/></svg><span class="bl">Installa</span></button>
+        <button class="btn sm" id="logoutBtn" onclick="logout()"></button>
+      </div>
+    </header>
+    <div id="reminder"></div>
+    <main class="content" id="content"></main>
+  </div>
+</div>
+
+<!-- ===================== FINESTRE ===================== -->
+<dialog id="bedDlg"><form class="dlg" onsubmit="event.preventDefault();saveBed()">
+  <div class="dlg-h"><div><small id="bedSub"></small><h2 id="bedTitle">Letto</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <div class="field"><span class="lbl">Com’è il letto adesso?</span>
+    <div class="choices c5" id="stateChoices"></div></div>
+  <div class="field" id="fSex"><span class="lbl">Paziente</span>
+    <div class="choices c2">
+      <label class="choice"><input type="radio" name="sex" value="M" onchange="$('#bedErr').textContent=''"><span>♂ Uomo</span></label>
+      <label class="choice"><input type="radio" name="sex" value="F" onchange="$('#bedErr').textContent=''"><span>♀ Donna</span></label>
+    </div></div>
+  <div class="field" id="fDate"><label for="bedDate">Giorno previsto per l’ingresso</label><input type="date" id="bedDate"></div>
+  <div class="field" id="fReason"><label for="bedReason">Motivo</label><input id="bedReason" maxlength="120" placeholder="Scrivi il motivo">
+    <div class="quick" id="reasonQuick"></div></div>
+  <div class="field" id="fNotes" hidden><label for="bedNotes">Nota (facoltativa)</label><textarea id="bedNotes" rows="2" maxlength="300" placeholder="Informazioni sul posto letto, senza dati del paziente"></textarea></div>
+  <button type="button" class="linkbtn" id="addNote" onclick="showNote()">+ Aggiungi una nota</button>
+  <div class="err" id="bedErr" role="alert"></div>
+  <p class="small" style="margin-top:6px">Non scrivere nomi, iniziali o date di nascita dei pazienti.</p>
+  <div class="actions"><button type="button" class="btn" onclick="closeDlg(this)">Annulla</button><button class="btn primary">Salva</button></div>
+</form></dialog>
+
+<dialog id="roomDlg"><form class="dlg" onsubmit="event.preventDefault();saveRoom()">
+  <div class="dlg-h"><div><small id="roomSub"></small><h2 id="roomTitle">Stanza</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <label class="switch"><div><b>Stanza adatta all’isolamento</b><small>Può accogliere pazienti in isolamento</small></div><input type="checkbox" id="roomCap" onchange="roomCapChanged()"></label>
+  <div class="field" id="fIso"><span class="lbl">Isolamento attivo</span><div class="choices c2" id="isoChoices"></div>
+    <p class="small">Con un isolamento attivo i letti liberi della stanza non risultano disponibili.</p></div>
+  <div class="err" id="roomErr" role="alert"></div>
+  <div class="actions"><button type="button" class="btn" onclick="closeDlg(this)">Annulla</button><button class="btn primary">Salva</button></div>
+</form></dialog>
+
+<dialog id="structDlg"><div class="dlg">
+  <div class="dlg-h"><div><small id="structSub"></small><h2>Stanze e letti</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <p>Imposta quanti letti ha ogni stanza. Si possono togliere solo letti liberi e senza note.</p>
+  <div class="rowlist" id="structRows"></div>
+  <button type="button" class="btn soft sm" style="margin-top:12px" onclick="structAdd()">+ Aggiungi stanza</button>
+  <div class="err" id="structErr" role="alert"></div>
+  <div class="actions"><button type="button" class="btn" onclick="closeDlg(this)">Annulla</button><button class="btn primary" onclick="saveStructure()">Salva</button></div>
+</div></dialog>
+
+<dialog id="pwDlg"><form class="dlg" onsubmit="event.preventDefault();savePassword()">
+  <div class="dlg-h"><div><small>Password di accesso</small><h2 id="pwTitle">Password</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <p>Dopo il salvataggio la password non sarà più visibile: annotala e consegnala al reparto. La password precedente smette subito di funzionare.</p>
+  <div class="field"><label for="pwNew">Nuova password (almeno 8 caratteri, lettere e numeri)</label>
+    <div class="pwbox"><input id="pwNew" autocomplete="off" spellcheck="false" maxlength="64"><button type="button" class="btn" onclick="genPassword()">Genera</button></div></div>
+  <div class="err" id="pwErr" role="alert"></div>
+  <div class="actions"><button type="button" class="btn" onclick="closeDlg(this)">Annulla</button><button class="btn primary" id="pwSave">Salva password</button></div>
+</form></dialog>
+
+<dialog id="deptDlg"><form class="dlg" onsubmit="event.preventDefault();saveDeptSettings()">
+  <div class="dlg-h"><div><small>Reparto</small><h2 id="deptTitle">Reparto</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <div class="field"><label for="deptName">Nome</label><input id="deptName" maxlength="60"></div>
+  <div class="field"><label for="deptOrder">Posizione nell’elenco (numeri bassi in alto)</label><input id="deptOrder" type="number" min="0" max="999"></div>
+  <label class="switch"><div><b>Camere miste consentite</b><small>Uomini e donne nella stessa stanza senza doppia conferma (es. terapia intensiva)</small></div><input type="checkbox" id="deptMixed"></label>
+  <div class="err" id="deptErr" role="alert"></div>
+  <div class="actions"><button type="button" class="btn" onclick="closeDlg(this)">Annulla</button><button class="btn primary">Salva</button></div>
+</form></dialog>
+
+<dialog id="admPwDlg"><form class="dlg" onsubmit="event.preventDefault();saveAdminPw()">
+  <div class="dlg-h"><div><small>Sicurezza</small><h2>Password amministratore</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <div class="field"><label for="admCur">Password attuale</label><input id="admCur" type="password" autocomplete="current-password"></div>
+  <div class="field"><label for="admNew">Nuova password (almeno 10 caratteri)</label><input id="admNew" type="password" autocomplete="new-password"></div>
+  <div class="field"><label for="admNew2">Ripeti la nuova password</label><input id="admNew2" type="password" autocomplete="new-password"></div>
+  <div class="err" id="admErr" role="alert"></div>
+  <div class="actions"><button type="button" class="btn" onclick="closeDlg(this)">Annulla</button><button class="btn primary">Cambia password</button></div>
+</form></dialog>
+
+<dialog id="installDlg"><div class="dlg">
+  <div class="dlg-h"><div><small>App sul computer</small><h2>Installa Posti letto</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <p>Il programma si aprirà in una finestra sua, con l’icona sul desktop. Dati e accesso restano gli stessi.</p>
+  <ol id="installSteps" style="margin:14px 0 0;padding-left:20px;line-height:1.75;color:var(--text2)"></ol>
+  <div class="actions"><button class="btn primary" onclick="closeDlg(this)">Ho capito</button></div>
+</div></dialog>
+
+<dialog id="msgDlg"><div class="dlg">
+  <div class="dlg-h"><h2 id="msgTitle"></h2></div>
+  <div id="msgText" style="color:var(--text2);margin-top:8px;white-space:pre-line;line-height:1.6"></div>
+  <div class="actions"><button class="btn" id="msgNo">Annulla</button><button class="btn primary" id="msgYes">Conferma</button></div>
+</div></dialog>
+
 <input type="file" id="importFile" accept="application/json,.json" hidden onchange="handleImport(this)">
 
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
-import {getAuth,initializeAuth,inMemoryPersistence,signInWithEmailAndPassword,signOut,onAuthStateChanged,createUserWithEmailAndPassword,updatePassword,reauthenticateWithCredential,EmailAuthProvider} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js';
-import {getFirestore,doc,getDoc,getDocs,setDoc,updateDoc,collection,onSnapshot,runTransaction,writeBatch,addDoc,query,orderBy,limit,deleteField,serverTimestamp,FieldPath} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
+import {getAuth,initializeAuth,inMemoryPersistence,browserLocalPersistence,browserSessionPersistence,setPersistence,signInWithEmailAndPassword,signOut,onAuthStateChanged,createUserWithEmailAndPassword,updatePassword,reauthenticateWithCredential,EmailAuthProvider} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js';
+import {getFirestore,doc,getDoc,getDocs,setDoc,deleteDoc,collection,onSnapshot,runTransaction,writeBatch,addDoc,query,where,orderBy,limit,deleteField,serverTimestamp,Timestamp,FieldPath} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
 
+// ================= CONFIGURAZIONE =================
 const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomain:"gestionale-reparti-ospedale.firebaseapp.com",projectId:"gestionale-reparti-ospedale",storageBucket:"gestionale-reparti-ospedale.firebasestorage.app",messagingSenderId:"398239423904",appId:"1:398239423904:web:af3007359ca0af7f8998c5"};
-// L'account amministratore va creato nella console Firebase (Authentication › Utenti) con questa email.
-// Deve coincidere con ADMIN_EMAIL nelle regole Firestore.
+// L'account amministratore si crea nella console Firebase (Authentication › Utenti) con questa email.
+// Deve coincidere con l'email scritta in firestore.rules.
 const ADMIN_EMAIL='admin@ospedale.local';
 const ACCOUNT_DOMAIN='ospedale.local';
-const APP_VERSION='2.1.0',APP_DATE='02/11/2026';
-const PS='__ps',PS_LABEL='Pronto Soccorso · consultazione',LEGACY_KEY='beds-rsm-configurable-v3';
+const APP_VERSION='3.0.0',APP_DATE='02/11/2026';
+const PS='__ps',PS_LABEL='Pronto Soccorso',ADMIN='__admin',LEGACY_KEY='beds-rsm-configurable-v3';
+const ADMIN_IDLE_MIN=30;
+const TZ='Europe/San_Marino';
 const DEFAULT_DEPTS=[['terapia-intensiva','Terapia intensiva',true,0],['terapia-semi-intensiva','Terapia semi-intensiva',true,1],['degenza-breve','Degenza breve',true,10],['ortopedia','Ortopedia',false,10],['chirurgia','Chirurgia',false,10],['medicina-interna','Medicina interna',false,10],['geriatria','Geriatria',false,10],['ostetricia-ginecologia','Ostetricia e ginecologia',false,10],['pediatria','Pediatria',false,10]];
 const LEGACY_IDS=['degenza-breve','ortopedia','chirurgia','terapia-intensiva','terapia-semi-intensiva','medicina-interna','geriatria','ostetricia-ginecologia','pediatria'];
-const STATES=['free','occupied','reserved','blocked','closed'],ISOS=['Nessuno','Contatto','Goccioline','Via aerea','Contatto + goccioline'];
-const STATE_LABEL={free:'Libero',occupied:'Occupato',reserved:'Programmato',blocked:'Bloccato',closed:'Chiuso / non disponibile'};
+const STATES=['free','occupied','reserved','blocked','closed'];
+const ISOS=['Nessuno','Contatto','Goccioline','Via aerea','Contatto + goccioline'];
+const STATE_LABEL={free:'Libero',occupied:'Occupato',reserved:'Programmato',blocked:'Bloccato',closed:'Chiuso'};
+const STATE_HINT={free:'Pronto per un ricovero',occupied:'C’è un paziente',reserved:'Ricovero in arrivo',blocked:'Per isolamento o rischio infettivo',closed:'Non utilizzabile'};
+const REASONS={blocked:['Isolamento','Rischio infettivo','In attesa di esito tampone'],closed:['Carenza personale','Manutenzione','Sanificazione','Guasto']};
+const TYPES={accesso:['Accesso','#0b9467'],uscita:['Uscita','#66727e'],letto:['Posto letto','#2c6bd8'],ricovero:['Ingresso','#0f9b8e'],isolamento:['Isolamento','#7650d3'],struttura:['Struttura','#b9740b'],controllo:['Controllo','#0b7d72'],consultazione:['Consultazione','#8a98a6'],password:['Password','#a8457a'],reparto:['Reparto','#b8571a'],backup:['Backup e dati','#3a4a58'],sistema:['Sistema','#3a4a58'],altro:['Altro','#8a98a6']};
 
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 let secAuth=null;
-const $=s=>document.querySelector(s);
-class AppError extends Error{}
 
-let user=null,isAdmin=false,myDept=null,myLabel='',depts=[],logins={},loginsLoaded=false,page=null,editing=null,pwTarget=null,deptEditing=null,auditCache=null,unsubs=[];
+// ================= UTILITÀ =================
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+class AppError extends Error{}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const str=(v,n)=>typeof v==='string'?v.slice(0,n):'';
+const isDate=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)?v:'';
+const itDate=v=>v?v.split('-').reverse().join('/'):'';
+function randomId(n=10){const cs='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';return Array.from(crypto.getRandomValues(new Uint32Array(n)),x=>cs[x%cs.length]).join('')}
+const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const DEVICE=(()=>{const u=navigator.userAgent;const b=/Edg\//.test(u)?'Edge':/OPR\//.test(u)?'Opera':/Firefox\/|FxiOS/.test(u)?'Firefox':/Chrome\/|CriOS/.test(u)?'Chrome':/Safari\//.test(u)?'Safari':'Browser';const o=/Windows/.test(u)?'Windows':/Android/.test(u)?'Android':/iPhone|iPad|iPod/.test(u)?'iOS':/Mac OS X/.test(u)?'macOS':/Linux/.test(u)?'Linux':'';return b+(o?' · '+o:'')+(isStandalone()?' · app':'')})();
+const SID=(()=>{let s=sessionStorage.getItem('pl-sid');if(!s){s=randomId(10);sessionStorage.setItem('pl-sid',s)}return s})();
+const ICONS={grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>',bed:'<path d="M3 6v13M3 14h18v5M21 14v-2.5A2.5 2.5 0 0 0 18.5 9H11v5"/><circle cx="7" cy="11" r="2"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',activity:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.5 3.5 5.2"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 21v-4h6v4M12 7v4M10 9h4"/>',sliders:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',logout:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11"/>',download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',upload:'<path d="M12 16V5M7 10l5-5 5 5M5 20h14"/>',chart:'<path d="M4 20V11M10 20V5M16 20v-6M2 20h20"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M15 18l-6-6 6-6"/>',lock:'<rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/>',switch:'<path d="M7 7h11l-3-3M17 17H6l3 3"/>',door:'<path d="M5 21V4a1 1 0 0 1 1-1h9l4 2v16M3 21h18"/><circle cx="12.5" cy="12" r=".8"/>',refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>'};
+const ico=n=>`<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]||''}</svg>`;
+const AV=['#0f9b8e','#2c6bd8','#c7820f','#7650d3','#c84a7c','#1d88b0','#4f8a2a','#b8571a','#0d7a8a'];
+function avColor(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return AV[h%AV.length]}
+function initials(s){const w=String(s).replace(/[^A-Za-zÀ-ÿ0-9 ]/g,' ').split(/\s+/).filter(x=>x&&!/^(e|di|del|della|d|e)$/i.test(x));if(!w.length)return '?';return (w[0][0]+(w[1]?w[1][0]:(w[0][1]||''))).toUpperCase()}
+function tint(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${n>>8&255},${n&255},${a})`}
+
+function toast(t){const el=document.createElement('div');el.className='toast';el.textContent=t;document.body.append(el);setTimeout(()=>el.remove(),3000)}
+function closeDlg(el){el.closest('dialog').close()}
+function appMessage(message,title='Attenzione',question=false,opts={}){return new Promise(resolve=>{const d=$('#msgDlg');$('#msgTitle').textContent=title;const t=$('#msgText');if(opts.html)t.innerHTML=message;else t.textContent=message;const yes=$('#msgYes'),no=$('#msgNo');no.hidden=!question;yes.textContent=opts.yes||(question?'Conferma':'Ho capito');yes.className='btn '+(opts.danger?'danger':'primary');const finish=v=>{d.close();resolve(v)};yes.onclick=()=>finish(true);no.onclick=()=>finish(false);d.oncancel=e=>{e.preventDefault();finish(false)};d.showModal();setTimeout(()=>(question?no:yes).focus(),30)})}
+function errMsg(e){const c=e?.code||'';if(/invalid-credential|wrong-password|user-not-found|invalid-login/.test(c))return 'Password non corretta.';if(c.includes('too-many-requests'))return 'Troppi tentativi sbagliati. Attendi qualche minuto e riprova.';if(c.includes('network')||c==='unavailable')return 'Connessione assente. Controlla la rete e riprova.';if(c.includes('permission-denied'))return 'Permessi insufficienti. Controlla che le regole Firestore della versione 3 siano pubblicate.';if(c.includes('weak-password'))return 'Password troppo debole.';if(c.includes('requires-recent-login'))return 'Per sicurezza accedi di nuovo e riprova.';if(c.includes('operation-not-allowed'))return 'L’accesso con email e password non è attivo in Firebase Authentication.';if(c.includes('failed-precondition'))return 'Firestore richiede un indice per questa ricerca.';return 'Operazione non riuscita'+(c?' ('+c+')':'')+'.'}
+async function guarded(fn){try{return await fn()}catch(e){if(e instanceof AppError){if(e.message)await appMessage(e.message)}else{console.error(e);await appMessage(errMsg(e),'Errore')}}}
+function download(name,text,type='application/json'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+
+// ---- date e ore ----
+function localTimeParts(now){const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(now).map(x=>[x.type,x.value]));return {day:p.year+'-'+p.month+'-'+p.day,hour:Number(p.hour),minute:Number(p.minute)}}
+let today=localTimeParts(new Date()).day,date=today;
+function nextDate(){const d=new Date(today+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+1);return d.toISOString().slice(0,10)}
+function toDate(v){if(!v)return null;if(typeof v.toDate==='function')return v.toDate();const d=new Date(v);return isNaN(d)?null:d}
+function fmtDT(v){const d=toDate(v);return d?d.toLocaleString('it-IT',{timeZone:TZ,day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—'}
+function fmtTime(v,sec){const d=toDate(v);return d?d.toLocaleTimeString('it-IT',{timeZone:TZ,hour:'2-digit',minute:'2-digit',...(sec?{second:'2-digit'}:{})}):'—'}
+function fmtDayLong(v){const d=toDate(v);return d?d.toLocaleDateString('it-IT',{timeZone:TZ,weekday:'long',day:'numeric',month:'long',year:'numeric'}):''}
+const cap=s=>s?s[0].toUpperCase()+s.slice(1):s;
+const dayKey=v=>{const d=toDate(v);return d?localTimeParts(d).day:''};
+function ago(v){const d=toDate(v);if(!d)return '—';const s=Math.round((Date.now()-d)/1000);if(s<45)return 'adesso';if(s<3600)return Math.round(s/60)+' min fa';if(s<86400)return Math.round(s/3600)+' ore fa';return fmtDT(d)}
+function updatedText(d){if(!d.updatedAt)return '<span class="muted">mai</span>';const t=new Date(d.updatedAt),stale=Date.now()-t>12*3600e3;const label=dayKey(t)===today?'oggi alle '+fmtTime(t):fmtDT(t);return `<span class="${stale?'stale':''}" title="${stale?'Più di 12 ore fa':''}">${label}</span>`}
+
+// ================= STATO =================
+let user=null,isAdmin=false,myDept=null,myLabel='',depts=[],deptsLoaded=false,logins={},loginsState='loading';
+let page='overview',adminTab='attivita',searchText='',editing=null,roomEditing=null,structDraft=null,pwTarget=null,deptEditing=null;
+let authReady=false,unsubs=[],pendingLogin=null,failCount={},gateSel=null,gateErr='',sessionSince='',viewed=new Set();
+let auditRows=[],auditUnsub=null,auditLimit=300,auditMode='live',auditLoaded=false,auditErr='',auditOpen=new Set();
+let todayRows=[],todayUnsub=null,todayKey='',presenceRows=[],presenceUnsub=null,presenceTimer=null,lastActivity=Date.now();
+const lf={type:'',dept:'',who:'',q:'',from:'',to:''};
 const byId=id=>depts.find(d=>d.id===id);
 const canEdit=id=>isAdmin||(!!myDept&&myDept!==PS&&myDept===id);
 const signedInOk=()=>!!user&&(isAdmin||!!myDept);
+const deptName=id=>id===PS?PS_LABEL:byId(id)?.name||logins[id]?.label||id||'—';
 
-// ---------- dati ----------
-const str=(v,n)=>typeof v==='string'?v.slice(0,n):'';
-const isDate=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)?v:'';
+// ================= DATI =================
 function sanitizeRooms(rooms){return (Array.isArray(rooms)?rooms:[]).slice(0,50).map(r=>({cap:!!r?.cap,iso:ISOS.includes(r?.iso)?r.iso:'Nessuno',reason:'',beds:(Array.isArray(r?.beds)?r.beds:[]).slice(0,12).map(b=>{let sex=b?.sex;if(sex===undefined)sex=['occupied','reserved'].includes(b?.state)?(r?.sex==='Femminile'?'F':'M'):'';const o={state:STATES.includes(b?.state)?b.state:'free',sex:['M','F'].includes(sex)?sex:'',date:isDate(b?.date),reason:str(b?.reason,120),notes:str(b?.notes,300)};if(isDate(b?.scheduledDate))o.scheduledDate=b.scheduledDate;if(typeof b?.admittedAt==='string')o.admittedAt=b.admittedAt.slice(0,40);return o})}))}
 function normalize(d){return {id:d.id,name:str(d.name,60)||'Reparto',order:Number.isFinite(d.order)?d.order:10,mixed:!!d.mixed,updatedAt:str(d.updatedAt,40),updatedBy:str(d.updatedBy,80),rooms:sanitizeRooms(d.rooms)}}
-function sortDepts(){depts.sort((a,b)=>a.order-b.order||a.name.localeCompare(b.name,'it'))}
+const sortDepts=()=>depts.sort((a,b)=>a.order-b.order||a.name.localeCompare(b.name,'it'));
 
-async function audit(dept,action){try{await addDoc(collection(db,'audit'),{at:serverTimestamp(),uid:user.uid,who:myLabel,dept:dept||'',action:String(action).slice(0,280)})}catch(e){console.warn('audit',e)}}
-async function mutate(id,fn,action){
+async function audit(type,dept,action,details=[]){if(!user)return;try{await addDoc(collection(db,'audit'),{at:serverTimestamp(),uid:user.uid,who:myLabel,dept:dept||'',type,action:String(action).slice(0,280),details:details.filter(Boolean).slice(0,30).map(x=>String(x).slice(0,240)),device:DEVICE,sid:SID})}catch(e){console.warn('audit',e)}}
+async function mutate(id,fn,log){
   if(!canEdit(id))throw new AppError('Non hai i permessi per modificare questo reparto.');
   const ref=doc(db,'departments',id);let result;
   await runTransaction(db,async tx=>{const s=await tx.get(ref);if(!s.exists())throw new AppError('Reparto non trovato: potrebbe essere stato eliminato.');const d=normalize({id,...s.data()});fn(d);d.rooms=sanitizeRooms(d.rooms);d.updatedAt=new Date().toISOString();d.updatedBy=myLabel;tx.update(ref,{rooms:d.rooms,updatedAt:d.updatedAt,updatedBy:d.updatedBy});result=d});
   const i=depts.findIndex(x=>x.id===id);if(i>=0)depts[i]=result;
-  if(action)audit(id,action);render();return result}
+  if(log)audit(log.type,id,log.action,log.details);
+  render();return result}
+const SEX={M:'Uomo',F:'Donna'};
+function bedDiff(o,n){const out=[];if(o.state!==n.state)out.push('Stato: '+STATE_LABEL[o.state]+' → '+STATE_LABEL[n.state]);if((o.sex||'')!==(n.sex||''))out.push('Paziente: '+(SEX[o.sex]||'—')+' → '+(SEX[n.sex]||'—'));if((o.date||'')!==(n.date||''))out.push('Ingresso previsto: '+(itDate(o.date)||'—')+' → '+(itDate(n.date)||'—'));if((o.reason||'')!==(n.reason||''))out.push('Motivo: '+(o.reason||'—')+' → '+(n.reason||'—'));if((o.notes||'')!==(n.notes||''))out.push('Nota: '+(o.notes||'—')+' → '+(n.notes||'—'));return out}
 
-function errMsg(e){const c=e?.code||'';if(c.includes('invalid-credential')||c.includes('wrong-password')||c.includes('user-not-found')||c.includes('invalid-login'))return 'Password non corretta.';if(c.includes('too-many-requests'))return 'Troppi tentativi falliti. Attendi qualche minuto e riprova.';if(c.includes('network')||c==='unavailable')return 'Connessione assente. Controlla la rete e riprova.';if(c.includes('permission-denied'))return 'Permessi insufficienti. Se sei l’amministratore, verifica che le regole Firestore siano pubblicate.';if(c.includes('weak-password'))return 'Password troppo debole.';if(c.includes('requires-recent-login'))return 'Per sicurezza accedi di nuovo e riprova.';if(c.includes('operation-not-allowed'))return 'Accesso con email/password non attivo in Firebase Authentication.';return 'Operazione non riuscita'+(c?' ('+c+')':'')+'.'}
-async function guarded(fn){try{return await fn()}catch(e){if(e instanceof AppError){if(e.message)await appMessage(e.message)}else{console.error(e);await appMessage(errMsg(e),'Errore')}}}
-function toast(t){const el=document.createElement('div');el.className='toast';el.textContent=t;document.body.append(el);setTimeout(()=>el.remove(),3200)}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-const escapeHtml=esc;
-function fmtDate(iso){if(!iso)return '—';const d=iso.toDate?iso.toDate():new Date(iso);if(isNaN(d))return '—';return d.toLocaleString('it-IT',{timeZone:'Europe/San_Marino',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}
-function fmtUpdated(d){if(!d.updatedAt)return '<span class="muted">Mai aggiornato</span>';const t=new Date(d.updatedAt),day=localTimeParts(t).day,hm=t.toLocaleTimeString('it-IT',{timeZone:'Europe/San_Marino',hour:'2-digit',minute:'2-digit'});const label=day===today?'Oggi '+hm:fmtDate(d.updatedAt);const stale=Date.now()-t>12*3600e3;return `<span class="${stale?'stale':''}" title="${stale?'Più di 12 ore fa':''}">${label}</span>${d.updatedBy?'<br><span class="muted">'+esc(d.updatedBy)+'</span>':''}`}
+// ================= LOGICA POSTI LETTO =================
+function roomSex(r,exclude=-1){const s=[...new Set(r.beds.filter((b,k)=>k!==exclude&&(b.state==='occupied'||b.state==='reserved'&&b.date<=date)).map(b=>b.sex).filter(Boolean))];return s.length>1?'mixed':s[0]||''}
+function availability(d,r){if(d.mixed)return 'Uomo o donna';const v=roomSex(r);return v==='M'?'Per uomo':v==='F'?'Per donna':v==='mixed'?'Camera mista':'Uomo o donna'}
+async function confirmMixedRoom(d,j){if(d.mixed)return true;if(!await appMessage('Nella stanza '+(j+1)+' ci sono già pazienti di sesso diverso. Vuoi creare una camera mista?','Camera mista · 1 di 2',true))return false;return appMessage('Confermi la camera mista nella stanza '+(j+1)+'? Il salvataggio avviene solo dopo questa seconda conferma.','Camera mista · 2 di 2',true,{yes:'Sì, confermo'})}
+function psBreakdown(d){const c={male:0,female:0,neutral:0,mixed:0,isolationFree:0,infectionBlocked:0};d.rooms.forEach(r=>{const sex=roomSex(r);r.beds.forEach(b=>{if(b.state==='closed'||b.state==='occupied'||b.state==='reserved'&&b.date<=nextDate())return;if(b.state==='blocked'||r.iso!=='Nessuno'){c.infectionBlocked++;return}c[sex==='M'?'male':sex==='F'?'female':sex==='mixed'?'mixed':'neutral']++;if(r.cap)c.isolationFree++})});return c}
+function counts(d){const c={total:0,active:0,closed:0,occupied:0,reserved:0,tomorrow:0,blocked:0,free:0};d.rooms.forEach(r=>r.beds.forEach(b=>{c.total++;if(b.state==='closed'){c.closed++;return}c.active++;if(b.state==='reserved'&&b.date===nextDate()){c.tomorrow++;return}if(b.state==='occupied')c.occupied++;else if(b.state==='blocked'||r.iso!=='Nessuno')c.blocked++;else if(b.state==='reserved'&&b.date<=date)c.reserved++;else c.free++}));return c}
+function dailyAdmissions(d){let total=0,confirmed=0,pending=0,overdue=0;d.rooms.forEach(r=>r.beds.forEach(b=>{const planned=b.scheduledDate||b.date;if(planned===date&&(b.state==='reserved'||b.admittedAt)){total++;if(b.admittedAt)confirmed++;else pending++}if(b.state==='reserved'&&b.date<today)overdue++}));return {total,confirmed,pending,overdue}}
+const roomHasIsolation=r=>r.iso!=='Nessuno'||r.beds.some(b=>b.state==='blocked');
 
-// ---------- logica posti letto ----------
-function roomSex(r,exclude=-1){let sexes=[...new Set(r.beds.filter((b,k)=>k!==exclude&&(b.state==='occupied'||b.state==='reserved'&&b.date<=date)).map(b=>b.sex).filter(Boolean))];return sexes.length>1?'mixed':sexes[0]||''}
-function appMessage(message,title='Attenzione',question=false){return new Promise(resolve=>{let d=$('#message');$('#messageTitle').textContent=title;$('#messageText').textContent=message;let yes=$('#messageYes'),no=$('#messageNo');no.hidden=!question;yes.textContent=question?'Conferma':'Ho capito';function finish(v){d.close();resolve(v)}yes.onclick=()=>finish(true);no.onclick=()=>finish(false);d.oncancel=e=>{e.preventDefault();finish(false)};d.showModal()})}
-function showError(message){$('#bederror').textContent=message;$('#bederror').scrollIntoView({block:'center'})}
-async function confirmMixedRoom(d,j){if(d.mixed)return true;if(!await appMessage('Nella stanza '+(j+1)+' sono presenti occupanti o ricoveri programmati di sesso diverso. Vuoi procedere creando una camera mista?','Camera mista · conferma 1 di 2',true))return false;return await appMessage('Sei sicuro di ricoverare nella stanza '+(j+1)+' creando o mantenendo una camera mista? Il ricovero sarà salvato solo dopo questa seconda conferma.','Camera mista · conferma 2 di 2',true)}
-function nextDate(){let d=new Date(today+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+1);return d.toISOString().slice(0,10)}
-function availability(d,r){if(d.mixed)return 'Disponibile per uomo o donna';let v=roomSex(r);return v==='M'?'Disponibile per uomo · donna con doppia conferma':v==='F'?'Disponibile per donna · uomo con doppia conferma':v==='mixed'?'Camera mista · nuovo ricovero con doppia conferma':'Disponibile per uomo o donna'}
-let today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/San_Marino'});let date=today;
-function psBreakdown(d){let c={male:0,female:0,neutral:0,mixed:0,isolationFree:0,infectionBlocked:0};d.rooms.forEach(r=>{let sex=roomSex(r);r.beds.forEach(b=>{if(b.state==='closed'||b.state==='occupied'||b.state==='reserved'&&b.date<=nextDate())return;if(b.state==='blocked'||r.iso!=='Nessuno'){c.infectionBlocked++;return}c[sex==='M'?'male':sex==='F'?'female':sex==='mixed'?'mixed':'neutral']++;if(r.cap)c.isolationFree++})});return c}
-function psDetail(d){if(d.mixed)return '';let c=psBreakdown(d);return `<div class="muted" style="margin-top:8px;line-height:1.65;white-space:nowrap"><span>Uomo: <b style="font-size:12px">${c.male}</b> · Donna: <b style="font-size:12px">${c.female}</b></span><br><span title="Stanza vuota: posto assegnabile a uomo o donna">Indifferenti: ${c.neutral}</span>${c.mixed?' · In camera mista: '+c.mixed:''}<br><span class="green">Liberi idonei all’isolamento: ${c.isolationFree}</span><br><span class="purple">Bloccati per rischio infettivo: ${c.infectionBlocked}</span></div>`}
-function dailyAdmissions(d){let total=0,confirmed=0,pending=0,overdue=0;d.rooms.forEach(r=>r.beds.forEach(b=>{let planned=b.scheduledDate||b.date;if(planned===date&&(b.state==='reserved'||b.admittedAt)){total++;if(b.admittedAt)confirmed++;else pending++}if(b.state==='reserved'&&b.date<today)overdue++}));return {total,confirmed,pending,overdue}}
-function admissionsPanel(d){let c=dailyAdmissions(d);return `<section class="panel" style="margin:0 0 24px;padding:20px"><h2 style="font-size:17px;margin:0 0 12px">Ricoveri programmati del giorno selezionato</h2><strong>${c.total}</strong> in programma · <span class="green">${c.confirmed} ingressi confermati</span> · <span class="amber">${c.pending} da confermare</span>${c.overdue?'<p class="amber" style="margin:12px 0 0">'+c.overdue+' prenotazioni precedenti ancora da confermare o annullare.</p>':''}<p class="muted" style="margin:12px 0 0">Al momento dell’arrivo usa “Conferma ingresso”: il posto diventa occupato. Fino alla conferma resta riservato e non disponibile.</p></section>`}
-async function confirmAdmission(j,k){const d=byId(page);if(!d||!canEdit(d.id))return;let r=d.rooms[j],b=r?.beds[k];if(!b||b.state!=='reserved')return;if(b.date>today){await appMessage('L’ingresso è programmato per un giorno futuro. Puoi confermarlo dal giorno previsto.');return}if(!b.sex){await appMessage('Indica prima il sesso del ricovero tramite Modifica.');return}let conflict=r.beds.some((other,n)=>n!==k&&other.state==='occupied'&&other.sex&&other.sex!==b.sex);if(conflict&&!await confirmMixedRoom(d,j))return;if(!await appMessage('Confermi che il paziente è entrato in reparto e occupa il letto '+(k+1)+' della stanza '+(j+1)+'?','Conferma ingresso',true))return;const snap=JSON.stringify(r);
-  await guarded(()=>mutate(d.id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==snap)throw new AppError('La stanza è stata modificata da un altro utente nel frattempo. Ricontrolla e riprova.');const fb=fr.beds[k];fb.scheduledDate=fb.date;fb.admittedAt=new Date().toISOString();fb.state='occupied'},`Stanza ${j+1} letto ${k+1}: ingresso confermato`))}
-function counts(d){let c={total:0,active:0,closed:0,occupied:0,reserved:0,tomorrow:0,blocked:0,free:0};d.rooms.forEach(r=>r.beds.forEach(b=>{c.total++;if(b.state==='closed'){c.closed++;return}c.active++;if(b.state==='reserved'&&b.date===nextDate()){c.tomorrow++;return}if(b.state==='occupied')c.occupied++;else if(b.state==='blocked'||r.iso!=='Nessuno')c.blocked++;else if(b.state==='reserved'&&b.date<=date)c.reserved++;else c.free++}));return c}
-function navigate(p){page=p;if(p==='admin'&&isAdmin&&!auditCache)loadAudit();render();window.scrollTo(0,0)}
-function stats(c){return `<div class="stats"><div class="stat"><small>Letti disponibili</small><strong class="green">${c.free}</strong><em>Esclusi i letti riservati anche al giorno successivo</em></div><div class="stat"><small>Letti occupati</small><strong>${c.occupied}<span style="font-size:16px;color:#98a8b0"> / ${c.active}</span></strong><em>Capienza attiva: ${c.active} · registrati: ${c.total}</em></div><div class="stat"><small>Ricoveri previsti domani</small><strong class="amber">${c.tomorrow}</strong><em>Posti già esclusi dai disponibili</em></div><div class="stat"><small>Letti chiusi / bloccati</small><strong class="purple">${c.closed} / ${c.blocked}</strong><em>Chiusi: esclusi dalla capienza attiva · bloccati: isolamento</em></div></div>`}
-function roomHasIsolation(r){return r.iso!=='Nessuno'||r.beds.some(b=>b.state==='blocked')}
-function localTimeParts(now){let p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/San_Marino',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(now).map(x=>[x.type,x.value]));return {day:p.year+'-'+p.month+'-'+p.day,hour:Number(p.hour),minute:Number(p.minute),second:Number(p.second)}}
-function reminderSlot(now){let p=localTimeParts(now);return p.hour>=21?{day:p.day,time:'21:00'}:p.hour>=12?{day:p.day,time:'12:00'}:null}
-function reminderKey(slot){return 'beds-check-'+slot.day+'-'+slot.time+'-'+(isAdmin?'admin':myDept)}
-let lastReminderMarkup='';
-function updateReminder(now=new Date()){let slot=signedInOk()?reminderSlot(now):null,host=$('#checkReminder');let ack=slot&&localStorage.getItem(reminderKey(slot));const own=!isAdmin&&myDept&&myDept!==PS&&byId(myDept);let markup=slot&&!ack?`<div class="check-reminder"><div><strong>Promemoria delle ${slot.time} · verifica posti letto</strong><small>${own?'Controlla occupazioni, dimissioni, prenotazioni, chiusure e isolamenti di '+esc(own.name)+'.':'Tutti i reparti sono invitati a controllare e aggiornare la disponibilità.'}</small></div><button onclick="acknowledgeCheck()">${own?'Ho controllato i posti letto':'Ho letto il promemoria'}</button></div>`:'';if(markup!==lastReminderMarkup){host.innerHTML=markup;lastReminderMarkup=markup}}
-async function acknowledgeCheck(){let slot=reminderSlot(new Date());if(!slot)return;localStorage.setItem(reminderKey(slot),new Date().toISOString());updateReminder();if(!isAdmin&&myDept&&myDept!==PS&&byId(myDept))await guarded(()=>mutate(myDept,()=>{},'Controllo posti letto delle '+slot.time+' confermato'))}
-function tickClock(now=new Date()){$('#liveclock').textContent=new Intl.DateTimeFormat('it-IT',{timeZone:'Europe/San_Marino',weekday:'long',day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(now);let day=localTimeParts(now).day;if(day!==today){let old=today;today=day;if(date===old)date=day;render()}updateReminder(now)}
+// ================= ACCESSO =================
+function gateProfiles(){return Object.entries(logins).filter(([,e])=>e&&e.email).map(([id,e])=>({id,label:e.label||id})).sort((a,b)=>a.id===PS?-1:b.id===PS?1:a.label.localeCompare(b.label,'it'))}
+function renderGate(){
+  $('#gate').hidden=false;$('#shell').hidden=true;
+  $('#gateVer').textContent='Versione '+APP_VERSION+' · '+APP_DATE;
+  const body=$('#gateBody');
+  if(!gateSel){
+    const last=localStorage.getItem('pl-last-profile');let tiles;
+    if(loginsState==='loading')tiles='<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
+    else if(loginsState==='error')tiles='<div class="empty">Impossibile caricare l’elenco dei reparti. Controlla la connessione e ricarica la pagina.</div>';
+    else{const list=gateProfiles();tiles=list.length?list.map(p=>`<button class="tile" onclick="gatePick('${esc(p.id)}')"><span class="avatar" style="background:${avColor(p.label)}">${esc(initials(p.label))}</span><span><b>${esc(p.label)}</b><small>${p.id===PS?'Sola consultazione':'Reparto'}</small></span>${p.id===last?'<span class="chip accent last">Ultimo usato</span>':''}</button>`).join(''):'<div class="empty">Nessun reparto è ancora abilitato.<br>L’amministratore deve creare le password dall’area riservata.</div>'}
+    body.innerHTML=`<h2>Seleziona il tuo reparto</h2><p class="sub">Poi inserisci la password che ti ha dato l’amministratore.</p><div class="tiles">${tiles}</div>${gateErr?`<div class="err" role="alert">${esc(gateErr)}</div>`:''}`;
+    return}
+  const adm=gateSel===ADMIN,label=adm?'Amministratore':(logins[gateSel]?.label||'Profilo');
+  body.innerHTML=`<button class="btn ghost sm back" onclick="gatePick(null)">${ico('back')} Cambia reparto</button>
+  <div class="gate-sel"><span class="avatar lg" style="background:${adm?'#3a4a58':avColor(label)}">${adm?ico('shield'):esc(initials(label))}</span><div><small>${adm?'Area riservata':gateSel===PS?'Sola consultazione':'Reparto'}</small><h2>${esc(label)}</h2></div></div>
+  <form class="gate-form" onsubmit="event.preventDefault();doLogin()">
+    <input type="text" name="username" autocomplete="username" value="${esc(label)}" style="display:none">
+    <label for="gatePw">Password</label>
+    <div class="pw"><input id="gatePw" type="password" autocomplete="current-password" required><button type="button" class="btn ghost sm" onclick="togglePw()" aria-label="Mostra o nascondi la password">${ico('eye')}</button></div>
+    <div class="err" id="gateErr" role="alert">${esc(gateErr)}</div>
+    <button class="btn primary block" id="gateBtn">${ico('lock')} Entra</button>
+    <p class="hint">${adm?'La sessione amministratore si chiude chiudendo il browser e dopo '+ADMIN_IDLE_MIN+' minuti di inattività.':'Sul computer del reparto l’accesso resta attivo. Per uscire usa “Cambia reparto” in alto a destra.'}</p>
+  </form>`;
+  setTimeout(()=>$('#gatePw')?.focus(),40)}
+function gatePick(id){gateSel=id;gateErr='';renderGate()}
+function togglePw(){const i=$('#gatePw');i.type=i.type==='password'?'text':'password';i.focus()}
+async function doLogin(){const t=gateSel,pw=$('#gatePw').value,err=$('#gateErr');err.textContent='';if(!pw){err.textContent='Inserisci la password.';return}
+  const email=t===ADMIN?ADMIN_EMAIL:logins[t]?.email;if(!email){err.textContent='Questo profilo non ha una password attiva. Rivolgiti all’amministratore.';return}
+  const btn=$('#gateBtn');btn.disabled=true;btn.textContent='Accesso in corso…';
+  try{await setPersistence(auth,t===ADMIN?browserSessionPersistence:browserLocalPersistence);pendingLogin={failed:failCount[t]||0};await signInWithEmailAndPassword(auth,email,pw);failCount[t]=0;if(t!==ADMIN)localStorage.setItem('pl-last-profile',t)}
+  catch(e){pendingLogin=null;failCount[t]=(failCount[t]||0)+1;err.textContent=errMsg(e);btn.disabled=false;btn.innerHTML=ico('lock')+' Entra';$('#gatePw').select()}}
+async function logout(auto=false){if(!user)return;
+  if(!auto&&!await appMessage(isAdmin?'Vuoi uscire dall’area amministratore?':'Vuoi uscire da “'+myLabel+'” e tornare alla scelta del reparto?',isAdmin?'Esci':'Cambia reparto',true,{yes:isAdmin?'Esci':'Cambia reparto'}))return;
+  await audit('uscita',isAdmin?'':myDept,auto?'Uscita automatica dopo '+ADMIN_IDLE_MIN+' minuti di inattività':'Uscita dal profilo');
+  try{await deleteDoc(doc(db,'presence',user.uid+'_'+SID))}catch{}
+  sessionStorage.removeItem('pl-open-'+user.uid);gateSel=null;if(auto)gateErr='Sessione chiusa per inattività.';await signOut(auth)}
+function stopListeners(){[...unsubs,auditUnsub,todayUnsub,presenceUnsub].forEach(u=>{try{u&&u()}catch{}});unsubs=[];auditUnsub=todayUnsub=presenceUnsub=null;clearInterval(presenceTimer);presenceTimer=null}
+
+onSnapshot(doc(db,'public','logins'),s=>{logins=(s.exists()&&s.data().entries)||{};loginsState='ok';if(authReady&&!user)renderGate();else if(page==='admin')render({soft:true})},e=>{console.warn('logins',e);loginsState='error';if(authReady&&!user)renderGate()});
+
+onAuthStateChanged(auth,async u=>{
+  authReady=true;stopListeners();user=u;isAdmin=false;myDept=null;myLabel='';depts=[];deptsLoaded=false;viewed=new Set();auditRows=[];todayRows=[];presenceRows=[];auditLoaded=false;
+  if(!u){renderGate();return}
+  if(u.email===ADMIN_EMAIL){isAdmin=true;myLabel='Amministratore'}
+  else{try{const s=await getDoc(doc(db,'accounts',u.uid));if(s.exists()){myDept=s.data().dept;myLabel=s.data().label||'Reparto'}}catch(e){console.warn(e)}
+    if(!myDept){pendingLogin=null;gateErr='Accesso non più valido: la password di questo profilo è stata cambiata o revocata.';await signOut(auth);return}
+    unsubs.push(onSnapshot(doc(db,'accounts',u.uid),s=>{if(!s.exists()){gateErr='La password di questo profilo è stata cambiata dall’amministratore. Accedi con quella nuova.';signOut(auth)}else if(s.data().label&&s.data().label!==myLabel){myLabel=s.data().label;render({soft:true})}},()=>{}))}
+  sessionSince=new Date().toISOString();lastActivity=Date.now();
+  page=isAdmin?'admin':(myDept===PS?'overview':myDept);adminTab='attivita';gateSel=null;gateErr='';
+  $('#gate').hidden=true;$('#shell').hidden=false;
+  unsubs.push(onSnapshot(collection(db,'departments'),snap=>{depts=snap.docs.map(x=>normalize({id:x.id,...x.data()}));sortDepts();deptsLoaded=true;render({soft:true});if(editing&&$('#bedDlg').open&&!byId(editing.id))$('#bedDlg').close()},e=>{console.error(e);if(e.code==='permission-denied'&&!isAdmin){gateErr='Il profilo non ha più accesso ai dati.';signOut(auth)}else appMessage(errMsg(e),'Errore di collegamento')}));
+  if(isAdmin)startAdminFeeds();
+  const dept=isAdmin?'':myDept;
+  if(pendingLogin){const f=pendingLogin.failed;audit('accesso',dept,'Accesso effettuato',[f?f+(f===1?' tentativo':' tentativi')+' con password sbagliata prima dell’accesso':'',isStandalone()?'Aperto dall’app installata':'']);pendingLogin=null;sessionStorage.setItem('pl-open-'+u.uid,'1')}
+  else if(!sessionStorage.getItem('pl-open-'+u.uid)){audit('accesso',dept,'Programma aperto con l’accesso già attivo');sessionStorage.setItem('pl-open-'+u.uid,'1')}
+  beat(true);presenceTimer=setInterval(()=>beat(true),60000);
+  render()});
+
+// ---- sessioni aperte ----
+let lastBeat=0;
+function pageLabel(){return page==='overview'?'Quadro generale':page==='admin'?'Area amministratore':deptName(page)}
+async function beat(force){if(!user)return;if(!force&&Date.now()-lastBeat<4000)return;lastBeat=Date.now();try{await setDoc(doc(db,'presence',user.uid+'_'+SID),{uid:user.uid,who:myLabel,dept:isAdmin?'':myDept,page:pageLabel(),device:DEVICE,since:sessionSince,lastSeen:serverTimestamp()})}catch(e){}}
+
+// ================= NAVIGAZIONE E RENDER =================
+function go(p){if(p!=='overview'&&p!=='admin'&&!byId(p))return;page=p;if(!isAdmin&&byId(p)&&p!==myDept&&!viewed.has(p)){viewed.add(p);audit('consultazione',p,'Consultato il reparto '+deptName(p))}beat();render();window.scrollTo(0,0)}
+function freeCnt(d){return counts(d).free}
+function navItem(p,icon,label,cnt){return `<button class="nav-i ${page===p?'on':''}" onclick="go('${esc(p)}')">${icon?ico(icon):'<span class="ndot"></span>'}<span class="nl">${esc(label)}</span>${cnt!=null?`<span class="cnt ${cnt?'':'z'}" title="Letti disponibili">${cnt}</span>`:''}</button>`}
+function renderSide(){
+  const own=!isAdmin&&myDept!==PS?byId(myDept):null;
+  let h=navItem('overview','grid','Quadro generale');
+  if(own)h+=navItem(own.id,'bed','Il mio reparto',freeCnt(own));
+  if(isAdmin)h+=navItem('admin','shield','Area amministratore');
+  h+='<div class="nav-l">Reparti</div>'+(deptsLoaded?depts.map(d=>navItem(d.id,null,d.name,freeCnt(d))).join(''):'<div class="small muted" style="padding:6px 10px">Caricamento…</div>');
+  $('#nav').innerHTML=h;
+  $('#who').innerHTML=`<span class="avatar" style="background:${isAdmin?'#3a4a58':avColor(myLabel)}">${isAdmin?ico('shield'):esc(initials(myLabel))}</span><div><b>${esc(myLabel)}</b><small>${isAdmin?'Accesso completo':myDept===PS?'Sola consultazione':'Modifica il proprio reparto'}</small></div>`;
+  $('#sidefoot').innerHTML='I numeri accanto ai reparti sono i letti disponibili.<br>Dati condivisi in tempo reale, senza dati dei pazienti.<br><br>Versione '+APP_VERSION+' · '+APP_DATE;
+  $('#logoutBtn').innerHTML=isAdmin?ico('logout')+'<span class="bl">Esci</span>':ico('switch')+'<span class="bl">Cambia reparto</span>';
+  $('#crumb').textContent=page==='overview'?'Quadro generale':page==='admin'?'Area amministratore':'Reparti / '+deptName(page);
+  refreshInstallBtn()}
+function render(opts={}){
+  if(!signedInOk())return;
+  renderSide();updateReminder();
+  if(opts.soft&&page==='admin'&&['attivita','collegati'].includes(adminTab)&&$('#admBody')){if(adminTab==='attivita')updateLog();else updatePresence();return}
+  const act=document.activeElement,fid=act&&act.id&&$('#content').contains(act)?act.id:null,sel=fid&&'selectionStart'in act?[act.selectionStart,act.selectionEnd]:null;
+  const c=$('#content');
+  if(page==='admin'){if(isAdmin)renderAdmin();else page='overview'}
+  if(page!=='admin'){
+    if(!deptsLoaded){c.innerHTML='<div class="kpis"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>';return}
+    if(page!=='overview'&&!byId(page))page='overview';
+    c.innerHTML=page==='overview'?overviewHtml():deptHtml(byId(page))}
+  if(fid){const el=document.getElementById(fid);if(el){el.focus();try{sel&&el.setSelectionRange(...sel)}catch{}}}}
+
+const dateBar=()=>`<div class="datebar"><span>Disponibilità al</span><input type="date" id="dateSel" aria-label="Data" value="${date}" onchange="setDate(this.value)">${date!==today?`<button class="btn ghost sm" onclick="setDate('${today}')">Torna a oggi</button>`:''}<span>I letti prenotati per domani sono già esclusi dai disponibili.</span></div>`;
 function setDate(v){date=isDate(v)||today;render()}
+const kpiHtml=c=>`<div class="kpis"><div class="card kpi"><small>Letti disponibili</small><strong class="c-free">${c.free}</strong><em>Pronti per un ricovero</em></div><div class="card kpi"><small>Letti occupati</small><strong>${c.occupied}<span> / ${c.active}</span></strong><em>Su ${c.active} letti attivi</em></div><div class="card kpi"><small>Ricoveri previsti domani</small><strong class="c-res">${c.tomorrow}</strong><em>Già tolti dai disponibili</em></div><div class="card kpi"><small>Bloccati · chiusi</small><strong class="c-blk">${c.blocked}<span> · ${c.closed}</span></strong><em>Isolamento · non utilizzabili</em></div></div>`;
 
-// ---------- rendering ----------
-function renderChrome(){let h='';if(signedInOk()){h=`<button class="${page===null?'active':''}" onclick="navigate(null)">▦　Quadro generale</button>`+(isAdmin?`<button class="${page==='admin'?'active':''}" onclick="navigate('admin')">⚙　Area amministratore</button>`:'')+`<small style="margin:25px 12px 12px;font-size:10px;letter-spacing:1.5px">REPARTI</small>`+depts.map(d=>`<button class="${page===d.id?'active':''}" onclick="navigate('${esc(d.id)}')">${esc(d.name)}${!isAdmin&&myDept===d.id?' ✎':''}</button>`).join('')}$('#nav').innerHTML=h;
-  $('#profile').textContent=signedInOk()?myLabel+' · Esci':'Accedi';
-  $('#asidefoot').innerHTML=(signedInOk()?'Collegato come<br><b>'+esc(myLabel)+'</b><br><br>':'')+'Dati condivisi in tempo reale<br>Nessun dato identificativo dei pazienti<br><br>Versione '+APP_VERSION+' · '+APP_DATE}
-function render(){renderChrome();updateReminder();const content=$('#content');
-  if(!signedInOk()){content.innerHTML=`<div class="gate"><section class="panel"><h1 style="margin-top:0">Accesso richiesto</h1><p>Per consultare e aggiornare i posti letto accedi con il profilo del tuo reparto.</p><button class="primary" onclick="openLogin()">Accedi</button></section></div>`;return}
-  if(page==='admin'){if(isAdmin){renderAdmin();return}page=null}
-  if(page&&!byId(page))page=null;
-  let all=depts.map(counts),zero=counts({rooms:[]}),d=page?byId(page):null,c=d?counts(d):all.reduce((a,x)=>{Object.keys(x).forEach(k=>a[k]+=x[k]);return a},zero);
-  let html=`<h1>${d?esc(d.name):'Il quadro dei posti letto'}</h1><p>${d?'Stanze, disponibilità e programmazione del reparto.':'Una vista condivisa, per orientare ogni ricovero.'}</p><div class="datebar"><span>Disponibilità al</span><input aria-label="Data disponibilità" type="date" value="${date}" onchange="setDate(this.value)"><span class="muted">I letti prenotati per il giorno successivo sono già esclusi dai disponibili. Nessuna dimissione automatica.</span></div>${stats(c)}`;
-  if(!d){html+=`<section class="panel"><div class="toolbar"><h2>Disponibilità per reparto <span class="muted"> · ${depts.length} reparti</span></h2><input id="search" aria-label="Cerca reparto" placeholder="Cerca un reparto…" oninput="filterRows(this.value)"></div><table><thead><tr><th>Reparto</th><th>Occupati / attivi</th><th>Disponibili</th><th>Ricoveri previsti<br>domani</th><th>Chiusi / bloccati</th><th>Aggiornamento</th><th></th></tr></thead><tbody>${depts.length?depts.map((d,i)=>{let c=all[i];return `<tr data-name="${esc(d.name.toLowerCase())}"><td>${esc(d.name)}</td><td>${c.occupied} / ${c.active}<br><span class="muted">${c.total} registrati</span><div class="bar"><i style="width:${c.active?c.occupied/c.active*100:0}%"></i></div></td><td><span class="pill ${c.free?'':'zero'}">${c.free} ${c.free===1?'letto':'letti'}</span>${psDetail(d)}</td><td><b class="amber">${c.tomorrow}</b> <span class="muted">in programma</span></td><td>${c.closed} / ${c.blocked}</td><td>${fmtUpdated(d)}</td><td><button onclick="navigate('${esc(d.id)}')">Dettaglio ↗</button></td></tr>`}).join(''):`<tr><td colspan="7" class="muted">Nessun reparto configurato.${isAdmin?' Crea i reparti dall’Area amministratore.':''}</td></tr>`}</tbody></table></section><div class="note">ⓘ　Tutti i reparti e il Pronto Soccorso vedono questa schermata. Ogni reparto modifica solo i propri letti; l’amministratore può modificare tutto.<br>I posti “indifferenti” sono assegnabili a uomo o donna; quelli in camera mista richiedono doppia conferma. I liberi idonei all’isolamento sono già inclusi nel totale disponibile; i bloccati per rischio infettivo sono esclusi. Un aggiornamento in rosso è più vecchio di 12 ore.</div>`}
-  else{const ce=canEdit(d.id);html+=admissionsPanel(d);html+=`<div class="toolbar" style="padding:0"><h2>Stanze del reparto</h2><span class="muted">${ce?(isAdmin?'Modifica come amministratore · ':'')+'<button onclick="configure()">Modifica reparto</button>':'Sola consultazione'}</span></div><div class="legend"><span>🟢 Libero</span><span>● Occupato</span><span class="amber">● Programmato</span><span class="purple">● Bloccato / isolamento</span><span>● Chiuso / non disponibile</span></div><div class="rooms">`+(d.rooms.length?'':`<div class="note" style="grid-column:1/-1">Nessuna stanza o letto configurato.${ce?' Usa “Modifica reparto” per aggiungerli.':''}</div>`)+d.rooms.map((r,j)=>`<article class="room ${roomHasIsolation(r)?'isolation-room':''}"><h3>Stanza ${String(j+1).padStart(2,'0')} <span style="float:right;font-size:12px;font-weight:400">${roomSex(r)==='M'?'Occupanti uomini':roomSex(r)==='F'?'Occupanti donne':roomSex(r)==='mixed'?'Camera mista':'Stanza neutra'}</span></h3><span class="muted">${r.cap?'Idonea all’isolamento':'Isolamento non predisposto'}</span><div class="beds">${r.beds.map((b,k)=>{let s=b.state==='free'&&r.iso!=='Nessuno'?'blocked':b.state;return `<div class="bed ${s==='free'?'':s}">Letto ${k+1}<br><b>${s==='free'?availability(d,r):STATE_LABEL[s]}</b>${s==='reserved'?'<br>Previsto il '+esc(b.date.split('-').reverse().join('/')):''}${s==='reserved'&&b.date===nextDate()?' (domani)':''}${['occupied','reserved'].includes(b.state)?'<br>'+({M:'Uomo',F:'Donna'}[b.sex]||'Sesso non indicato'):''}${b.reason?'<br><strong>'+esc(b.reason)+'</strong>':''}${b.notes?'<br><span>'+esc(b.notes)+'</span>':''}${b.state==='reserved'&&b.date<=date?'<br><strong>Ingresso da confermare</strong>':''}${ce&&b.state==='reserved'&&b.date<=today?`<button class="primary" style="padding:7px;margin-top:8px" onclick="confirmAdmission(${j},${k})">Conferma ingresso</button>`:''}${ce?`<button style="padding:5px;margin-top:8px" onclick="edit(${j},${k})">Modifica</button>`:''}</div>`}).join('')}</div><footer>${r.iso==='Nessuno'?'Nessun isolamento attivo':'Isolamento: '+esc(r.iso)}</footer></article>`).join('')+'</div>';html+=`<div class="note">ⓘ　I letti liberi in stanze con isolamento attivo sono esclusi dalla disponibilità. Le modifiche sono salvate sul server e visibili subito a tutti i reparti.</div>`}
-  content.innerHTML=html}
-function filterRows(v){document.querySelectorAll('tbody tr[data-name]').forEach(r=>r.hidden=!r.dataset.name.includes(v.toLowerCase()))}
+function overviewHtml(){
+  const all=depts.map(counts),zero={total:0,active:0,closed:0,occupied:0,reserved:0,tomorrow:0,blocked:0,free:0},tot=all.reduce((a,x)=>{for(const k in x)a[k]+=x[k];return a},{...zero});
+  const q=searchText.trim().toLowerCase();
+  const cards=depts.map((d,i)=>{if(q&&!d.name.toLowerCase().includes(q))return '';const c=all[i],own=!isAdmin&&d.id===myDept,b=d.mixed?null:psBreakdown(d),act=c.active||1;
+    return `<article class="card dcard ${own?'own':''}" tabindex="0" role="button" onclick="go('${esc(d.id)}')" onkeydown="if(event.key==='Enter')go('${esc(d.id)}')">
+      <div class="dcard-h"><h3>${esc(d.name)}</h3>${own?'<span class="chip accent">Il tuo reparto</span>':d.mixed?'<span class="chip">Camere miste</span>':''}</div>
+      <div class="dbig"><strong class="${c.free?'c-free':''}" style="${c.free?'':'color:var(--danger)'}">${c.free}</strong><span>${c.free===1?'letto disponibile':'letti disponibili'}</span></div>
+      <div class="meter" title="Occupati, programmati, bloccati"><i style="width:${c.occupied/act*100}%;background:#7ea5ea"></i><i style="width:${(c.reserved+c.tomorrow)/act*100}%;background:#ecc565"></i><i style="width:${c.blocked/act*100}%;background:#b39ef0"></i></div>
+      <div class="dline"><span>Occupati <b>${c.occupied}/${c.active}</b></span><span>Domani <b>${c.tomorrow}</b></span><span>Bloccati <b>${c.blocked}</b></span></div>
+      ${b&&c.free?`<div class="sexrow">${b.male?`<span class="chip">♂ Uomo ${b.male}</span>`:''}${b.female?`<span class="chip">♀ Donna ${b.female}</span>`:''}${b.neutral?`<span class="chip green">Uomo o donna ${b.neutral}</span>`:''}${b.mixed?`<span class="chip amber">Camera mista ${b.mixed}</span>`:''}${b.isolationFree?`<span class="chip violet">Adatti all’isolamento ${b.isolationFree}</span>`:''}</div>`:''}
+      <div class="dfoot"><span>${d.updatedAt?'Aggiornato '+updatedText(d):'<span class="muted">Mai aggiornato</span>'}</span><span>${d.updatedBy?esc(d.updatedBy):''}</span></div></article>`}).join('');
+  return `<div class="phead"><div><h1 class="title">Quadro dei posti letto</h1><p class="sub">Tutti i reparti in un colpo d’occhio. Tocca un reparto per vedere le stanze.</p></div></div>${dateBar()}${kpiHtml(tot)}
+  <div class="toolbar"><h2>Reparti <span class="muted small">· ${depts.length}</span></h2><div class="search">${ico('search')}<input id="search" placeholder="Cerca un reparto" value="${esc(searchText)}" oninput="setSearch(this.value)"></div></div>
+  <div class="dgrid">${cards||`<div class="empty">${depts.length?'Nessun reparto trovato.':'Nessun reparto configurato.'+(isAdmin?' Crealo dall’Area amministratore.':'')}</div>`}</div>
+  <div class="note">${ico('info')}<div>Ogni reparto aggiorna solo i propri letti; il Pronto Soccorso consulta. “Uomo o donna” indica una stanza vuota; la camera mista richiede doppia conferma. Un aggiornamento in rosso è più vecchio di 12 ore.</div></div>`}
 
-// ---------- modifica letti e struttura ----------
-function edit(j,k){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.rooms[j],b=r?.beds[k];if(!b)return;editing={id:d.id,j,k,room:JSON.stringify(r)};$('#bederror').textContent='';for(let [id,val]of Object.entries({sex:b.sex||'',state:b.state,admit:b.date,cap:r.cap?'yes':'no',iso:r.iso,reason:b.reason||'',bednotes:b.notes||''}))document.getElementById(id).value=val;$('#editTitle').textContent=`${d.name} · Stanza ${j+1} · Letto ${k+1}`;$('#editor').showModal()}
-async function saveBed(){if(!editing)return;const {id,j,k,room}=editing;const d=byId(id);if(!d||!canEdit(id))return;const val=x=>document.getElementById(x).value;let state=val('state'),sex=val('sex'),admit=val('admit'),cap=val('cap')==='yes',iso=val('iso'),reason=val('reason').trim().slice(0,120),notes=val('bednotes').trim().slice(0,300);
-  const r=JSON.parse(room),old=r.beds[k];
-  if(state==='reserved'&&!admit){showError('Indica la data del ricovero programmato.');return}
-  if(state==='reserved'&&admit!==old.date&&admit<today){showError('La data del ricovero programmato non può essere nel passato.');return}
-  if(['occupied','reserved'].includes(state)&&!sex){showError('Indica il sesso dell’occupante o del ricovero programmato.');return}
-  if(iso!=='Nessuno'&&!cap){showError('Per attivare l’isolamento, indica una stanza idonea.');return}
-  if(['blocked','closed'].includes(state)&&!reason){showError('Indica il motivo del blocco o della chiusura del letto.');return}
-  let conflicts=r.beds.some((b,n)=>n!==k&&['occupied','reserved'].includes(b.state)&&b.sex&&sex&&b.sex!==sex);
+function bedTile(d,r,b,j,k,ce){
+  const s=b.state==='free'&&r.iso!=='Nessuno'?'blocked':b.state,info=[];
+  if(s==='free')info.push(availability(d,r));
+  if(['occupied','reserved'].includes(b.state))info.push((({M:'♂ Uomo',F:'♀ Donna'})[b.sex])||'Sesso non indicato');
+  if(b.state==='reserved')info.push((b.date===today?'Oggi':b.date===nextDate()?'Domani':'Il '+itDate(b.date)));
+  if(b.state==='free'&&r.iso!=='Nessuno')info.push('Isolamento in stanza');
+  if(b.reason)info.push('<b>'+esc(b.reason)+'</b>');
+  if(b.notes)info.push('<i>'+esc(b.notes)+'</i>');
+  const acts=[];
+  if(ce&&b.state==='reserved'&&b.date<=today)acts.push(`<button class="btn primary" onclick="event.stopPropagation();confirmAdmission(${j},${k})">${ico('check')}È arrivato</button>`);
+  if(ce&&b.state==='occupied')acts.push(`<button class="btn" onclick="event.stopPropagation();discharge(${j},${k})">${ico('door')}Dimesso</button>`);
+  const click=ce?` click" role="button" tabindex="0" title="Tocca per modificare" onclick="editBed(${j},${k})" onkeydown="if(event.key==='Enter')editBed(${j},${k})`:'';
+  return `<div class="bed s-${s}${click}"><div class="bed-h"><span>Letto ${k+1}</span>${b.state==='reserved'&&b.date<=today?'<span title="Ingresso da confermare">●</span>':''}</div><div class="bed-s">${STATE_LABEL[s]}</div><div class="bed-d">${info.join('<br>')}</div>${acts.length?'<div class="bed-a">'+acts.join('')+'</div>':''}</div>`}
+function deptHtml(d){
+  const ce=canEdit(d.id),c=counts(d),a=dailyAdmissions(d);
+  const rooms=d.rooms.map((r,j)=>{const sx=roomSex(r);return `<article class="card room ${roomHasIsolation(r)?'iso':''}"><div class="room-h"><h3>Stanza ${j+1}</h3>${ce?`<button class="btn ghost sm" onclick="editRoom(${j})">${ico('sliders')}Isolamento</button>`:''}</div>
+    <div class="room-tags">${sx==='M'?'<span class="chip">♂ Uomini</span>':sx==='F'?'<span class="chip">♀ Donne</span>':sx==='mixed'?'<span class="chip amber">Camera mista</span>':'<span class="chip">Stanza vuota</span>'}${r.iso!=='Nessuno'?`<span class="chip violet">Isolamento: ${esc(r.iso)}</span>`:r.cap?'<span class="chip">Adatta all’isolamento</span>':''}</div>
+    <div class="beds">${r.beds.map((b,k)=>bedTile(d,r,b,j,k,ce)).join('')||'<span class="muted small">Nessun letto</span>'}</div></article>`}).join('');
+  return `<button class="btn ghost sm back" onclick="go('overview')">${ico('back')} Quadro generale</button>
+  <div class="phead"><div><h1 class="title">${esc(d.name)}</h1><p class="sub">${ce?(isAdmin?'Stai modificando come amministratore.':'Tocca un letto per aggiornarlo.'):'Sola consultazione.'} ${d.updatedAt?'Aggiornato '+updatedText(d)+(d.updatedBy?' da '+esc(d.updatedBy):'')+'.':'Non ancora aggiornato.'}</p></div>${ce?`<button class="btn" onclick="openStructure()">${ico('building')}Stanze e letti</button>`:''}</div>
+  ${dateBar()}${kpiHtml(c)}
+  ${a.total||a.overdue?`<div class="card strip"><b>Ricoveri programmati${date===today?' oggi':' il '+itDate(date)}: ${a.total}</b><span class="chip green">${a.confirmed} arrivati</span><span class="chip amber">${a.pending} da confermare</span>${a.overdue?`<span class="chip red">${a.overdue} di giorni passati ancora aperti</span>`:''}${ce?'<span class="muted small">Quando il paziente arriva premi “È arrivato” sul letto.</span>':''}</div>`:''}
+  <div class="toolbar"><h2>Stanze</h2><div class="legend">${STATES.map(s=>`<span><i class="l-${s}"></i>${STATE_LABEL[s]}</span>`).join('')}</div></div>
+  <div class="rooms">${rooms||`<div class="empty">Nessuna stanza configurata.${ce?' Premi “Stanze e letti” per aggiungerle.':''}</div>`}</div>`}
+
+// ================= MODIFICA LETTO =================
+function editBed(j,k){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.rooms[j],b=r?.beds[k];if(!b)return;
+  editing={id:d.id,j,k,room:JSON.stringify(r)};
+  $('#bedSub').textContent=d.name+' · Stanza '+(j+1);$('#bedTitle').textContent='Letto '+(k+1);
+  $('#stateChoices').innerHTML=STATES.map(s=>`<label class="choice"><input type="radio" name="st" value="${s}" ${b.state===s?'checked':''} onchange="bedFields()"><span><i class="l-${s}"></i><span class="ct"><b>${STATE_LABEL[s]}</b><small>${STATE_HINT[s]}</small></span></span></label>`).join('');
+  $$('input[name=sex]').forEach(x=>x.checked=x.value===b.sex);
+  $('#bedDate').value=b.date||'';$('#bedDate').min=today;$('#bedReason').value=b.reason||'';$('#bedNotes').value=b.notes||'';
+  $('#fNotes').hidden=!b.notes;$('#addNote').hidden=!!b.notes;$('#bedErr').textContent='';
+  bedFields();$('#bedDlg').showModal()}
+function bedFields(){const s=$('input[name=st]:checked')?.value||'free';$('#fSex').hidden=!['occupied','reserved'].includes(s);$('#fDate').hidden=s!=='reserved';$('#fReason').hidden=!['blocked','closed'].includes(s);
+  $('#reasonQuick').innerHTML=(REASONS[s]||[]).map(x=>`<button type="button" onclick="$('#bedReason').value=this.textContent">${esc(x)}</button>`).join('');
+  if(s==='reserved'&&!$('#bedDate').value)$('#bedDate').value=nextDate();$('#bedErr').textContent=''}
+function showNote(){$('#fNotes').hidden=false;$('#addNote').hidden=true;$('#bedNotes').focus()}
+async function saveBed(){if(!editing)return;const {id,j,k,room}=editing,d=byId(id);if(!d||!canEdit(id))return;
+  const state=$('input[name=st]:checked')?.value||'free',sex=$('input[name=sex]:checked')?.value||'',admit=$('#bedDate').value,reason=$('#bedReason').value.trim().slice(0,120),notes=$('#bedNotes').value.trim().slice(0,300);
+  const r=JSON.parse(room),old=r.beds[k],err=m=>{$('#bedErr').textContent=m};
+  if(['occupied','reserved'].includes(state)&&!sex)return err('Indica se il paziente è uomo o donna.');
+  if(state==='reserved'&&!admit)return err('Indica il giorno previsto per l’ingresso.');
+  if(state==='reserved'&&admit!==old.date&&admit<today)return err('Il giorno dell’ingresso non può essere nel passato.');
+  if(['blocked','closed'].includes(state)&&!reason)return err('Scrivi il motivo, oppure scegline uno dai suggerimenti.');
+  const conflicts=r.beds.some((b,n)=>n!==k&&['occupied','reserved'].includes(b.state)&&b.sex&&sex&&b.sex!==sex);
   if(['occupied','reserved'].includes(state)&&conflicts&&(old.state!==state||old.sex!==sex||state==='reserved'&&old.date!==admit)&&!await confirmMixedRoom(d,j))return;
-  await guarded(async()=>{await mutate(id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==room)throw new AppError('La stanza è stata modificata da un altro utente mentre la stavi aggiornando. Riapri il letto e riprova.');Object.assign(fr,{cap,iso});const p=fr.beds[k];if(state==='occupied'&&p.state==='reserved'){p.scheduledDate=p.date;p.admittedAt=new Date().toISOString()}else if(state!=='occupied'){delete p.scheduledDate;delete p.admittedAt}Object.assign(p,{state,sex:['occupied','reserved'].includes(state)?sex:'',date:state==='reserved'?admit:'',reason:['blocked','closed'].includes(state)?reason:'',notes})},`Stanza ${j+1} letto ${k+1}: ${STATE_LABEL[state]}${iso!=='Nessuno'?' · isolamento '+iso:''}`);$('#editor').close();editing=null})}
-function configure(){const d=byId(page);if(!d||!canEdit(d.id))return;$('#roomfields').innerHTML='';$('#roomcount').value=d.rooms.length;structureFields();if(!$('#structure').open)$('#structure').showModal()}
-async function removeRoom(j){const d=byId(page);if(!d||!canEdit(d.id))return;let r=d.rooms[j];if(!r)return;if(r.iso!=='Nessuno'||r.beds.some(b=>b.state!=='free')){appMessage('Libera tutti i letti e disattiva l’isolamento prima di cancellare la stanza.');return}if(!await appMessage('Cancellare la stanza '+(j+1)+' e tutti i suoi letti? Le eventuali note saranno eliminate.','Conferma cancellazione',true))return;
-  await guarded(async()=>{await mutate(d.id,f=>{const fr=f.rooms[j];if(!fr||fr.iso!=='Nessuno'||fr.beds.some(b=>b.state!=='free'))throw new AppError('La stanza non è più libera: è stata modificata da un altro utente.');f.rooms.splice(j,1)},`Cancellata stanza ${j+1}`);configure()})}
-async function removeBed(j,k){const d=byId(page);if(!d||!canEdit(d.id))return;let r=d.rooms[j],b=r?.beds[k];if(!b)return;if(b.state!=='free'||r.iso!=='Nessuno'){appMessage('Libera il letto e disattiva l’isolamento prima di cancellarlo.');return}if(!await appMessage('Cancellare il letto '+(k+1)+' della stanza '+(j+1)+'? Le eventuali note saranno eliminate.','Conferma cancellazione',true))return;
-  await guarded(async()=>{await mutate(d.id,f=>{const fr=f.rooms[j],fb=fr?.beds[k];if(!fb||fb.state!=='free'||fr.iso!=='Nessuno')throw new AppError('Il letto non è più libero: è stato modificato da un altro utente.');fr.beds.splice(k,1)},`Cancellato letto ${k+1} della stanza ${j+1}`);configure()})}
-function structureFields(){const d=byId(page);if(!d)return;let n=Number($('#roomcount').value);if(!Number.isInteger(n)||n<0||n>50)return;let old=[...document.querySelectorAll('.bedcount')].map(x=>x.value);$('#roomfields').innerHTML=Array.from({length:n},(_,j)=>`<label for="count${j}">Stanza ${j+1} · posti letto</label><input class="bedcount" id="count${j}" type="number" min="0" max="12" value="${esc(old[j]??d.rooms[j]?.beds.length??2)}"><div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 20px">${d.rooms[j]?'<button onclick="removeRoom('+j+')">Cancella stanza '+(j+1)+'</button>'+d.rooms[j].beds.map((b,k)=>'<button onclick="removeBed('+j+','+k+')">Cancella letto '+(k+1)+'</button>').join(''):''}</div>`).join('')}
-async function saveStructure(){const d=byId(page);if(!d||!canEdit(d.id))return;let n=Number($('#roomcount').value),sizes=[...document.querySelectorAll('.bedcount')].map(x=>Number(x.value));if(!Number.isInteger(n)||n<0||n>50||sizes.length!==n||sizes.some(x=>!Number.isInteger(x)||x<0||x>12)){appMessage('Imposta da 0 a 50 stanze e da 0 a 12 letti per stanza.');return}
-  await guarded(async()=>{await mutate(d.id,f=>{let rooms=f.rooms;let removed=rooms.flatMap((r,j)=>j>=n?r.beds:r.beds.slice(sizes[j]));if(removed.some(b=>b.state!=='free'||b.reason||b.notes)||rooms.some((r,j)=>(j>=n||sizes[j]<r.beds.length)&&r.iso!=='Nessuno'))throw new AppError('Non puoi rimuovere letti occupati, programmati, bloccati, con note o in isolamento. Aggiorna prima quei posti.');f.rooms=Array.from({length:n},(_,j)=>{let r=rooms[j]||{cap:false,iso:'Nessuno',reason:'',beds:[]};r.beds=Array.from({length:sizes[j]},(_,k)=>r.beds[k]||{state:'free',sex:'',date:'',reason:'',notes:''});return r})},`Configurazione reparto: ${n} stanze, ${sizes.reduce((a,b)=>a+b,0)} letti`);$('#structure').close()})}
+  const nb={state,sex:['occupied','reserved'].includes(state)?sex:'',date:state==='reserved'?admit:'',reason:['blocked','closed'].includes(state)?reason:'',notes};
+  const details=bedDiff(old,nb);if(!details.length){$('#bedDlg').close();return}
+  await guarded(async()=>{await mutate(id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==room)throw new AppError('Nel frattempo questa stanza è stata modificata da un altro computer. Riapri il letto e riprova.');const p=fr.beds[k];if(state==='occupied'&&p.state==='reserved'){p.scheduledDate=p.date;p.admittedAt=new Date().toISOString()}else if(state!=='occupied'){delete p.scheduledDate;delete p.admittedAt}Object.assign(p,nb)},{type:'letto',action:`Stanza ${j+1}, letto ${k+1}: ${STATE_LABEL[old.state]} → ${STATE_LABEL[state]}`,details});$('#bedDlg').close();editing=null;toast('Letto aggiornato')})}
+async function confirmAdmission(j,k){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.rooms[j],b=r?.beds[k];if(!b||b.state!=='reserved')return;
+  if(b.date>today)return appMessage('L’ingresso è previsto per un giorno futuro: si può confermare dal giorno stabilito.');
+  if(!b.sex)return appMessage('Indica prima se il paziente è uomo o donna: tocca il letto e completa i dati.');
+  if(r.beds.some((o,n)=>n!==k&&o.state==='occupied'&&o.sex&&o.sex!==b.sex)&&!await confirmMixedRoom(d,j))return;
+  if(!await appMessage('Il paziente è arrivato e occupa il letto '+(k+1)+' della stanza '+(j+1)+'?','Conferma ingresso',true,{yes:'Sì, è arrivato'}))return;
+  const snap=JSON.stringify(r);
+  await guarded(()=>mutate(d.id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==snap)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Ricontrolla e riprova.');const fb=fr.beds[k];fb.scheduledDate=fb.date;fb.admittedAt=new Date().toISOString();fb.state='occupied'},{type:'ricovero',action:`Stanza ${j+1}, letto ${k+1}: ingresso confermato`,details:['Ricovero programmato del '+itDate(b.date),'Paziente: '+(SEX[b.sex]||'—')]}))}
+async function discharge(j,k){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.rooms[j],b=r?.beds[k];if(!b||b.state!=='occupied')return;
+  if(!await appMessage('Il paziente del letto '+(k+1)+' (stanza '+(j+1)+') è stato dimesso? Il letto tornerà libero.','Dimissione',true,{yes:'Sì, libera il letto'}))return;
+  const snap=JSON.stringify(r);
+  await guarded(()=>mutate(d.id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==snap)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Ricontrolla e riprova.');const p=fr.beds[k];Object.assign(p,{state:'free',sex:'',date:'',reason:''});delete p.scheduledDate;delete p.admittedAt},{type:'letto',action:`Stanza ${j+1}, letto ${k+1}: dimissione, letto libero`,details:['Stato: Occupato → Libero','Paziente: '+(SEX[b.sex]||'—')]}))}
 
-// ---------- accesso ----------
-function fillLoginProfiles(){const sel=$('#loginProfile'),prev=sel.value||localStorage.getItem('beds-last-profile')||'';const entries=Object.entries(logins).filter(([,e])=>e&&e.email).sort((a,b)=>a[0]===PS?-1:b[0]===PS?1:String(a[1].label).localeCompare(String(b[1].label),'it'));sel.innerHTML=entries.map(([id,e])=>`<option value="${esc(id)}">${esc(e.label||id)}</option>`).join('')+'<option value="__admin">Amministratore</option>';if([...sel.options].some(o=>o.value===prev))sel.value=prev}
-function openLogin(){fillLoginProfiles();$('#loginErr').textContent=loginsLoaded||!navigator.onLine?'':'';$('#loginCancel').hidden=!signedInOk();if(!$('#login').open)$('#login').showModal();setTimeout(()=>$('#loginPw').focus(),50)}
-async function doLogin(){const t=$('#loginProfile').value,pw=$('#loginPw').value,err=$('#loginErr');err.textContent='';if(!pw){err.textContent='Inserisci la password.';return}const email=t==='__admin'?ADMIN_EMAIL:logins[t]?.email;if(!email){err.textContent='Questo profilo non ha una password attiva. Rivolgiti all’amministratore.';return}const btn=$('#loginBtn');btn.disabled=true;btn.textContent='Accesso…';try{if(user)await signOut(auth);await signInWithEmailAndPassword(auth,email,pw);localStorage.setItem('beds-last-profile',t);$('#loginPw').value='';$('#login').close()}catch(e){err.textContent=errMsg(e)}finally{btn.disabled=false;btn.textContent='Entra'}}
-async function profileClick(){if(!signedInOk()){openLogin();return}if(await appMessage('Vuoi uscire dal profilo “'+myLabel+'”? Su un computer condiviso esci sempre a fine turno se il profilo non è quello del reparto.','Esci',true))await signOut(auth)}
-function stopListeners(){unsubs.forEach(u=>{try{u()}catch{}});unsubs=[]}
+// ---- impostazioni stanza (isolamento) ----
+function editRoom(j){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.rooms[j];if(!r)return;roomEditing={id:d.id,j,room:JSON.stringify(r)};
+  $('#roomSub').textContent=d.name;$('#roomTitle').textContent='Stanza '+(j+1);$('#roomCap').checked=r.cap;
+  $('#isoChoices').innerHTML=ISOS.map(x=>`<label class="choice"><input type="radio" name="iso" value="${esc(x)}" ${r.iso===x?'checked':''}><span>${x==='Nessuno'?'Nessun isolamento':esc(x)}</span></label>`).join('');
+  $('#roomErr').textContent='';roomCapChanged();$('#roomDlg').showModal()}
+function roomCapChanged(){const cap=$('#roomCap').checked;$('#fIso').hidden=!cap;if(!cap)$$('input[name=iso]').forEach(x=>x.checked=x.value==='Nessuno')}
+async function saveRoom(){if(!roomEditing)return;const {id,j,room}=roomEditing,old=JSON.parse(room);const cap=$('#roomCap').checked,iso=cap?($('input[name=iso]:checked')?.value||'Nessuno'):'Nessuno';
+  const details=[];if(old.cap!==cap)details.push('Adatta all’isolamento: '+(old.cap?'Sì':'No')+' → '+(cap?'Sì':'No'));if(old.iso!==iso)details.push('Isolamento: '+old.iso+' → '+iso);if(!details.length){$('#roomDlg').close();return}
+  await guarded(async()=>{await mutate(id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==room)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Riapri e riprova.');fr.cap=cap;fr.iso=iso},{type:'isolamento',action:`Stanza ${j+1}: `+(iso!=='Nessuno'?'isolamento '+iso:old.iso!=='Nessuno'?'isolamento terminato':'impostazioni stanza'),details});$('#roomDlg').close();roomEditing=null;toast('Stanza aggiornata')})}
 
-onSnapshot(doc(db,'public','logins'),s=>{logins=(s.exists()&&s.data().entries)||{};loginsLoaded=true;if($('#login').open)fillLoginProfiles();if(page==='admin')render()},e=>{console.warn('logins',e);loginsLoaded=true});
+// ---- struttura del reparto ----
+function openStructure(){const d=byId(page);if(!d||!canEdit(d.id))return;structDraft={id:d.id,snap:JSON.stringify(d.rooms),rows:d.rooms.map((r,j)=>({orig:j,size:r.beds.length}))};$('#structSub').textContent=d.name;$('#structErr').textContent='';drawStructure();$('#structDlg').showModal()}
+function drawStructure(){const d=byId(structDraft.id);$('#structRows').innerHTML=structDraft.rows.map((x,j)=>{const r=x.orig!==null?d.rooms[x.orig]:null,busy=r&&(r.iso!=='Nessuno'||r.beds.some(b=>b.state!=='free'||b.reason||b.notes));return `<div class="rowitem"><b>Stanza ${j+1}</b><div class="stepper"><button type="button" onclick="structStep(${j},-1)" aria-label="Un letto in meno">−</button><output>${x.size}</output><button type="button" onclick="structStep(${j},1)" aria-label="Un letto in più">+</button></div><span class="muted small">${x.size===1?'letto':'letti'}${x.orig===null?' · nuova':x.orig!==j?' · era la stanza '+(x.orig+1):''}</span><button type="button" class="btn ghost sm" style="margin-left:auto" ${busy?'disabled title="Ci sono letti occupati, programmati, bloccati, con note o un isolamento attivo"':''} onclick="structRemove(${j})">Togli</button></div>`}).join('')||'<div class="empty">Nessuna stanza. Premi “Aggiungi stanza”.</div>'}
+function structStep(j,v){const x=structDraft.rows[j];x.size=Math.max(0,Math.min(12,x.size+v));drawStructure()}
+function structAdd(){if(structDraft.rows.length>=50)return;structDraft.rows.push({orig:null,size:2});drawStructure()}
+function structRemove(j){structDraft.rows.splice(j,1);drawStructure()}
+async function saveStructure(){if(!structDraft)return;const {id,rows,snap}=structDraft,d=byId(id),n=rows.length;
+  const oldBeds=d.rooms.reduce((a,r)=>a+r.beds.length,0),newBeds=rows.reduce((a,x)=>a+x.size,0);
+  await guarded(async()=>{await mutate(id,f=>{if(JSON.stringify(f.rooms)!==snap)throw new AppError('Nel frattempo il reparto è stato modificato da un altro computer. Chiudi e riapri “Stanze e letti”.');const rooms=f.rooms,sizeOf=j=>{const x=rows.find(x=>x.orig===j);return x?x.size:-1};
+    const removed=rooms.flatMap((r,j)=>sizeOf(j)<0?r.beds:r.beds.slice(sizeOf(j)));
+    if(removed.some(b=>b.state!=='free'||b.reason||b.notes)||rooms.some((r,j)=>sizeOf(j)<r.beds.length&&r.iso!=='Nessuno'))throw new AppError('Non si possono togliere letti occupati, programmati, bloccati, con note o in stanze in isolamento. Aggiorna prima quei letti.');
+    f.rooms=rows.map(x=>{const r=x.orig!==null?rooms[x.orig]:{cap:false,iso:'Nessuno',reason:'',beds:[]};r.beds=Array.from({length:x.size},(_,k)=>r.beds[k]||{state:'free',sex:'',date:'',reason:'',notes:''});return r})},
+    {type:'struttura',action:`Stanze e letti: ${n} stanze, ${newBeds} letti`,details:['Stanze: '+d.rooms.length+' → '+n,'Letti: '+oldBeds+' → '+newBeds,...rows.map((x,j)=>x.orig!==null&&x.orig!==j?'La stanza '+(x.orig+1)+' diventa la stanza '+(j+1):'').filter(Boolean)]});$('#structDlg').close();structDraft=null;toast('Struttura salvata')})}
 
-onAuthStateChanged(auth,async u=>{stopListeners();user=u;isAdmin=false;myDept=null;myLabel='';depts=[];auditCache=null;page=null;
-  if(u){if(u.email===ADMIN_EMAIL){isAdmin=true;myLabel='Amministratore'}else{try{const s=await getDoc(doc(db,'accounts',u.uid));if(s.exists()){myDept=s.data().dept;myLabel=s.data().label||'Reparto'}}catch(e){console.warn(e)}
-      if(!myDept){await signOut(auth);openLogin();$('#loginErr').textContent='Accesso non più valido: la password del profilo è stata cambiata o revocata.';return}
-      unsubs.push(onSnapshot(doc(db,'accounts',u.uid),s=>{if(!s.exists()){signOut(auth);appMessage('La password di questo profilo è stata cambiata o revocata dall’amministratore. Accedi con la nuova password.','Sessione terminata')}else if(s.data().label&&s.data().label!==myLabel){myLabel=s.data().label;render()}},()=>{}))}
-    unsubs.push(onSnapshot(collection(db,'departments'),snap=>{depts=snap.docs.map(x=>normalize({id:x.id,...x.data()}));sortDepts();render();if(editing&&$('#editor').open&&!byId(editing.id))$('#editor').close()},e=>{console.error(e);if(e.code==='permission-denied'&&!isAdmin)signOut(auth);else appMessage(errMsg(e),'Errore di collegamento')}));
-    if($('#login').open)$('#login').close()}
-  render();if(!u)openLogin()});
+// ================= PROMEMORIA CONTROLLO =================
+function reminderSlot(now){const p=localTimeParts(now);return p.hour>=21?{day:p.day,time:'21:00'}:p.hour>=12?{day:p.day,time:'12:00'}:null}
+const reminderKey=s=>'pl-check-'+s.day+'-'+s.time+'-'+(isAdmin?'admin':myDept);
+let lastReminder='';
+function updateReminder(now=new Date()){const slot=signedInOk()&&!isAdmin?reminderSlot(now):null,ack=slot&&localStorage.getItem(reminderKey(slot)),own=myDept&&myDept!==PS&&byId(myDept);
+  const m=slot&&!ack?`<div class="reminder"><div><b>Controllo delle ${slot.time}</b><small>${own?'Verifica occupazioni, dimissioni, prenotazioni e isolamenti di '+esc(own.name)+'.':'È l’ora del controllo dei posti letto in tutti i reparti.'}</small></div><button class="btn" onclick="acknowledgeCheck()">${ico('check')}${own?'Ho controllato':'Ho letto'}</button></div>`:'';
+  if(m!==lastReminder){$('#reminder').innerHTML=m;lastReminder=m}}
+async function acknowledgeCheck(){const slot=reminderSlot(new Date());if(!slot)return;localStorage.setItem(reminderKey(slot),new Date().toISOString());updateReminder();
+  if(myDept&&myDept!==PS&&byId(myDept))await guarded(()=>mutate(myDept,()=>{},{type:'controllo',action:'Controllo posti letto delle '+slot.time+' confermato'}));else audit('controllo',myDept,'Promemoria delle '+slot.time+' letto')}
 
-// ---------- area amministratore ----------
-function renderAdmin(){const targets=[...depts.map(d=>({id:d.id,label:d.name})),{id:PS,label:PS_LABEL}];
-  const orphan=Object.keys(logins).filter(id=>id!==PS&&!byId(id));
-  let html=`<h1>Area amministratore</h1><p>Controllo completo: password dei reparti, struttura, backup e registro attività. · Versione ${APP_VERSION} del ${APP_DATE}</p>
-  <section class="panel adm"><div class="toolbar"><h2>Password di accesso</h2><span class="muted">Le password non sono visibili dopo il salvataggio: comunicale al reparto subito.</span></div><table><thead><tr><th>Profilo</th><th>Permessi</th><th>Stato</th><th></th></tr></thead><tbody>${targets.map(t=>{const e=logins[t.id];return `<tr><td>${esc(t.label)}</td><td class="muted">${t.id===PS?'Solo consultazione':'Consultazione + modifica del proprio reparto'}</td><td>${e?'<span class="pill">Attiva</span><br><span class="muted">dal '+fmtDate(e.createdAt)+'</span>':'<span class="pill zero">Nessuna password</span>'}</td><td style="text-align:right;white-space:nowrap"><button class="primary" onclick="openPassword('${esc(t.id)}')">${e?'Cambia password':'Crea password'}</button> ${e?`<button class="danger" onclick="revokeAccess('${esc(t.id)}')">Revoca</button>`:''}</td></tr>`}).join('')}${orphan.map(id=>`<tr><td>${esc(logins[id].label||id)} <span class="muted">(reparto eliminato)</span></td><td></td><td><span class="pill zero">Da revocare</span></td><td style="text-align:right"><button class="danger" onclick="revokeAccess('${esc(id)}')">Revoca</button></td></tr>`).join('')}</tbody></table></section>
-  <section class="panel adm"><div class="toolbar"><h2>Reparti <span class="muted">· ${depts.length}</span></h2><div style="display:flex;gap:8px">${depts.length<DEFAULT_DEPTS.length&&DEFAULT_DEPTS.some(x=>!byId(x[0]))?'<button onclick="seedDefaults()">Crea reparti predefiniti mancanti</button>':''}<button class="primary" onclick="openDeptSettings(null)">+ Aggiungi reparto</button></div></div><table><thead><tr><th>Reparto</th><th>Ordine</th><th>Camere miste</th><th>Stanze / letti</th><th>Aggiornamento</th><th></th></tr></thead><tbody>${depts.map(d=>{const c=counts(d);return `<tr><td>${esc(d.name)}</td><td>${d.order}</td><td>${d.mixed?'Consentite':'Doppia conferma'}</td><td>${d.rooms.length} / ${c.total}</td><td>${fmtUpdated(d)}</td><td style="text-align:right;white-space:nowrap"><button onclick="navigate('${esc(d.id)}')">Apri e modifica</button> <button onclick="openDeptSettings('${esc(d.id)}')">Impostazioni</button> <button class="danger" onclick="clearDept('${esc(d.id)}')">Svuota</button> <button class="danger" onclick="deleteDept('${esc(d.id)}')">Elimina</button></td></tr>`}).join('')||'<tr><td colspan="6" class="muted">Nessun reparto. Usa “Crea reparti predefiniti mancanti” per creare i 9 reparti standard.</td></tr>'}</tbody></table></section>
-  <section class="panel adm"><div class="toolbar"><h2>Backup e importazione</h2><span class="muted">Esegui un backup almeno una volta al giorno.</span></div><div class="btnrow"><button onclick="exportBackup()">⬇ Esporta backup (JSON)</button><button onclick="$('#importFile').click()">⬆ Ripristina da backup</button>${localStorage.getItem(LEGACY_KEY)?'<button onclick="importLegacy()">Importa i dati della vecchia versione salvati in questo browser</button>':''}</div></section>
-  <section class="panel adm"><div class="toolbar"><h2>Sicurezza</h2></div><div class="btnrow"><button onclick="openAdminPw()">Cambia password amministratore</button></div></section>
-  <section class="panel adm"><div class="toolbar"><h2>Registro attività</h2><div style="display:flex;gap:8px"><button onclick="loadAudit()">Aggiorna</button><button class="danger" onclick="clearAudit()">Svuota registro</button></div></div><div id="auditList">${auditHtml()}</div></section>`;
-  $('#content').innerHTML=html}
-function deptName(id){return id===PS?PS_LABEL:byId(id)?.name||logins[id]?.label||id||'—'}
-function auditHtml(){if(!auditCache)return '<p style="padding:20px">Caricamento…</p>';if(!auditCache.length)return '<p style="padding:20px">Nessuna attività registrata.</p>';return `<table><thead><tr><th>Quando</th><th>Chi</th><th>Reparto</th><th>Attività</th></tr></thead><tbody>${auditCache.map(a=>`<tr><td class="muted" style="white-space:nowrap">${fmtDate(a.at)}</td><td>${esc(a.who)}</td><td>${esc(a.dept?deptName(a.dept):'—')}</td><td>${esc(a.action)}</td></tr>`).join('')}</tbody></table>`}
-async function loadAudit(){if(!isAdmin)return;try{const s=await getDocs(query(collection(db,'audit'),orderBy('at','desc'),limit(200)));auditCache=s.docs.map(x=>x.data())}catch(e){console.error(e);auditCache=[]}const el=$('#auditList');if(el)el.innerHTML=auditHtml()}
-async function clearAudit(){if(!await appMessage('Eliminare tutto il registro attività? L’operazione non è reversibile.','Svuota registro',true))return;await guarded(async()=>{let s;do{s=await getDocs(query(collection(db,'audit'),limit(400)));const b=writeBatch(db);s.docs.forEach(x=>b.delete(x.ref));if(s.size)await b.commit()}while(s.size);await audit('','Registro attività svuotato');await loadAudit()})}
+// ================= OROLOGIO =================
+function tick(now=new Date()){$('#clock').textContent=cap(new Intl.DateTimeFormat('it-IT',{timeZone:TZ,weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(now).replace(' alle ore ',' · '));
+  const day=localTimeParts(now).day;if(day!==today){const old=today;today=day;if(date===old)date=day;if(isAdmin)startToday();render({soft:true})}
+  updateReminder(now);
+  if(isAdmin&&user&&Date.now()-lastActivity>ADMIN_IDLE_MIN*60e3){lastActivity=Date.now();logout(true)}
+  if(page==='admin'&&adminTab==='collegati'&&now.getSeconds()%15===0)updatePresence()}
+['pointerdown','keydown','wheel','touchstart'].forEach(e=>addEventListener(e,()=>{lastActivity=Date.now()},{passive:true}));
 
-function randomPassword(n=10){const cs='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';const a=crypto.getRandomValues(new Uint32Array(n));return Array.from(a,x=>cs[x%cs.length]).join('')}
-function strongPassword(){let p;do p=randomPassword(10);while(!/[A-Za-z]/.test(p)||!/\d/.test(p));return p}
+// ================= AREA AMMINISTRATORE =================
+const ADMIN_TABS=[['attivita','activity','Registro attività'],['collegati','users','Collegati ora'],['riepilogo','chart','Riepilogo di oggi'],['accessi','key','Password'],['reparti','building','Reparti'],['manutenzione','sliders','Dati e sicurezza']];
+function startAdminFeeds(){startAudit();startToday();
+  presenceUnsub=onSnapshot(collection(db,'presence'),s=>{const now=Date.now();presenceRows=[];s.docs.forEach(x=>{const d=x.data({serverTimestamps:'estimate'}),t=toDate(d.lastSeen);if(!t||now-t>864e5){deleteDoc(x.ref).catch(()=>{});return}presenceRows.push({id:x.id,...d})});presenceRows.sort((a,b)=>toDate(b.lastSeen)-toDate(a.lastSeen));if(page==='admin'){if(adminTab==='collegati')updatePresence();else if(adminTab==='riepilogo')render();updateTabBadges()}},e=>console.warn('presence',e))}
+const rowOf=x=>({id:x.id,...x.data({serverTimestamps:'estimate'})});
+function startAudit(){if(auditUnsub){auditUnsub();auditUnsub=null}auditLoaded=false;auditErr='';
+  if(lf.from||lf.to){auditMode='range';const from=lf.from?new Date(lf.from+'T00:00:00'):new Date(2020,0,1),to=lf.to?new Date(lf.to+'T23:59:59.999'):new Date(Date.now()+864e5);
+    getDocs(query(collection(db,'audit'),where('at','>=',Timestamp.fromDate(from)),where('at','<=',Timestamp.fromDate(to)),orderBy('at','desc'),limit(3000))).then(s=>{auditRows=s.docs.map(rowOf);auditLoaded=true;updateLog()}).catch(e=>{console.error(e);auditErr=errMsg(e);auditLoaded=true;updateLog()})}
+  else{auditMode='live';auditUnsub=onSnapshot(query(collection(db,'audit'),orderBy('at','desc'),limit(auditLimit)),s=>{auditRows=s.docs.map(rowOf);auditLoaded=true;updateLog()},e=>{console.error(e);auditErr=errMsg(e);auditLoaded=true;updateLog()})}}
+function startToday(){if(todayUnsub){todayUnsub();todayUnsub=null}todayKey=today;const start=new Date(today+'T00:00:00');
+  todayUnsub=onSnapshot(query(collection(db,'audit'),where('at','>=',Timestamp.fromDate(start)),orderBy('at','desc'),limit(3000)),s=>{todayRows=s.docs.map(rowOf);if(page==='admin'){if(adminTab==='attivita')updateLogKpis();else if(adminTab==='riepilogo')render()}},e=>console.warn('today',e))}
+function typeOf(r){if(r.type&&TYPES[r.type])return r.type;const a=String(r.action||'');return /^Password|Accesso revocato/.test(a)?'password':/[Bb]ackup|Importat/.test(a)?'backup':/^Stanza .*letto .*ingresso/.test(a)?'ricovero':/^Stanza|letto/.test(a)?'letto':/^Configurazione|^Cancellat/.test(a)?'struttura':/^Controllo/.test(a)?'controllo':/[Rr]eparto/.test(a)?'reparto':'altro'}
+const typeBadge=t=>{const [l,c]=TYPES[t]||TYPES.altro;return `<span class="tb" style="background:${tint(c,.12)};color:${c}">${l}</span>`};
+const onlineNow=()=>presenceRows.filter(p=>Date.now()-toDate(p.lastSeen)<150e3);
+function setTab(t){adminTab=t;render();window.scrollTo(0,0)}
+function updateTabBadges(){const b=$('#onlineBadge');if(b){const n=onlineNow().length;b.textContent=n;b.hidden=!n}}
+function renderAdmin(){
+  $('#content').innerHTML=`<div class="phead"><div><h1 class="title">Area amministratore</h1><p class="sub">Cosa succede nei reparti, chi è collegato, password e dati.</p></div></div>
+  <div class="tabs" role="tablist">${ADMIN_TABS.map(([id,ic,l])=>`<button class="tab ${adminTab===id?'on':''}" role="tab" onclick="setTab('${id}')">${ico(ic)}${l}${id==='collegati'?'<span class="badge" id="onlineBadge" hidden></span>':''}</button>`).join('')}</div>
+  <div id="admBody">${({attivita:admAttivita,collegati:admCollegati,riepilogo:admRiepilogo,accessi:admAccessi,reparti:admReparti,manutenzione:admManutenzione})[adminTab]()}</div>`;
+  updateTabBadges();if(adminTab==='attivita')updateLog();if(adminTab==='collegati')updatePresence()}
+
+// ---- registro attività ----
+function admAttivita(){const deptOpts=[...depts.map(d=>[d.id,d.name]),[PS,PS_LABEL],['-','Nessun reparto (amministratore)']];
+  return `<div class="kpis" id="logKpis"></div>
+  <section class="card"><div class="filters">
+    <div class="search">${ico('search')}<input id="lfq" placeholder="Cerca nel registro" value="${esc(lf.q)}" oninput="setLf('q',this.value)"></div>
+    <select id="lftype" onchange="setLf('type',this.value)" aria-label="Tipo"><option value="">Tutte le attività</option><option value="-consultazione" ${lf.type==='-consultazione'?'selected':''}>Tutte tranne le consultazioni</option><option value="!mod" ${lf.type==='!mod'?'selected':''}>Solo modifiche ai letti</option>${Object.entries(TYPES).map(([k,[l]])=>`<option value="${k}" ${lf.type===k?'selected':''}>${l}</option>`).join('')}</select>
+    <select id="lfdept" onchange="setLf('dept',this.value)" aria-label="Reparto"><option value="">Tutti i reparti</option>${deptOpts.map(([v,l])=>`<option value="${esc(v)}" ${lf.dept===v?'selected':''}>${esc(l)}</option>`).join('')}</select>
+    <select id="lfwho" onchange="setLf('who',this.value)" aria-label="Profilo"><option value="">Tutti i profili</option></select>
+    <span style="display:inline-flex;align-items:center;gap:6px"><span class="small muted">Dal</span><input type="date" id="lffrom" value="${lf.from}" onchange="setLf('from',this.value)" aria-label="Dal giorno"><span class="small muted">al</span><input type="date" id="lfto" value="${lf.to}" onchange="setLf('to',this.value)" aria-label="Al giorno"></span>
+    <button class="btn ghost sm" onclick="resetLf()">Azzera filtri</button>
+    <button class="btn sm" style="margin-left:auto" onclick="exportCsv()">${ico('download')}Esporta Excel (CSV)</button>
+  </div><div class="logstatus" id="logStatus"></div><div class="tablewrap" id="logTable"></div><div id="logMore" style="padding:14px;text-align:center"></div></section>`}
+function setLf(k,v){lf[k]=v;if(k==='from'||k==='to'){auditOpen.clear();startAudit()}updateLog()}
+function resetLf(){const reload=lf.from||lf.to;Object.keys(lf).forEach(k=>lf[k]='');if(reload)startAudit();render()}
+function filteredRows(){const q=lf.q.trim().toLowerCase();return auditRows.filter(r=>{const t=typeOf(r);if(lf.type==='-consultazione'&&t==='consultazione')return false;if(lf.type==='!mod'&&!['letto','ricovero','isolamento','struttura'].includes(t))return false;if(lf.type&&!lf.type.startsWith('-')&&!lf.type.startsWith('!')&&t!==lf.type)return false;if(lf.dept==='-'?!!r.dept:lf.dept&&r.dept!==lf.dept)return false;if(lf.who&&r.who!==lf.who)return false;if(q&&!(String(r.action)+' '+(r.details||[]).join(' ')+' '+r.who+' '+deptName(r.dept)+' '+(r.device||'')).toLowerCase().includes(q))return false;return true})}
+function updateLogKpis(){const k=$('#logKpis');if(!k)return;const rs=todayRows,cnt=t=>rs.filter(r=>t.includes(typeOf(r))).length,profiles=new Set(rs.filter(r=>typeOf(r)!=='consultazione').map(r=>r.who)).size;
+  k.innerHTML=`<div class="card kpi"><small>Accessi oggi</small><strong class="c-free">${cnt(['accesso'])}</strong><em>Ingressi nel programma</em></div><div class="card kpi"><small>Modifiche oggi</small><strong class="c-occ">${cnt(['letto','ricovero','isolamento','struttura'])}</strong><em>Letti, ingressi, isolamenti, stanze</em></div><div class="card kpi"><small>Profili attivi oggi</small><strong>${profiles}</strong><em>Reparti che hanno usato il programma</em></div><div class="card kpi"><small>Collegati ora</small><strong class="c-res">${onlineNow().length}</strong><em>Finestre aperte in questo momento</em></div>`}
+function updateLog(){updateLogKpis();const t=$('#logTable');if(!t)return;
+  const ws=$('#lfwho');if(ws){const names=[...new Set(auditRows.map(r=>r.who).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'it'));if(lf.who&&!names.includes(lf.who))names.unshift(lf.who);ws.innerHTML='<option value="">Tutti i profili</option>'+names.map(n=>`<option value="${esc(n)}" ${lf.who===n?'selected':''}>${esc(n)}</option>`).join('')}
+  const st=$('#logStatus');
+  if(!auditLoaded){st.innerHTML='Caricamento del registro…';t.innerHTML='';return}
+  if(auditErr){st.innerHTML=`<span class="stale">${esc(auditErr)}</span>`;t.innerHTML='';return}
+  const rows=filteredRows(),shown=rows.slice(0,1500);
+  st.innerHTML=auditMode==='live'?`<span class="live"></span> In tempo reale · ${rows.length} attività mostrate su ${auditRows.length} caricate${rows.length>shown.length?' (prime 1500)':''}`:`${ico('chart')} Periodo selezionato · ${rows.length} attività su ${auditRows.length}`;
+  if(!shown.length){t.innerHTML='<div class="empty" style="margin:16px">Nessuna attività con questi filtri.</div>';$('#logMore').innerHTML='';return}
+  let h='<table><thead><tr><th>Ora</th><th>Profilo</th><th>Reparto</th><th>Tipo</th><th>Cosa ha fatto</th><th>Dispositivo</th></tr></thead><tbody>',lastDay='';
+  shown.forEach(r=>{const dk=dayKey(r.at);if(dk!==lastDay){lastDay=dk;const n=rows.filter(x=>dayKey(x.at)===dk).length;h+=`<tr class="day"><td colspan="6">${dk===today?'Oggi · '+fmtDayLong(r.at):cap(fmtDayLong(r.at))} · ${n} attività</td></tr>`}
+    const open=auditOpen.has(r.id),det=r.details||[];
+    h+=`<tr class="lr ${open?'open':''}" onclick="toggleLog('${esc(r.id)}')"><td class="tm">${fmtTime(r.at,true)}</td><td><span class="who-cell"><span class="avatar" style="background:${r.who==='Amministratore'?'#3a4a58':avColor(r.who||'?')}">${esc(initials(r.who||'?'))}</span>${esc(r.who||'—')}</span></td><td>${r.dept?esc(deptName(r.dept)):'<span class="muted">—</span>'}</td><td>${typeBadge(typeOf(r))}</td><td>${esc(r.action)}${det.length?` <span class="muted small">· ${det.length} ${det.length===1?'dettaglio':'dettagli'} ${open?'▴':'▾'}</span>`:''}</td><td class="muted small" style="white-space:nowrap">${esc(r.device||'—')}</td></tr>`;
+    if(open)h+=`<tr class="ld"><td></td><td colspan="5">${det.length?'<ul>'+det.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}<div class="meta">${fmtDT(r.at)} · ${esc(r.device||'dispositivo non registrato')}${r.sid?' · finestra '+esc(r.sid):''}${r.uid?' · utente '+esc(String(r.uid).slice(0,8))+'…':''}</div></td></tr>`});
+  t.innerHTML=h+'</tbody></table>';
+  $('#logMore').innerHTML=auditMode==='live'&&auditRows.length>=auditLimit?`<button class="btn" onclick="moreLog()">Carica attività più vecchie</button>`:auditMode==='live'?'<span class="muted small">Inizio del registro</span>':''}
+function toggleLog(id){auditOpen.has(id)?auditOpen.delete(id):auditOpen.add(id);updateLog()}
+function moreLog(){auditLimit+=500;startAudit()}
+function exportCsv(){const rows=filteredRows();if(!rows.length)return appMessage('Non ci sono attività da esportare con questi filtri.');const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const lines=[['Data','Ora','Profilo','Reparto','Tipo','Attività','Dettagli','Dispositivo'].map(q).join(';')];
+  rows.forEach(r=>{const d=toDate(r.at);lines.push([d?d.toLocaleDateString('it-IT',{timeZone:TZ}):'',fmtTime(r.at,true),r.who,r.dept?deptName(r.dept):'',TYPES[typeOf(r)][0],r.action,(r.details||[]).join(' | '),r.device||''].map(q).join(';'))});
+  download('registro-attivita-'+today+'.csv','﻿'+lines.join('\r\n'),'text/csv;charset=utf-8');audit('backup','','Registro attività esportato ('+rows.length+' righe)')}
+
+// ---- collegati ----
+function admCollegati(){return `<section class="card"><div class="card-h"><h2>Chi sta usando il programma</h2><span class="muted small">Finestre aperte nelle ultime 24 ore · aggiornamento automatico</span></div><div class="tablewrap" id="presTable"></div></section><div class="note">${ico('info')}<div>Ogni finestra aperta invia un segnale ogni minuto. “Attivo” significa segnale ricevuto negli ultimi 2 minuti e mezzo. Le sessioni più vecchie di 24 ore vengono rimosse da sole.</div></div>`}
+function updatePresence(){const t=$('#presTable');updateTabBadges();if(!t)return;if(!presenceRows.length){t.innerHTML='<div class="empty" style="margin:16px">Nessuna sessione registrata. Se le regole Firestore non sono ancora state aggiornate alla versione 3, questa sezione resta vuota.</div>';return}
+  t.innerHTML=`<table><thead><tr><th>Stato</th><th>Profilo</th><th>Reparto</th><th>Sta guardando</th><th>Dispositivo</th><th>Collegato da</th><th>Ultimo segnale</th></tr></thead><tbody>${presenceRows.map(p=>{const on=Date.now()-toDate(p.lastSeen)<150e3,me=p.id===user.uid+'_'+SID;return `<tr><td style="white-space:nowrap"><span class="dot" style="background:${on?'var(--free)':'#c4cdd6'}"></span>${on?'Attivo':'Inattivo'}</td><td><span class="who-cell"><span class="avatar" style="background:${p.who==='Amministratore'?'#3a4a58':avColor(p.who||'?')}">${esc(initials(p.who||'?'))}</span>${esc(p.who||'—')}${me?' <span class="chip accent">tu</span>':''}</span></td><td>${p.dept?esc(deptName(p.dept)):'—'}</td><td>${esc(p.page||'—')}</td><td class="muted small">${esc(p.device||'—')}</td><td class="small">${fmtDT(p.since)}</td><td class="small">${ago(p.lastSeen)}</td></tr>`}).join('')}</tbody></table>`}
+
+// ---- riepilogo di oggi ----
+function admRiepilogo(){const rows=[...depts.map(d=>({id:d.id,name:d.name,d})),{id:PS,name:PS_LABEL,d:null}],on=onlineNow();
+  const body=rows.map(x=>{const mine=todayRows.filter(r=>r.dept===x.id),acc=mine.filter(r=>typeOf(r)==='accesso'),mods=mine.filter(r=>['letto','ricovero','isolamento','struttura'].includes(typeOf(r))).length,chk=t=>mine.some(r=>typeOf(r)==='controllo'&&String(r.action).includes(t)),online=on.filter(p=>p.dept===x.id).length,pw=!!logins[x.id];
+    return `<tr><td><b>${esc(x.name)}</b></td><td>${pw?'<span class="chip green">Attiva</span>':'<span class="chip red">Manca</span>'}</td><td>${x.d?updatedText(x.d):'<span class="muted">—</span>'}</td><td>${acc.length?fmtTime(acc[0].at)+' <span class="muted small">('+acc.length+')</span>':'<span class="nomark">nessuno</span>'}</td><td>${mods||'<span class="nomark">0</span>'}</td><td>${x.d?(chk('12:00')?'<span class="okmark">✓</span>':'<span class="nomark">—</span>'):''}</td><td>${x.d?(chk('21:00')?'<span class="okmark">✓</span>':'<span class="nomark">—</span>'):''}</td><td>${online?`<span class="dot" style="background:var(--free)"></span>${online}`:'<span class="nomark">0</span>'}</td><td><button class="btn ghost sm" onclick="lf.dept='${esc(x.id)}';setTab('attivita')">Vedi attività</button></td></tr>`}).join('');
+  return `<section class="card"><div class="card-h"><h2>Riepilogo di oggi per reparto</h2><span class="muted small">${fmtDayLong(new Date())} · ${todayRows.length} attività registrate oggi</span></div><div class="tablewrap"><table><thead><tr><th>Reparto</th><th>Password</th><th>Letti aggiornati</th><th>Ultimo accesso</th><th>Modifiche</th><th>Controllo 12:00</th><th>Controllo 21:00</th><th>Collegati</th><th></th></tr></thead><tbody>${body}</tbody></table></div></section>`}
+
+// ---- password ----
+function admAccessi(){const targets=[...depts.map(d=>({id:d.id,label:d.name})),{id:PS,label:PS_LABEL+' (consultazione)'}],orphan=Object.keys(logins).filter(id=>id!==PS&&!byId(id));
+  return `<section class="card"><div class="card-h"><h2>Password dei reparti</h2><span class="muted small">Dopo il salvataggio la password non è più visibile: consegnala subito al reparto.</span></div><div class="tablewrap"><table><thead><tr><th>Profilo</th><th>Cosa può fare</th><th>Password</th><th></th></tr></thead><tbody>${targets.map(t=>{const e=logins[t.id];return `<tr><td><span class="who-cell"><span class="avatar" style="background:${avColor(t.id===PS?PS_LABEL:t.label)}">${esc(initials(t.label))}</span><b>${esc(t.label)}</b></span></td><td class="muted">${t.id===PS?'Solo consultazione':'Consulta tutto, modifica il proprio reparto'}</td><td>${e?'<span class="chip green">Attiva</span> <span class="muted small">dal '+fmtDT(e.createdAt)+'</span>':'<span class="chip red">Da creare</span>'}</td><td><div class="row-actions"><button class="btn ${e?'':'primary'} sm" onclick="openPassword('${esc(t.id)}')">${e?'Cambia':'Crea password'}</button>${e?`<button class="btn danger sm" onclick="revokeAccess('${esc(t.id)}')">Revoca</button>`:''}</div></td></tr>`}).join('')}${orphan.map(id=>`<tr><td>${esc(logins[id].label||id)} <span class="muted small">(reparto eliminato)</span></td><td></td><td><span class="chip red">Da revocare</span></td><td><div class="row-actions"><button class="btn danger sm" onclick="revokeAccess('${esc(id)}')">Revoca</button></div></td></tr>`).join('')}</tbody></table></div></section>`}
+function strongPassword(){let p;do p=randomId(10);while(!/[A-Za-z]/.test(p)||!/\d/.test(p));return p}
 function genPassword(){$('#pwNew').value=strongPassword()}
-function openPassword(target){if(!isAdmin)return;pwTarget=target;$('#pwTitle').textContent=(logins[target]?'Cambia password · ':'Crea password · ')+deptName(target);$('#pwNew').value=strongPassword();$('#pwErr').textContent='';$('#pwdlg').showModal()}
+function openPassword(target){if(!isAdmin)return;pwTarget=target;$('#pwTitle').textContent=deptName(target);$('#pwNew').value=strongPassword();$('#pwErr').textContent='';$('#pwDlg').showModal()}
 function getSecondaryAuth(){if(!secAuth){const a=initializeApp(firebaseConfig,'creazione-account');secAuth=initializeAuth(a,{persistence:inMemoryPersistence})}return secAuth}
-async function savePassword(){if(!isAdmin||!pwTarget)return;const target=pwTarget,pw=$('#pwNew').value.trim(),label=deptName(target);if(pw.length<8||!/[A-Za-z]/.test(pw)||!/\d/.test(pw)){$('#pwErr').textContent='Usa almeno 8 caratteri, con lettere e numeri.';return}
-  const btn=$('#pwSave');btn.disabled=true;try{const sa=getSecondaryAuth();const email=`${target.replace(/[^a-z0-9-]/g,'')||'ps'}-${Date.now().toString(36)}${randomPassword(4).toLowerCase()}@${ACCOUNT_DOMAIN}`;const cred=await createUserWithEmailAndPassword(sa,email,pw);const uid=cred.user.uid;await signOut(sa);
+async function savePassword(){if(!isAdmin||!pwTarget)return;const target=pwTarget,pw=$('#pwNew').value.trim(),label=target===PS?(logins[PS]?.label||PS_LABEL):deptName(target);
+  if(pw.length<8||!/[A-Za-z]/.test(pw)||!/\d/.test(pw)){$('#pwErr').textContent='Usa almeno 8 caratteri, con lettere e numeri.';return}
+  const btn=$('#pwSave');btn.disabled=true;
+  try{const sa=getSecondaryAuth(),email=`${target.replace(/[^a-z0-9-]/g,'')||'ps'}-${Date.now().toString(36)}${randomId(4).toLowerCase()}@${ACCOUNT_DOMAIN}`;const cred=await createUserWithEmailAndPassword(sa,email,pw);const uid=cred.user.uid;await signOut(sa);
     const now=new Date().toISOString(),b=writeBatch(db),old=logins[target];if(old?.uid)b.delete(doc(db,'accounts',old.uid));b.set(doc(db,'accounts',uid),{dept:target,label,email,createdAt:now});b.set(doc(db,'public','logins'),{entries:{[target]:{email,uid,label,createdAt:now}}},{merge:true});await b.commit();
-    audit(target==='__ps'?'':target,(old?'Password cambiata':'Password creata')+' per '+label);$('#pwdlg').close();await appMessage(`Password per “${label}”:\n\n${pw}\n\nComunicala al reparto in modo riservato (di persona o per telefono). Non sarà più visualizzabile.${old?'\n\nLa password precedente non funziona più e chi era collegato viene disconnesso.':''}`,'Password salvata')}
+    audit('password',target,(old?'Password cambiata':'Password creata')+' per '+label,old?['Chi era collegato con la vecchia password è stato disconnesso']:[]);$('#pwDlg').close();
+    await appMessage(`<p style="margin:0">Password per <b>${esc(label)}</b>:</p><div class="bigpw">${esc(pw)}</div><p style="margin:8px 0 0">Consegnala al reparto di persona o per telefono. Non sarà più visibile.${old?'<br>La password precedente non funziona più.':''}</p>`,'Password salvata',false,{html:true})}
   catch(e){$('#pwErr').textContent=errMsg(e)}finally{btn.disabled=false}}
-async function revokeAccess(target){if(!isAdmin)return;const e=logins[target];if(!e)return;if(!await appMessage('Revocare l’accesso di “'+(e.label||target)+'”? Chi è collegato con questo profilo verrà disconnesso subito.','Revoca accesso',true))return;await guarded(async()=>{const b=writeBatch(db);if(e.uid)b.delete(doc(db,'accounts',e.uid));b.update(doc(db,'public','logins'),new FieldPath('entries',target),deleteField());await b.commit();audit('','Accesso revocato per '+(e.label||target));toast('Accesso revocato')})}
+async function revokeAccess(target){if(!isAdmin)return;const e=logins[target];if(!e)return;if(!await appMessage('Revocare l’accesso di “'+(e.label||target)+'”? Chi è collegato con questo profilo verrà disconnesso subito.','Revoca accesso',true,{danger:true,yes:'Revoca'}))return;
+  await guarded(async()=>{const b=writeBatch(db);if(e.uid)b.delete(doc(db,'accounts',e.uid));b.update(doc(db,'public','logins'),new FieldPath('entries',target),deleteField());await b.commit();audit('password',target,'Accesso revocato per '+(e.label||target));toast('Accesso revocato')})}
 
-function openDeptSettings(id){if(!isAdmin)return;deptEditing=id;const d=id?byId(id):null;$('#deptTitle').textContent=d?'Impostazioni · '+d.name:'Nuovo reparto';$('#deptName').value=d?.name||'';$('#deptOrder').value=d?d.order:10;$('#deptMixed').checked=!!d?.mixed;$('#deptErr').textContent='';$('#deptdlg').showModal()}
+// ---- reparti ----
+function admReparti(){const missing=DEFAULT_DEPTS.some(x=>!byId(x[0]));
+  return `<section class="card"><div class="card-h"><h2>Reparti <span class="muted small">· ${depts.length}</span></h2><div class="row-actions">${missing?'<button class="btn sm" onclick="seedDefaults()">Crea i reparti standard mancanti</button>':''}<button class="btn primary sm" onclick="openDeptSettings(null)">+ Nuovo reparto</button></div></div><div class="tablewrap"><table><thead><tr><th>Reparto</th><th>Posizione</th><th>Camere miste</th><th>Stanze · letti</th><th>Aggiornato</th><th></th></tr></thead><tbody>${depts.map(d=>{const c=counts(d);return `<tr><td><b>${esc(d.name)}</b></td><td>${d.order}</td><td>${d.mixed?'<span class="chip">Consentite</span>':'<span class="muted">Doppia conferma</span>'}</td><td>${d.rooms.length} · ${c.total}</td><td class="small">${updatedText(d)}</td><td><div class="row-actions"><button class="btn sm" onclick="go('${esc(d.id)}')">Apri</button><button class="btn sm" onclick="openDeptSettings('${esc(d.id)}')">Impostazioni</button><button class="btn danger sm" onclick="clearDept('${esc(d.id)}')">Svuota</button><button class="btn danger sm" onclick="deleteDept('${esc(d.id)}')">Elimina</button></div></td></tr>`}).join('')||'<tr><td colspan="6"><div class="empty">Nessun reparto. Usa “Crea i reparti standard mancanti”.</div></td></tr>'}</tbody></table></div></section>`}
 function slug(s){return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40)||'reparto'}
-async function saveDeptSettings(){if(!isAdmin)return;const name=$('#deptName').value.trim().replace(/\s+/g,' '),order=Math.max(0,Math.min(999,Math.round(Number($('#deptOrder').value)||0))),mixed=$('#deptMixed').checked;if(name.length<2){$('#deptErr').textContent='Inserisci un nome di almeno 2 caratteri.';return}if(depts.some(d=>d.id!==deptEditing&&d.name.toLowerCase()===name.toLowerCase())){$('#deptErr').textContent='Esiste già un reparto con questo nome.';return}
-  await guarded(async()=>{if(!deptEditing){let id=slug(name);if(byId(id)||id===PS)id+='-'+randomPassword(4).toLowerCase();await setDoc(doc(db,'departments',id),{name,order,mixed,rooms:[],updatedAt:'',updatedBy:''});audit(id,'Reparto creato: '+name)}else{const id=deptEditing,old=byId(id),b=writeBatch(db);b.update(doc(db,'departments',id),{name,order,mixed});const e=logins[id];if(e&&old.name!==name){b.update(doc(db,'public','logins'),new FieldPath('entries',id,'label'),name);if(e.uid)b.update(doc(db,'accounts',e.uid),{label:name})}await b.commit();audit(id,`Impostazioni reparto: ${name}, ordine ${order}, camere miste ${mixed?'consentite':'con doppia conferma'}`)}$('#deptdlg').close()})}
-async function clearDept(id){const d=byId(id);if(!d)return;if(!await appMessage('Svuotare “'+d.name+'”? Verranno cancellate tutte le stanze, i letti, le prenotazioni e le note del reparto.','Svuota reparto · 1 di 2',true))return;if(!await appMessage('Confermi di nuovo? Fai prima un backup se non sei sicuro.','Svuota reparto · 2 di 2',true))return;await guarded(()=>mutate(id,f=>{f.rooms=[]},'Reparto svuotato dall’amministratore'))}
-async function deleteDept(id){const d=byId(id);if(!d)return;if(!await appMessage('Eliminare definitivamente il reparto “'+d.name+'” con tutti i suoi dati? Anche la sua password verrà revocata.','Elimina reparto · 1 di 2',true))return;if(!await appMessage('Questa operazione non è reversibile. Procedere?','Elimina reparto · 2 di 2',true))return;
-  await guarded(async()=>{const b=writeBatch(db),e=logins[id];b.delete(doc(db,'departments',id));if(e){if(e.uid)b.delete(doc(db,'accounts',e.uid));b.update(doc(db,'public','logins'),new FieldPath('entries',id),deleteField())}await b.commit();audit('','Reparto eliminato: '+d.name);if(page===id)page='admin';toast('Reparto eliminato')})}
-async function seedDefaults(){await guarded(async()=>{const b=writeBatch(db);let n=0;DEFAULT_DEPTS.forEach(([id,name,mixed,order])=>{if(!byId(id)){b.set(doc(db,'departments',id),{name,mixed,order,rooms:[],updatedAt:'',updatedBy:''});n++}});if(n){await b.commit();audit('',`Creati ${n} reparti predefiniti`);toast(n+' reparti creati')}})}
+function openDeptSettings(id){if(!isAdmin)return;deptEditing=id;const d=id?byId(id):null;$('#deptTitle').textContent=d?d.name:'Nuovo reparto';$('#deptName').value=d?.name||'';$('#deptOrder').value=d?d.order:10;$('#deptMixed').checked=!!d?.mixed;$('#deptErr').textContent='';$('#deptDlg').showModal()}
+async function saveDeptSettings(){if(!isAdmin)return;const name=$('#deptName').value.trim().replace(/\s+/g,' '),order=Math.max(0,Math.min(999,Math.round(Number($('#deptOrder').value)||0))),mixed=$('#deptMixed').checked;
+  if(name.length<2){$('#deptErr').textContent='Il nome deve avere almeno 2 caratteri.';return}if(depts.some(d=>d.id!==deptEditing&&d.name.toLowerCase()===name.toLowerCase())){$('#deptErr').textContent='Esiste già un reparto con questo nome.';return}
+  await guarded(async()=>{if(!deptEditing){let id=slug(name);if(byId(id)||id===PS)id+='-'+randomId(4).toLowerCase();await setDoc(doc(db,'departments',id),{name,order,mixed,rooms:[],updatedAt:'',updatedBy:''});audit('reparto',id,'Reparto creato: '+name)}
+    else{const id=deptEditing,old=byId(id),b=writeBatch(db),det=[];b.update(doc(db,'departments',id),{name,order,mixed});const e=logins[id];if(e&&old.name!==name){b.update(doc(db,'public','logins'),new FieldPath('entries',id,'label'),name);if(e.uid)b.update(doc(db,'accounts',e.uid),{label:name})}await b.commit();if(old.name!==name)det.push('Nome: '+old.name+' → '+name);if(old.order!==order)det.push('Posizione: '+old.order+' → '+order);if(old.mixed!==mixed)det.push('Camere miste: '+(old.mixed?'consentite':'doppia conferma')+' → '+(mixed?'consentite':'doppia conferma'));audit('reparto',id,'Impostazioni del reparto modificate',det)}
+    $('#deptDlg').close();toast('Reparto salvato')})}
+async function clearDept(id){const d=byId(id);if(!d)return;if(!await appMessage('Svuotare “'+d.name+'”? Verranno cancellate tutte le stanze, i letti, le prenotazioni e le note.','Svuota reparto · 1 di 2',true,{danger:true,yes:'Continua'}))return;if(!await appMessage('Confermi? Se non sei sicuro esporta prima un backup.','Svuota reparto · 2 di 2',true,{danger:true,yes:'Svuota'}))return;await guarded(()=>mutate(id,f=>{f.rooms=[]},{type:'reparto',action:'Reparto svuotato',details:['Stanze eliminate: '+d.rooms.length]}))}
+async function deleteDept(id){const d=byId(id);if(!d)return;if(!await appMessage('Eliminare definitivamente “'+d.name+'” con tutti i suoi dati? Anche la sua password verrà revocata.','Elimina reparto · 1 di 2',true,{danger:true,yes:'Continua'}))return;if(!await appMessage('L’operazione non si può annullare. Procedere?','Elimina reparto · 2 di 2',true,{danger:true,yes:'Elimina'}))return;
+  await guarded(async()=>{const b=writeBatch(db),e=logins[id];b.delete(doc(db,'departments',id));if(e){if(e.uid)b.delete(doc(db,'accounts',e.uid));b.update(doc(db,'public','logins'),new FieldPath('entries',id),deleteField())}await b.commit();audit('reparto',id,'Reparto eliminato: '+d.name);toast('Reparto eliminato')})}
+async function seedDefaults(){await guarded(async()=>{const b=writeBatch(db);let n=0;DEFAULT_DEPTS.forEach(([id,name,mixed,order])=>{if(!byId(id)){b.set(doc(db,'departments',id),{name,mixed,order,rooms:[],updatedAt:'',updatedBy:''});n++}});if(n){await b.commit();audit('reparto','',`Creati ${n} reparti standard`);toast(n+' reparti creati')}})}
 
-function download(name,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'application/json'}));a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
-function exportBackup(){download('backup-posti-letto-'+today+'.json',JSON.stringify({format:'posti-letto-backup',version:1,appVersion:APP_VERSION,exportedAt:new Date().toISOString(),departments:depts.map(({id,name,order,mixed,rooms,updatedAt,updatedBy})=>({id,name,order,mixed,rooms,updatedAt,updatedBy}))},null,1));audit('','Backup esportato')}
+// ---- dati e sicurezza ----
+function admManutenzione(){const legacy=localStorage.getItem(LEGACY_KEY);
+  return `<div class="grid2">
+  <section class="card"><div class="card-h"><h2>Backup dei reparti</h2></div><div class="card-b"><p class="muted" style="margin:0 0 14px">Salva una copia di stanze e letti di tutti i reparti. Conviene farlo almeno una volta al giorno.</p><div class="row-actions" style="justify-content:flex-start"><button class="btn primary" onclick="exportBackup()">${ico('download')}Scarica backup</button><button class="btn" onclick="$('#importFile').click()">${ico('upload')}Ripristina da backup</button>${legacy?'<button class="btn" onclick="importLegacy()">Importa dati della versione 1 da questo browser</button>':''}</div></div></section>
+  <section class="card"><div class="card-h"><h2>Pulizia del registro</h2></div><div class="card-b"><p class="muted" style="margin:0 0 14px">Elimina le attività più vecchie per alleggerire il registro. Prima puoi esportarle in Excel dal “Registro attività”.</p><div class="row-actions" style="justify-content:flex-start"><select id="purgeDays" style="width:auto"><option value="90">più vecchie di 3 mesi</option><option value="180" selected>più vecchie di 6 mesi</option><option value="365">più vecchie di 1 anno</option></select><button class="btn danger" onclick="purgeLogs()">Elimina</button><button class="btn danger" onclick="clearAudit()">Svuota tutto il registro</button></div></div></section>
+  <section class="card"><div class="card-h"><h2>Sicurezza</h2></div><div class="card-b"><p class="muted" style="margin:0 0 14px">La sessione amministratore si chiude chiudendo il browser e dopo ${ADMIN_IDLE_MIN} minuti di inattività.</p><button class="btn" onclick="openAdminPw()">${ico('lock')}Cambia password amministratore</button></div></section>
+  <section class="card"><div class="card-h"><h2>Informazioni</h2></div><div class="card-b small muted" style="line-height:1.7">Versione ${APP_VERSION} del ${APP_DATE}<br>Progetto Firebase: ${esc(firebaseConfig.projectId)}<br>Per il registro e i collegati servono le regole Firestore della versione 3 (file <b>firestore.rules</b>).</div></section></div>`}
+function exportBackup(){download('backup-posti-letto-'+today+'.json',JSON.stringify({format:'posti-letto-backup',version:1,appVersion:APP_VERSION,exportedAt:new Date().toISOString(),departments:depts.map(({id,name,order,mixed,rooms,updatedAt,updatedBy})=>({id,name,order,mixed,rooms,updatedAt,updatedBy}))},null,1));audit('backup','','Backup dei reparti scaricato',[depts.length+' reparti'])}
 async function writeDepartments(list,by){const b=writeBatch(db);list.forEach(d=>b.set(doc(db,'departments',d.id),{name:d.name,order:d.order,mixed:d.mixed,rooms:d.rooms,updatedAt:new Date().toISOString(),updatedBy:by}));await b.commit()}
 async function handleImport(input){const file=input.files[0];input.value='';if(!file||!isAdmin)return;await guarded(async()=>{if(file.size>5e6)throw new AppError('File troppo grande.');let j;try{j=JSON.parse(await file.text())}catch{throw new AppError('Il file non è un backup valido.')}if(j?.format!=='posti-letto-backup'||!Array.isArray(j.departments))throw new AppError('Il file non è un backup di questo programma.');const list=j.departments.filter(d=>typeof d?.id==='string'&&/^[a-z0-9-]{1,60}$/.test(d.id)&&d.id!==PS).slice(0,100).map(d=>normalize(d));if(!list.length)throw new AppError('Il backup non contiene reparti.');
-  if(!await appMessage(`Ripristinare ${list.length} reparti dal backup del ${fmtDate(j.exportedAt)}?\n\nI dati attuali di questi reparti verranno sovrascritti. I reparti non presenti nel backup restano invariati. Le password non cambiano.`,'Ripristino backup',true))return;await writeDepartments(list,'Ripristino backup');audit('',`Backup ripristinato (${list.length} reparti)`);toast('Backup ripristinato')})}
-async function importLegacy(){await guarded(async()=>{let arr;try{arr=JSON.parse(localStorage.getItem(LEGACY_KEY))}catch{}if(!Array.isArray(arr))throw new AppError('Nessun dato della vecchia versione trovato in questo browser.');const list=arr.map((d,i)=>{const id=LEGACY_IDS[i],def=DEFAULT_DEPTS.find(x=>x[0]===id);if(!id||!def)return null;const cur=byId(id);return normalize({id,name:cur?.name||def[1],order:cur?.order??def[3],mixed:cur?.mixed??def[2],rooms:d?.rooms})}).filter(d=>d&&d.rooms.length);if(!list.length)throw new AppError('I dati salvati in questo browser non contengono stanze.');if(!await appMessage(`Importare ${list.length} reparti dalla vecchia versione (${list.map(d=>d.name).join(', ')})?\n\nI dati attuali di questi reparti sul server verranno sovrascritti.`,'Importazione',true))return;await writeDepartments(list,'Importazione vecchia versione');audit('','Importati dati della vecchia versione');toast('Dati importati')})}
+  if(!await appMessage(`Ripristinare ${list.length} reparti dal backup del ${fmtDT(j.exportedAt)}?\n\nI dati attuali di questi reparti verranno sostituiti. Gli altri reparti e le password non cambiano.`,'Ripristino backup',true,{danger:true,yes:'Ripristina'}))return;await writeDepartments(list,'Ripristino backup');audit('backup','',`Backup ripristinato`,[list.length+' reparti','Backup del '+fmtDT(j.exportedAt)]);toast('Backup ripristinato')})}
+async function importLegacy(){await guarded(async()=>{let arr;try{arr=JSON.parse(localStorage.getItem(LEGACY_KEY))}catch{}if(!Array.isArray(arr))throw new AppError('Nessun dato della versione 1 in questo browser.');const list=arr.map((d,i)=>{const id=LEGACY_IDS[i],def=DEFAULT_DEPTS.find(x=>x[0]===id);if(!id||!def)return null;const cur=byId(id);return normalize({id,name:cur?.name||def[1],order:cur?.order??def[3],mixed:cur?.mixed??def[2],rooms:d?.rooms})}).filter(d=>d&&d.rooms.length);if(!list.length)throw new AppError('I dati di questo browser non contengono stanze.');if(!await appMessage(`Importare ${list.length} reparti (${list.map(d=>d.name).join(', ')})?\n\nI dati attuali di questi reparti verranno sostituiti.`,'Importazione',true))return;await writeDepartments(list,'Importazione versione 1');audit('backup','','Importati i dati della versione 1',list.map(d=>d.name));toast('Dati importati')})}
+async function deleteWhere(q){let n=0,s;do{s=await getDocs(q);if(s.size){const b=writeBatch(db);s.docs.forEach(x=>b.delete(x.ref));await b.commit();n+=s.size}}while(s.size);return n}
+async function purgeLogs(){const days=Number($('#purgeDays').value),cut=new Date(Date.now()-days*864e5);if(!await appMessage('Eliminare dal registro le attività precedenti al '+cut.toLocaleDateString('it-IT')+'?','Pulizia del registro',true,{danger:true,yes:'Elimina'}))return;
+  await guarded(async()=>{const n=await deleteWhere(query(collection(db,'audit'),where('at','<',Timestamp.fromDate(cut)),limit(400)));await audit('sistema','','Pulizia del registro: eliminate '+n+' attività più vecchie di '+days+' giorni');toast(n+' attività eliminate')})}
+async function clearAudit(){if(!await appMessage('Eliminare tutto il registro attività?','Svuota registro · 1 di 2',true,{danger:true,yes:'Continua'}))return;if(!await appMessage('L’operazione non si può annullare. Procedere?','Svuota registro · 2 di 2',true,{danger:true,yes:'Svuota'}))return;
+  await guarded(async()=>{const n=await deleteWhere(query(collection(db,'audit'),limit(400)));await audit('sistema','','Registro svuotato ('+n+' attività eliminate)');toast('Registro svuotato')})}
+function openAdminPw(){['#admCur','#admNew','#admNew2'].forEach(s=>$(s).value='');$('#admErr').textContent='';$('#admPwDlg').showModal()}
+async function saveAdminPw(){const cur=$('#admCur').value,n=$('#admNew').value,n2=$('#admNew2').value,err=$('#admErr');if(n.length<10){err.textContent='La nuova password deve avere almeno 10 caratteri.';return}if(n!==n2){err.textContent='Le due password non coincidono.';return}
+  try{await reauthenticateWithCredential(auth.currentUser,EmailAuthProvider.credential(ADMIN_EMAIL,cur));await updatePassword(auth.currentUser,n);audit('password','','Password amministratore cambiata');$('#admPwDlg').close();toast('Password amministratore aggiornata')}catch(e){err.textContent=errMsg(e)}}
 
-function openAdminPw(){['#admCur','#admNew','#admNew2'].forEach(s=>$(s).value='');$('#admErr').textContent='';$('#admpw').showModal()}
-async function saveAdminPw(){const cur=$('#admCur').value,n=$('#admNew').value,n2=$('#admNew2').value,err=$('#admErr');if(n.length<10){err.textContent='La nuova password deve avere almeno 10 caratteri.';return}if(n!==n2){err.textContent='Le due password non coincidono.';return}try{await reauthenticateWithCredential(auth.currentUser,EmailAuthProvider.credential(ADMIN_EMAIL,cur));await updatePassword(auth.currentUser,n);audit('','Password amministratore cambiata');$('#admpw').close();toast('Password amministratore aggiornata')}catch(e){err.textContent=errMsg(e)}}
-
-// ---------- installazione come app ----------
-const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: window-controls-overlay)').matches||navigator.standalone===true;
+// ================= INSTALLAZIONE COME APP =================
 function installSteps(){const ua=navigator.userAgent,ios=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),android=/Android/.test(ua),edge=/Edg\//.test(ua),firefox=/Firefox\//.test(ua),safari=/Safari\//.test(ua)&&!/Chrome|Chromium|CriOS|Edg|FxiOS|OPR/.test(ua),mac=/Macintosh/.test(ua);
-  if(ios)return ['Apri questa pagina con <b>Safari</b>.','Tocca il pulsante <b>Condividi</b> (quadrato con la freccia verso l’alto).','Scegli <b>Aggiungi alla schermata Home</b> e conferma con <b>Aggiungi</b>.'];
-  if(safari&&mac)return ['Nella barra dei menu di Safari apri <b>File</b>.','Scegli <b>Aggiungi al Dock…</b> e conferma con <b>Aggiungi</b>.','L’app compare nel Dock e in Launchpad.'];
-  if(firefox)return ['Firefox per computer non installa le app web.','Apri questo indirizzo con <b>Google Chrome</b> o <b>Microsoft Edge</b>:<br><b>'+esc(location.href.split('#')[0])+'</b>','Poi premi di nuovo <b>Installa sul desktop</b>.'];
-  if(android)return ['Apri il menu del browser (<b>⋮</b> in alto a destra).','Scegli <b>Installa app</b> oppure <b>Aggiungi a schermata Home</b>.','Conferma con <b>Installa</b>.'];
-  if(edge)return ['Apri il menu di Edge (<b>…</b> in alto a destra).','Scegli <b>App</b> › <b>Installa questo sito come app</b>.','Conferma con <b>Installa</b>: l’icona viene aggiunta al desktop e al menu Start.'];
-  return ['Nella barra degli indirizzi di Chrome premi l’icona <b>Installa</b> (monitor con la freccia), oppure apri il menu <b>⋮</b>.','Scegli <b>Trasmetti, salva e condividi</b> › <b>Installa pagina come app…</b>','Conferma con <b>Installa</b>: l’icona viene aggiunta al desktop e al menu Start.']}
-function refreshInstallBtn(){const h=isStandalone();document.querySelectorAll('[data-install]').forEach(b=>b.hidden=h)}
+  if(ios)return ['Apri questa pagina con <b>Safari</b>.','Tocca <b>Condividi</b> (quadrato con la freccia in su).','Scegli <b>Aggiungi alla schermata Home</b> e poi <b>Aggiungi</b>.'];
+  if(safari&&mac)return ['Nella barra dei menu di Safari apri <b>File</b>.','Scegli <b>Aggiungi al Dock…</b> e conferma.'];
+  if(firefox)return ['Firefox per computer non installa le app web.','Apri questo indirizzo con <b>Chrome</b> o <b>Edge</b>:<br><b>'+esc(location.href.split('#')[0])+'</b>','Poi premi di nuovo <b>Installa</b>.'];
+  if(android)return ['Apri il menu del browser (<b>⋮</b> in alto a destra).','Scegli <b>Installa app</b> oppure <b>Aggiungi a schermata Home</b>.'];
+  if(edge)return ['Apri il menu di Edge (<b>…</b> in alto a destra).','Scegli <b>App</b> › <b>Installa questo sito come app</b>.','Conferma con <b>Installa</b>.'];
+  return ['Nella barra degli indirizzi premi l’icona <b>Installa</b> (schermo con la freccia), oppure apri il menu <b>⋮</b>.','Scegli <b>Trasmetti, salva e condividi</b> › <b>Installa pagina come app…</b>','Conferma con <b>Installa</b>.']}
+function refreshInstallBtn(){const h=isStandalone();$$('[data-install]').forEach(b=>b.hidden=h)}
 async function installApp(){const ev=window.__bip;if(ev){window.__bip=null;try{await ev.prompt();const {outcome}=await ev.userChoice;if(outcome==='accepted')toast('Installazione in corso…')}catch(e){console.warn(e)}refreshInstallBtn();return}
-  $('#installSteps').innerHTML=installSteps().map(s=>'<li>'+s+'</li>').join('');$('#installdlg').showModal()}
+  $('#installSteps').innerHTML=installSteps().map(s=>'<li>'+s+'</li>').join('');$('#installDlg').showModal()}
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.__bip=e;refreshInstallBtn()});
-addEventListener('appinstalled',()=>{window.__bip=null;toast('Posti letto è stato installato sul dispositivo');setTimeout(refreshInstallBtn,500)});
-matchMedia('(display-mode: standalone)').addEventListener?.('change',refreshInstallBtn);
-refreshInstallBtn();
+addEventListener('appinstalled',()=>{window.__bip=null;toast('Posti letto è installato');if(user)audit('sistema',isAdmin?'':myDept,'Programma installato come app');setTimeout(refreshInstallBtn,500)});
 
-Object.assign(window,{installApp,navigate,setDate,filterRows,confirmAdmission,edit,saveBed,configure,structureFields,saveStructure,removeRoom,removeBed,acknowledgeCheck,openLogin,doLogin,profileClick,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,loadAudit,clearAudit,openAdminPw,saveAdminPw,$});
-$('#login').addEventListener('cancel',e=>{if(!signedInOk())e.preventDefault()});
-tickClock();setInterval(tickClock,1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tickClock()});window.addEventListener('storage',e=>{if(e.key&&e.key.startsWith('beds-check-'))updateReminder()});
-</script></html>
+// ================= AVVIO =================
+Object.assign(window,{$,go,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,roomCapChanged,saveRoom,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
+window.render=render;
+refreshInstallBtn();$('#gateVer').textContent='Versione '+APP_VERSION+' · '+APP_DATE;tick();setInterval(tick,1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();beat()}});
+addEventListener('storage',e=>{if(e.key&&e.key.startsWith('pl-check-'))updateReminder()});
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+rules_version = '2';
+// Regole Firestore · Posti letto · Ospedale di Stato RSM · versione 3.0.0
+// Da pubblicare in Firebase Console › Firestore Database › Regole.
+// L'email dell'amministratore deve coincidere con ADMIN_EMAIL in index.html.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isAdmin() { return signedIn() && request.auth.token.email == 'admin@ospedale.local'; }
+    function accountPath() { return /databases/$(database)/documents/accounts/$(request.auth.uid); }
+    function hasAccount() { return signedIn() && exists(accountPath()); }
+    function myDept() { return get(accountPath()).data.dept; }
+    function member() { return isAdmin() || hasAccount(); }
+
+    // Elenco dei profili mostrato nella schermata di accesso (solo nomi ed email tecniche).
+    match /public/logins {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Collegamento account → reparto. Lo crea e lo cancella solo l'amministratore.
+    match /accounts/{uid} {
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+      allow write: if isAdmin();
+    }
+
+    // Reparti: tutti i profili attivi leggono; ogni reparto modifica solo i propri letti.
+    match /departments/{id} {
+      allow read: if member();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (hasAccount() && myDept() == id
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['rooms', 'updatedAt', 'updatedBy']));
+    }
+
+    // Registro attività: ognuno scrive solo a proprio nome e con l'ora del server.
+    // Solo l'amministratore legge e cancella. Nessuno può modificare una voce.
+    match /audit/{id} {
+      allow create: if member()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.at == request.time;
+      allow read, delete: if isAdmin();
+      allow update: if false;
+    }
+
+    // Sessioni aperte ("Collegati ora"): un documento per finestra aperta.
+    match /presence/{pid} {
+      allow read: if isAdmin();
+      allow create, update: if member()
+        && request.resource.data.uid == request.auth.uid
+        && pid.matches(request.auth.uid + '_[A-Za-z0-9]+');
+      allow delete: if isAdmin() || (signedIn() && pid.matches(request.auth.uid + '_[A-Za-z0-9]+'));
+    }
+  }
+}
