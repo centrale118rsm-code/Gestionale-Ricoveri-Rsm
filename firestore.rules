@@ -1,5 +1,5 @@
 rules_version = '2';
-// Regole Firestore · Posti letto · Ospedale di Stato RSM · versione 3.1.0
+// Regole Firestore · Posti letto · Ospedale di Stato RSM · versione 3.3.0
 // Da pubblicare in Firebase Console › Firestore Database › Regole.
 // L'email dell'amministratore deve coincidere con ADMIN_EMAIL in index.html.
 service cloud.firestore {
@@ -50,6 +50,12 @@ service cloud.firestore {
         && request.resource.data.uid == request.auth.uid
         && pid.matches(request.auth.uid + '_[A-Za-z0-9]+');
       allow delete: if isAdmin() || (signedIn() && pid.matches(request.auth.uid + '_[A-Za-z0-9]+'));
+    }
+
+    // Archivio delle password dei reparti, consultabile con l'occhio nell'area amministratore.
+    // Solo l'amministratore può leggerlo e scriverlo: nessun reparto e nessun visitatore vi accede.
+    match /vault/{docId} {
+      allow read, write: if isAdmin();
     }
   }
 }
