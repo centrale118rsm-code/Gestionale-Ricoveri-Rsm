@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- Posti letto · Ospedale di Stato RSM · versione 3.5.2 (02/11/2026)
+<!-- Posti letto · Ospedale di Stato RSM · versione 3.5.3 (02/11/2026)
      Nuova grafica chiara, accesso per reparto, registro attività completo per l'amministratore. -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<meta name="version" content="3.5.2">
+<meta name="version" content="3.5.3">
 <title>Posti letto · Ospedale di Stato RSM</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f4f7f9">
@@ -321,23 +321,27 @@ body.monitor.idle .mon-ctrl{opacity:0;pointer-events:none}
 .mon-clock{text-align:right}
 .mon-clock b{display:block;font-size:clamp(36px,4.6vw,76px);letter-spacing:-2px;line-height:1;font-variant-numeric:tabular-nums}
 .mon-clock span{color:var(--muted);font-size:clamp(13px,1.15vw,19px);font-weight:600}
+html:fullscreen .mon-tot,html:-webkit-full-screen .mon-tot{display:none}
+@media (display-mode:fullscreen){.mon-tot{display:none}}
 .mon-tot{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:clamp(8px,1vw,14px)}
 .mon-tot>div{background:#fff;border:1px solid var(--line);border-radius:18px;padding:clamp(10px,1vw,16px) clamp(12px,1.3vw,20px);box-shadow:var(--shadow)}
 .mon-tot small{display:block;color:var(--muted);font-weight:700;font-size:clamp(11px,.9vw,14px);text-transform:uppercase;letter-spacing:.5px}
 .mon-tot b{display:block;font-size:clamp(30px,3.4vw,58px);letter-spacing:-1.5px;line-height:1.1}
-.mon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(230px,17vw,330px),1fr));gap:clamp(10px,1.2vw,16px);flex:1;align-content:start}
-.mt{background:#fff;border:1px solid var(--line);border-top:7px solid var(--free);border-radius:18px;padding:clamp(12px,1.2vw,18px);display:flex;flex-direction:column;gap:clamp(6px,.7vw,10px);box-shadow:var(--shadow)}
+.mon-grid{--cols:5;--g:clamp(10px,1.2vw,16px);display:grid;grid-template-columns:repeat(auto-fill,minmax(max(230px,calc((100% - (var(--cols) - 1) * var(--g)) / var(--cols))),1fr));grid-auto-rows:auto;column-gap:var(--g);row-gap:var(--g);flex:1;align-content:start}
+.mt{background:#fff;border:1px solid var(--line);border-top:7px solid var(--free);border-radius:18px;padding:clamp(12px,1.2vw,18px);display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:clamp(6px,.7vw,10px);align-content:start;box-shadow:var(--shadow)}
 .mt.zero{border-top-color:var(--danger);background:#fffafa}
 .mt-h{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .mt-h b{font-size:clamp(16px,1.45vw,24px);line-height:1.2;letter-spacing:-.3px}
 .mt-big{font-size:clamp(48px,5.2vw,92px);font-weight:800;letter-spacing:-3px;line-height:.95;color:var(--free)}
 .mt.zero .mt-big{color:var(--danger)}
 .mt-big small{font-size:clamp(13px,1.05vw,18px);letter-spacing:0;color:var(--muted);font-weight:600;margin-left:8px}
-.mt-sex{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.mt-sex span{background:#f4f7f9;border-radius:11px;padding:6px 9px;font-size:clamp(11px,.85vw,14px);color:var(--muted);font-weight:600;line-height:1.25}
-.mt-sex b{display:block;font-size:clamp(22px,2vw,34px);color:var(--text);letter-spacing:-.5px;line-height:1.1}
+.mt-sex{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;align-self:end}
+.mt-sex span{background:#f4f7f9;border-radius:11px;padding:6px 9px;font-size:clamp(11px,.85vw,14px);color:var(--muted);font-weight:600;line-height:1.25;display:flex;flex-direction:column;justify-content:space-between;min-height:100%}
+.mt-sex b{display:block;margin-top:auto;font-size:clamp(22px,2vw,34px);color:var(--text);letter-spacing:-.5px;line-height:1.1}
 .mt-sex .m b{color:var(--occ)}.mt-sex .w b{color:#c2417a}
-.mt-f{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:clamp(11px,.9vw,14px);color:var(--muted);margin-top:auto;font-weight:500}
+.mt-f{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;flex-wrap:wrap;font-size:clamp(11px,.9vw,14px);color:var(--muted);font-weight:500;align-self:end}
+.mt-big{align-self:end}
+@supports not (grid-template-rows:subgrid){.mt{display:flex;flex-direction:column}.mt-h b{min-height:2.4em}.mt-f{margin-top:auto}}
 .mon-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:clamp(12px,.9vw,14px)}
 .mon-ctrl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;transition:opacity .3s}
 .conn{display:inline-flex;align-items:center;gap:7px;font-weight:700}
@@ -710,7 +714,7 @@ const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomai
 // Deve coincidere con l'email scritta in firestore.rules.
 const ADMIN_EMAIL='admin@ospedale.local';
 const ACCOUNT_DOMAIN='ospedale.local';
-const APP_VERSION='3.5.2',APP_DATE='02/11/2026';
+const APP_VERSION='3.5.3',APP_DATE='02/11/2026';
 const PS='__ps',PS_LABEL='Pronto Soccorso',ADMIN='__admin',LEGACY_KEY='beds-rsm-configurable-v3';
 const ADMIN_IDLE_MIN=30;
 const TZ='Europe/San_Marino';
@@ -1249,7 +1253,7 @@ function monitorHtml(){
   return `<div class="mon">
   <div class="mon-h"><div class="mon-brand"><img src="icons/icon-192.png" alt=""><div><b>Posti letto disponibili</b><span>Ospedale di Stato · Repubblica di San Marino</span></div></div><div class="mon-clock"><b id="monClock">${fmtTime(new Date())}</b><span id="monDate">${cap(fmtDayLong(new Date()))}</span></div></div>
   <div class="mon-tot"><div><small>Letti liberi</small><b class="c-free">${T.f}</b></div><div><small>♂ Per uomo</small><b class="c-occ">${T.m}</b></div><div><small>♀ Per donna</small><b class="c-pink">${T.w}</b></div><div><small>Stanze vuote</small><b>${T.e}</b></div><div><small>Ricoveri domani</small><b class="c-res">${T.t}</b></div><div><small>Stanze in isolamento</small><b style="color:#c53030">${T.i}</b></div></div>
-  <div class="mon-grid">${tiles||'<div class="empty">Nessun reparto configurato.</div>'}</div>
+  <div class="mon-grid" style="--cols:${rows.length<=6?Math.max(rows.length,1):Math.min(6,Math.ceil(rows.length/2))}">${tiles||'<div class="empty">Nessun reparto configurato.</div>'}</div>
   <div class="mon-foot"><span><span class="conn ${navigator.onLine?'ok':'off'}" id="monConn">${navigator.onLine?'● Collegato · dati in tempo reale':'● Connessione assente · i numeri potrebbero non essere aggiornati'}</span>${last?` · Ultima modifica alle ${fmtTime(last.updatedAt)} (${esc(last.name)})`:''}</span>
   <span class="mon-ctrl"><label class="chk"><input type="checkbox" ${auto?'checked':''} onchange="setMonitorAuto(this.checked)">Apri il monitor all’avvio su questo computer</label><button class="btn sm" onclick="toggleFullscreen()">${ico('expand')}Schermo intero</button><button class="btn sm" onclick="exitMonitor()">${ico('back')}Esci dal monitor</button></span></div></div>`}
 function monitorTick(now){const c=$('#monClock');if(!c)return;c.textContent=fmtTime(now);$('#monDate').textContent=cap(fmtDayLong(now))}
