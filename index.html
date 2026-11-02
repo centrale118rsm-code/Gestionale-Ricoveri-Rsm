@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- Posti letto · Ospedale di Stato RSM · versione 3.0.0 (02/11/2026)
+<!-- Posti letto · Ospedale di Stato RSM · versione 3.0.1 (02/11/2026)
      Nuova grafica chiara, accesso per reparto, registro attività completo per l'amministratore. -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<meta name="version" content="3.0.0">
+<meta name="version" content="3.0.1">
 <title>Posti letto · Ospedale di Stato RSM</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f4f7f9">
@@ -89,6 +89,7 @@ label,.lbl{display:block;font-size:13px;font-weight:600;color:var(--text2);margi
 .tile:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-50);transform:translateY(-1px)}
 .tile b{display:block;font-size:14px;line-height:1.25}
 .tile small{color:var(--muted);font-size:12px}
+.tile.off{background:#fafbfc;border-style:dashed}.tile.off b{color:var(--muted)}.tile.off:hover{transform:none;box-shadow:none;border-color:#cdd7e0}
 .tile .last{position:absolute;top:-8px;right:10px}
 .avatar{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;flex:none;letter-spacing:.3px}
 .avatar.lg{width:56px;height:56px;border-radius:16px;font-size:19px}
@@ -438,7 +439,7 @@ const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomai
 // Deve coincidere con l'email scritta in firestore.rules.
 const ADMIN_EMAIL='admin@ospedale.local';
 const ACCOUNT_DOMAIN='ospedale.local';
-const APP_VERSION='3.0.0',APP_DATE='02/11/2026';
+const APP_VERSION='3.0.1',APP_DATE='02/11/2026';
 const PS='__ps',PS_LABEL='Pronto Soccorso',ADMIN='__admin',LEGACY_KEY='beds-rsm-configurable-v3';
 const ADMIN_IDLE_MIN=30;
 const TZ='Europe/San_Marino';
@@ -493,7 +494,7 @@ function ago(v){const d=toDate(v);if(!d)return '—';const s=Math.round((Date.no
 function updatedText(d){if(!d.updatedAt)return '<span class="muted">mai</span>';const t=new Date(d.updatedAt),stale=Date.now()-t>12*3600e3;const label=dayKey(t)===today?'oggi alle '+fmtTime(t):fmtDT(t);return `<span class="${stale?'stale':''}" title="${stale?'Più di 12 ore fa':''}">${label}</span>`}
 
 // ================= STATO =================
-let user=null,isAdmin=false,myDept=null,myLabel='',depts=[],deptsLoaded=false,logins={},loginsState='loading';
+let user=null,isAdmin=false,myDept=null,myLabel='',depts=[],deptsLoaded=false,logins={},publicDepts={},loginsState='loading';
 let page='overview',adminTab='attivita',searchText='',editing=null,roomEditing=null,structDraft=null,pwTarget=null,deptEditing=null;
 let authReady=false,unsubs=[],pendingLogin=null,failCount={},gateSel=null,gateErr='',sessionSince='',viewed=new Set();
 let auditRows=[],auditUnsub=null,auditLimit=300,auditMode='live',auditLoaded=false,auditErr='',auditOpen=new Set();
@@ -530,7 +531,14 @@ function dailyAdmissions(d){let total=0,confirmed=0,pending=0,overdue=0;d.rooms.
 const roomHasIsolation=r=>r.iso!=='Nessuno'||r.beds.some(b=>b.state==='blocked');
 
 // ================= ACCESSO =================
-function gateProfiles(){return Object.entries(logins).filter(([,e])=>e&&e.email).map(([id,e])=>({id,label:e.label||id})).sort((a,b)=>a.id===PS?-1:b.id===PS?1:a.label.localeCompare(b.label,'it'))}
+// Elenco pubblico dei reparti (solo nome e posizione) letto dalla schermata di accesso.
+// Lo aggiorna da sola l'area amministratore ogni volta che un reparto viene creato, rinominato o eliminato.
+function publicDeptMap(){const m={};depts.forEach(d=>m[d.id]={label:d.name,order:d.order});return m}
+const mapKey=m=>JSON.stringify(Object.keys(m||{}).sort().map(k=>[k,m[k]?.label,m[k]?.order]));
+let syncing=false;
+async function syncPublicDepts(){if(!isAdmin||!deptsLoaded||loginsState!=='ok'||syncing)return;const m=publicDeptMap();if(mapKey(m)===mapKey(publicDepts))return;syncing=true;try{await setDoc(doc(db,'public','logins'),{depts:m},{mergeFields:['depts']})}catch(e){console.warn('elenco reparti',e)}finally{syncing=false}}
+function gateProfiles(){const hasList=Object.keys(publicDepts).length>0,ids=new Set([...Object.keys(publicDepts),...Object.keys(logins).filter(id=>logins[id]?.email&&(id===PS||!hasList||publicDepts[id]))]);
+  return [...ids].map(id=>{const e=logins[id],p=publicDepts[id];return {id,label:(id===PS?e?.label:p?.label||e?.label)||id,order:id===PS?-1:(p?p.order:500),active:!!e?.email}}).sort((a,b)=>a.order-b.order||a.label.localeCompare(b.label,'it'))}
 function renderGate(){
   $('#gate').hidden=false;$('#shell').hidden=true;
   $('#gateVer').textContent='Versione '+APP_VERSION+' · '+APP_DATE;
@@ -539,7 +547,7 @@ function renderGate(){
     const last=localStorage.getItem('pl-last-profile');let tiles;
     if(loginsState==='loading')tiles='<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
     else if(loginsState==='error')tiles='<div class="empty">Impossibile caricare l’elenco dei reparti. Controlla la connessione e ricarica la pagina.</div>';
-    else{const list=gateProfiles();tiles=list.length?list.map(p=>`<button class="tile" onclick="gatePick('${esc(p.id)}')"><span class="avatar" style="background:${avColor(p.label)}">${esc(initials(p.label))}</span><span><b>${esc(p.label)}</b><small>${p.id===PS?'Sola consultazione':'Reparto'}</small></span>${p.id===last?'<span class="chip accent last">Ultimo usato</span>':''}</button>`).join(''):'<div class="empty">Nessun reparto è ancora abilitato.<br>L’amministratore deve creare le password dall’area riservata.</div>'}
+    else{const list=gateProfiles();tiles=list.length?list.map(p=>`<button class="tile ${p.active?'':'off'}" onclick="gatePick('${esc(p.id)}')"><span class="avatar" style="background:${p.active?avColor(p.label):'#b7c2cc'}">${esc(initials(p.label))}</span><span><b>${esc(p.label)}</b><small>${!p.active?'Password non ancora creata':p.id===PS?'Sola consultazione':'Reparto'}</small></span>${p.id===last&&p.active?'<span class="chip accent last">Ultimo usato</span>':''}</button>`).join(''):'<div class="empty">Nessun reparto è ancora abilitato.<br>L’amministratore deve creare le password dall’area riservata.</div>'}
     body.innerHTML=`<h2>Seleziona il tuo reparto</h2><p class="sub">Poi inserisci la password che ti ha dato l’amministratore.</p><div class="tiles">${tiles}</div>${gateErr?`<div class="err" role="alert">${esc(gateErr)}</div>`:''}`;
     return}
   const adm=gateSel===ADMIN,label=adm?'Amministratore':(logins[gateSel]?.label||'Profilo');
@@ -554,7 +562,7 @@ function renderGate(){
     <p class="hint">${adm?'La sessione amministratore si chiude chiudendo il browser e dopo '+ADMIN_IDLE_MIN+' minuti di inattività.':'Sul computer del reparto l’accesso resta attivo. Per uscire usa “Cambia reparto” in alto a destra.'}</p>
   </form>`;
   setTimeout(()=>$('#gatePw')?.focus(),40)}
-function gatePick(id){gateSel=id;gateErr='';renderGate()}
+function gatePick(id){if(id&&id!==ADMIN&&!logins[id]?.email){gateSel=null;gateErr='Il reparto “'+(publicDepts[id]?.label||id)+'” non ha ancora una password. Chiedi all’amministratore di crearla.';renderGate();return}gateSel=id;gateErr='';renderGate()}
 function togglePw(){const i=$('#gatePw');i.type=i.type==='password'?'text':'password';i.focus()}
 async function doLogin(){const t=gateSel,pw=$('#gatePw').value,err=$('#gateErr');err.textContent='';if(!pw){err.textContent='Inserisci la password.';return}
   const email=t===ADMIN?ADMIN_EMAIL:logins[t]?.email;if(!email){err.textContent='Questo profilo non ha una password attiva. Rivolgiti all’amministratore.';return}
@@ -568,7 +576,7 @@ async function logout(auto=false){if(!user)return;
   sessionStorage.removeItem('pl-open-'+user.uid);gateSel=null;if(auto)gateErr='Sessione chiusa per inattività.';await signOut(auth)}
 function stopListeners(){[...unsubs,auditUnsub,todayUnsub,presenceUnsub].forEach(u=>{try{u&&u()}catch{}});unsubs=[];auditUnsub=todayUnsub=presenceUnsub=null;clearInterval(presenceTimer);presenceTimer=null}
 
-onSnapshot(doc(db,'public','logins'),s=>{logins=(s.exists()&&s.data().entries)||{};loginsState='ok';if(authReady&&!user)renderGate();else if(page==='admin')render({soft:true})},e=>{console.warn('logins',e);loginsState='error';if(authReady&&!user)renderGate()});
+onSnapshot(doc(db,'public','logins'),s=>{const data=s.exists()?s.data():{};logins=data.entries||{};publicDepts=data.depts||{};loginsState='ok';syncPublicDepts();if(authReady&&!user)renderGate();else if(page==='admin')render({soft:true})},e=>{console.warn('logins',e);loginsState='error';if(authReady&&!user)renderGate()});
 
 onAuthStateChanged(auth,async u=>{
   authReady=true;stopListeners();user=u;isAdmin=false;myDept=null;myLabel='';depts=[];deptsLoaded=false;viewed=new Set();auditRows=[];todayRows=[];presenceRows=[];auditLoaded=false;
@@ -580,7 +588,7 @@ onAuthStateChanged(auth,async u=>{
   sessionSince=new Date().toISOString();lastActivity=Date.now();
   page=isAdmin?'admin':(myDept===PS?'overview':myDept);adminTab='attivita';gateSel=null;gateErr='';
   $('#gate').hidden=true;$('#shell').hidden=false;
-  unsubs.push(onSnapshot(collection(db,'departments'),snap=>{depts=snap.docs.map(x=>normalize({id:x.id,...x.data()}));sortDepts();deptsLoaded=true;render({soft:true});if(editing&&$('#bedDlg').open&&!byId(editing.id))$('#bedDlg').close()},e=>{console.error(e);if(e.code==='permission-denied'&&!isAdmin){gateErr='Il profilo non ha più accesso ai dati.';signOut(auth)}else appMessage(errMsg(e),'Errore di collegamento')}));
+  unsubs.push(onSnapshot(collection(db,'departments'),snap=>{depts=snap.docs.map(x=>normalize({id:x.id,...x.data()}));sortDepts();deptsLoaded=true;syncPublicDepts();render({soft:true});if(editing&&$('#bedDlg').open&&!byId(editing.id))$('#bedDlg').close()},e=>{console.error(e);if(e.code==='permission-denied'&&!isAdmin){gateErr='Il profilo non ha più accesso ai dati.';signOut(auth)}else appMessage(errMsg(e),'Errore di collegamento')}));
   if(isAdmin)startAdminFeeds();
   const dept=isAdmin?'':myDept;
   if(pendingLogin){const f=pendingLogin.failed;audit('accesso',dept,'Accesso effettuato',[f?f+(f===1?' tentativo':' tentativi')+' con password sbagliata prima dell’accesso':'',isStandalone()?'Aperto dall’app installata':'']);pendingLogin=null;sessionStorage.setItem('pl-open-'+u.uid,'1')}
@@ -820,7 +828,7 @@ function admRiepilogo(){const rows=[...depts.map(d=>({id:d.id,name:d.name,d})),{
 
 // ---- password ----
 function admAccessi(){const targets=[...depts.map(d=>({id:d.id,label:d.name})),{id:PS,label:PS_LABEL+' (consultazione)'}],orphan=Object.keys(logins).filter(id=>id!==PS&&!byId(id));
-  return `<section class="card"><div class="card-h"><h2>Password dei reparti</h2><span class="muted small">Dopo il salvataggio la password non è più visibile: consegnala subito al reparto.</span></div><div class="tablewrap"><table><thead><tr><th>Profilo</th><th>Cosa può fare</th><th>Password</th><th></th></tr></thead><tbody>${targets.map(t=>{const e=logins[t.id];return `<tr><td><span class="who-cell"><span class="avatar" style="background:${avColor(t.id===PS?PS_LABEL:t.label)}">${esc(initials(t.label))}</span><b>${esc(t.label)}</b></span></td><td class="muted">${t.id===PS?'Solo consultazione':'Consulta tutto, modifica il proprio reparto'}</td><td>${e?'<span class="chip green">Attiva</span> <span class="muted small">dal '+fmtDT(e.createdAt)+'</span>':'<span class="chip red">Da creare</span>'}</td><td><div class="row-actions"><button class="btn ${e?'':'primary'} sm" onclick="openPassword('${esc(t.id)}')">${e?'Cambia':'Crea password'}</button>${e?`<button class="btn danger sm" onclick="revokeAccess('${esc(t.id)}')">Revoca</button>`:''}</div></td></tr>`}).join('')}${orphan.map(id=>`<tr><td>${esc(logins[id].label||id)} <span class="muted small">(reparto eliminato)</span></td><td></td><td><span class="chip red">Da revocare</span></td><td><div class="row-actions"><button class="btn danger sm" onclick="revokeAccess('${esc(id)}')">Revoca</button></div></td></tr>`).join('')}</tbody></table></div></section>`}
+  return `<section class="card"><div class="card-h"><h2>Password dei reparti</h2><span class="muted small">Dopo il salvataggio la password non è più visibile: consegnala subito al reparto. I reparti senza password compaiono nella schermata di accesso ma non si possono aprire.</span></div><div class="tablewrap"><table><thead><tr><th>Profilo</th><th>Cosa può fare</th><th>Password</th><th></th></tr></thead><tbody>${targets.map(t=>{const e=logins[t.id];return `<tr><td><span class="who-cell"><span class="avatar" style="background:${avColor(t.id===PS?PS_LABEL:t.label)}">${esc(initials(t.label))}</span><b>${esc(t.label)}</b></span></td><td class="muted">${t.id===PS?'Solo consultazione':'Consulta tutto, modifica il proprio reparto'}</td><td>${e?'<span class="chip green">Attiva</span> <span class="muted small">dal '+fmtDT(e.createdAt)+'</span>':'<span class="chip red">Da creare</span>'}</td><td><div class="row-actions"><button class="btn ${e?'':'primary'} sm" onclick="openPassword('${esc(t.id)}')">${e?'Cambia':'Crea password'}</button>${e?`<button class="btn danger sm" onclick="revokeAccess('${esc(t.id)}')">Revoca</button>`:''}</div></td></tr>`}).join('')}${orphan.map(id=>`<tr><td>${esc(logins[id].label||id)} <span class="muted small">(reparto eliminato)</span></td><td></td><td><span class="chip red">Da revocare</span></td><td><div class="row-actions"><button class="btn danger sm" onclick="revokeAccess('${esc(id)}')">Revoca</button></div></td></tr>`).join('')}</tbody></table></div></section>`}
 function strongPassword(){let p;do p=randomId(10);while(!/[A-Za-z]/.test(p)||!/\d/.test(p));return p}
 function genPassword(){$('#pwNew').value=strongPassword()}
 function openPassword(target){if(!isAdmin)return;pwTarget=target;$('#pwTitle').textContent=deptName(target);$('#pwNew').value=strongPassword();$('#pwErr').textContent='';$('#pwDlg').showModal()}
