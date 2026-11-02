@@ -1,5 +1,5 @@
 rules_version = '2';
-// Regole Firestore · Posti letto · Ospedale di Stato RSM · versione 3.5.5
+// Regole Firestore · Posti letto · Ospedale di Stato RSM · versione 3.7.0
 // Da pubblicare in Firebase Console › Firestore Database › Regole.
 // L'email dell'amministratore deve coincidere con ADMIN_EMAIL in index.html.
 service cloud.firestore {

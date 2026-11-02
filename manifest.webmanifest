@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Posti letto · Ospedale di Stato RSM",
-  "short_name": "Posti letto",
-  "description": "Disponibilità dei posti letto dei reparti dell'Ospedale di Stato di San Marino, condivisa in tempo reale.",
+  "name": "Bed Management",
+  "short_name": "Bed Management",
+  "description": "Bed Management · Ospedale di Stato RSM: disponibilità dei posti letto dei reparti condivisa in tempo reale.",
   "lang": "it",
   "dir": "ltr",
   "start_url": "./",
@@ -39,12 +39,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
-    },
-    {
-      "src": "icons/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
     }
   ],
   "related_applications": [

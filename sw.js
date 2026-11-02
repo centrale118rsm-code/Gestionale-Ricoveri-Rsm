@@ -1,13 +1,12 @@
 // Service worker · Posti letto · Ospedale di Stato RSM
 // Serve solo a rendere l'app installabile e ad aprirla più in fretta.
 // I dati (Firebase) passano sempre dalla rete: nessun dato dei reparti viene salvato qui.
-const CACHE = 'posti-letto-3.5.5';
+const CACHE = 'posti-letto-3.7.0';
 const SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
   './favicon.ico',
-  './icons/icon.svg',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-192.png',
