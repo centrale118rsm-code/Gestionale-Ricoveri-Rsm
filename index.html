@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- Posti letto · Ospedale di Stato RSM · versione 3.0.1 (02/11/2026)
+<!-- Posti letto · Ospedale di Stato RSM · versione 3.1.0 (02/11/2026)
      Nuova grafica chiara, accesso per reparto, registro attività completo per l'amministratore. -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<meta name="version" content="3.0.1">
+<meta name="version" content="3.1.0">
 <title>Posti letto · Ospedale di Stato RSM</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f4f7f9">
@@ -150,6 +150,11 @@ label,.lbl{display:block;font-size:13px;font-weight:600;color:var(--text2);margi
 .kpi strong{display:block;font-size:32px;letter-spacing:-1.2px;line-height:1.1;margin:6px 0 3px}
 .kpi strong span{font-size:16px;color:var(--soft);letter-spacing:0;font-weight:600}
 .kpi em{font-style:normal;font-size:12px;color:var(--soft)}
+.c-pink{color:#c2417a}
+.avail tbody tr{cursor:pointer}.avail tbody tr:hover td{background:#fafcfd}.avail tr.mine td{background:var(--accent-50)}.avail tfoot td{background:#f7f9fb;border-top:1px solid var(--line)}.sexcell b{font-size:16px}
+.pillnum{display:inline-block;min-width:34px;text-align:center;font-weight:800;border-radius:8px;padding:2px 8px}.pillnum.free{background:var(--free-bg);color:var(--free)}.pillnum.zero{background:var(--danger-bg);color:var(--danger)}
+.sexnum{display:flex;gap:8px}.sexnum span{flex:1;border-radius:10px;padding:7px 10px;font-size:12.5px;color:var(--muted);background:#f6f8fa}.sexnum b{display:block;font-size:19px;letter-spacing:-.5px;color:var(--text)}.sexnum b.c-occ{color:var(--occ)}.sexnum b.c-pink{color:#c2417a}
+details.others{margin:0 0 20px}details.others>summary{cursor:pointer;list-style:none;padding:15px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:700}details.others>summary::-webkit-details-marker{display:none}details.others>summary::after{content:'▾';margin-left:auto;color:var(--muted)}details.others[open]>summary::after{content:'▴'}details.others[open]>summary{border-bottom:1px solid var(--line2)}
 .c-free{color:var(--free)}.c-res{color:var(--res)}.c-blk{color:var(--blk)}.c-occ{color:var(--occ)}
 .reminder{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:16px 30px 0;padding:14px 18px;background:var(--res-bg);border:1px solid var(--res-bd);border-radius:14px;color:#7a4d05}
 .reminder b{display:block}
@@ -189,7 +194,11 @@ label,.lbl{display:block;font-size:13px;font-weight:600;color:var(--text2);margi
 .legend i{width:11px;height:11px;border-radius:4px;display:inline-block;border:1px solid}
 .rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
 .room{padding:16px}
-.room.iso{border-color:var(--blk-bd);box-shadow:0 0 0 3px var(--blk-bg)}
+.room.iso{border:3px solid #d93636;box-shadow:0 0 0 4px rgba(217,54,54,.10)}
+.iso-note{font-size:12.5px;color:#9b2c2c;background:var(--danger-bg);border-radius:10px;padding:8px 11px;margin:0 0 12px;line-height:1.45}
+.iso-note b{display:block}
+.isohead{display:flex;align-items:center;gap:8px;color:#b42f2f;font-weight:700;font-size:13.5px;background:var(--danger-bg);border:1px solid #f3c9c9;border-radius:12px;padding:10px 12px;margin-top:18px}
+.legend .lred{border:3px solid #d93636;background:#fff;width:13px;height:13px}
 .room-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
 .room-h h3{font-size:15px}
 .room-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
@@ -350,7 +359,8 @@ tr.ld td{background:#fbfdfd;border-top:0;padding-top:4px}
 
 <!-- ===================== FINESTRE ===================== -->
 <dialog id="bedDlg"><form class="dlg" onsubmit="event.preventDefault();saveBed()">
-  <div class="dlg-h"><div><small id="bedSub"></small><h2 id="bedTitle">Letto</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <div class="dlg-h"><div><small id="bedSub"></small><h2 id="bedTitle">Letto</h2><button type="button" class="linkbtn" style="margin-top:2px;font-size:12.5px" onclick="toggleBedName()">Rinomina letto</button></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <div class="field" id="fBedName" hidden><label for="bedName">Nome del letto</label><input id="bedName" maxlength="30"><p class="small">Lascia vuoto per usare il nome automatico.</p></div>
   <div class="field"><span class="lbl">Com’è il letto adesso?</span>
     <div class="choices c5" id="stateChoices"></div></div>
   <div class="field" id="fSex"><span class="lbl">Paziente</span>
@@ -359,6 +369,13 @@ tr.ld td{background:#fbfdfd;border-top:0;padding-top:4px}
       <label class="choice"><input type="radio" name="sex" value="F" onchange="$('#bedErr').textContent=''"><span>♀ Donna</span></label>
     </div></div>
   <div class="field" id="fDate"><label for="bedDate">Giorno previsto per l’ingresso</label><input type="date" id="bedDate"></div>
+  <div class="field" id="fBedIso">
+    <label class="switch"><div><b>Paziente in isolamento</b><small>La stanza diventa stanza di isolamento: i suoi letti liberi non saranno disponibili</small></div><input type="checkbox" id="bedIso" onchange="bedFields()"></label>
+    <div id="isoBox">
+      <span class="lbl" style="margin-top:14px">Tipo di isolamento</span><div class="choices c5" id="bisoChoices"></div>
+      <label for="bedIsoNote" style="margin-top:14px">Motivo dell’isolamento <span style="color:var(--danger)">(obbligatorio)</span></label><textarea id="bedIsoNote" rows="2" maxlength="200" placeholder="Es. sospetta infezione da germe multiresistente"></textarea>
+      <p class="small" id="isoInfo" style="color:#9b2c2c"></p>
+    </div></div>
   <div class="field" id="fReason"><label for="bedReason">Motivo</label><input id="bedReason" maxlength="120" placeholder="Scrivi il motivo">
     <div class="quick" id="reasonQuick"></div></div>
   <div class="field" id="fNotes" hidden><label for="bedNotes">Nota (facoltativa)</label><textarea id="bedNotes" rows="2" maxlength="300" placeholder="Informazioni sul posto letto, senza dati del paziente"></textarea></div>
@@ -370,9 +387,14 @@ tr.ld td{background:#fbfdfd;border-top:0;padding-top:4px}
 
 <dialog id="roomDlg"><form class="dlg" onsubmit="event.preventDefault();saveRoom()">
   <div class="dlg-h"><div><small id="roomSub"></small><h2 id="roomTitle">Stanza</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
-  <label class="switch"><div><b>Stanza adatta all’isolamento</b><small>Può accogliere pazienti in isolamento</small></div><input type="checkbox" id="roomCap" onchange="roomCapChanged()"></label>
-  <div class="field" id="fIso"><span class="lbl">Isolamento attivo</span><div class="choices c2" id="isoChoices"></div>
-    <p class="small">Con un isolamento attivo i letti liberi della stanza non risultano disponibili.</p></div>
+  <div class="field"><label for="roomName">Nome della stanza</label><input id="roomName" maxlength="30"><p class="small">Lascia vuoto per usare il nome automatico.</p></div>
+  <div id="fRoomIso">
+    <div class="isohead">● Stanza in isolamento</div>
+    <div class="field"><span class="lbl">Tipo di isolamento</span><div class="choices c5" id="risoChoices"></div></div>
+    <div class="field"><label for="roomIsoNote">Motivo dell’isolamento <span style="color:var(--danger)">(obbligatorio)</span></label><textarea id="roomIsoNote" rows="2" maxlength="200"></textarea></div>
+    <button type="button" class="btn danger sm" style="margin-top:14px" onclick="endIsolation()">Termina isolamento</button>
+  </div>
+  <p class="small" id="roomIsoHint">L’isolamento si attiva dal letto, quando inserisci il paziente: tocca il letto e attiva “Paziente in isolamento”.</p>
   <div class="err" id="roomErr" role="alert"></div>
   <div class="actions"><button type="button" class="btn" onclick="closeDlg(this)">Annulla</button><button class="btn primary">Salva</button></div>
 </form></dialog>
@@ -439,14 +461,15 @@ const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomai
 // Deve coincidere con l'email scritta in firestore.rules.
 const ADMIN_EMAIL='admin@ospedale.local';
 const ACCOUNT_DOMAIN='ospedale.local';
-const APP_VERSION='3.0.1',APP_DATE='02/11/2026';
+const APP_VERSION='3.1.0',APP_DATE='02/11/2026';
 const PS='__ps',PS_LABEL='Pronto Soccorso',ADMIN='__admin',LEGACY_KEY='beds-rsm-configurable-v3';
 const ADMIN_IDLE_MIN=30;
 const TZ='Europe/San_Marino';
 const DEFAULT_DEPTS=[['terapia-intensiva','Terapia intensiva',true,0],['terapia-semi-intensiva','Terapia semi-intensiva',true,1],['degenza-breve','Degenza breve',true,10],['ortopedia','Ortopedia',false,10],['chirurgia','Chirurgia',false,10],['medicina-interna','Medicina interna',false,10],['geriatria','Geriatria',false,10],['ostetricia-ginecologia','Ostetricia e ginecologia',false,10],['pediatria','Pediatria',false,10]];
 const LEGACY_IDS=['degenza-breve','ortopedia','chirurgia','terapia-intensiva','terapia-semi-intensiva','medicina-interna','geriatria','ostetricia-ginecologia','pediatria'];
 const STATES=['free','occupied','reserved','blocked','closed'];
-const ISOS=['Nessuno','Contatto','Goccioline','Via aerea','Contatto + goccioline'];
+const ISOS=['Nessuno','Contatto','Goccioline','Via aerea','Contatto + goccioline','Altro'];
+const PATIENT=['occupied','reserved'];
 const STATE_LABEL={free:'Libero',occupied:'Occupato',reserved:'Programmato',blocked:'Bloccato',closed:'Chiuso'};
 const STATE_HINT={free:'Pronto per un ricovero',occupied:'C’è un paziente',reserved:'Ricovero in arrivo',blocked:'Per isolamento o rischio infettivo',closed:'Non utilizzabile'};
 const REASONS={blocked:['Isolamento','Rischio infettivo','In attesa di esito tampone'],closed:['Carenza personale','Manutenzione','Sanificazione','Guasto']};
@@ -506,7 +529,9 @@ const signedInOk=()=>!!user&&(isAdmin||!!myDept);
 const deptName=id=>id===PS?PS_LABEL:byId(id)?.name||logins[id]?.label||id||'—';
 
 // ================= DATI =================
-function sanitizeRooms(rooms){return (Array.isArray(rooms)?rooms:[]).slice(0,50).map(r=>({cap:!!r?.cap,iso:ISOS.includes(r?.iso)?r.iso:'Nessuno',reason:'',beds:(Array.isArray(r?.beds)?r.beds:[]).slice(0,12).map(b=>{let sex=b?.sex;if(sex===undefined)sex=['occupied','reserved'].includes(b?.state)?(r?.sex==='Femminile'?'F':'M'):'';const o={state:STATES.includes(b?.state)?b.state:'free',sex:['M','F'].includes(sex)?sex:'',date:isDate(b?.date),reason:str(b?.reason,120),notes:str(b?.notes,300)};if(isDate(b?.scheduledDate))o.scheduledDate=b.scheduledDate;if(typeof b?.admittedAt==='string')o.admittedAt=b.admittedAt.slice(0,40);return o})}))}
+function sanitizeRooms(rooms){return (Array.isArray(rooms)?rooms:[]).slice(0,50).map(r=>{const iso=ISOS.includes(r?.iso)?r.iso:'Nessuno',room={name:str(r?.name,30).trim(),cap:!!r?.cap,iso,isoNote:iso==='Nessuno'?'':str(r?.isoNote,200),reason:'',beds:(Array.isArray(r?.beds)?r.beds:[]).slice(0,12).map(b=>{let sex=b?.sex;if(sex===undefined)sex=PATIENT.includes(b?.state)?(r?.sex==='Femminile'?'F':'M'):'';const o={name:str(b?.name,30).trim(),state:STATES.includes(b?.state)?b.state:'free',sex:['M','F'].includes(sex)?sex:'',date:isDate(b?.date),reason:str(b?.reason,120),notes:str(b?.notes,300)};if(isDate(b?.scheduledDate))o.scheduledDate=b.scheduledDate;if(typeof b?.admittedAt==='string')o.admittedAt=b.admittedAt.slice(0,40);if(b?.isoSource===true&&iso!=='Nessuno'&&PATIENT.includes(o.state))o.isoSource=true;return o})};return room})}
+const roomLabel=(r,j)=>r?.name||('Stanza '+(j+1));
+const bedLabel=(b,k)=>b?.name||('Letto '+(k+1));
 function normalize(d){return {id:d.id,name:str(d.name,60)||'Reparto',order:Number.isFinite(d.order)?d.order:10,mixed:!!d.mixed,updatedAt:str(d.updatedAt,40),updatedBy:str(d.updatedBy,80),rooms:sanitizeRooms(d.rooms)}}
 const sortDepts=()=>depts.sort((a,b)=>a.order-b.order||a.name.localeCompare(b.name,'it'));
 
@@ -520,15 +545,27 @@ async function mutate(id,fn,log){
   render();return result}
 const SEX={M:'Uomo',F:'Donna'};
 function bedDiff(o,n){const out=[];if(o.state!==n.state)out.push('Stato: '+STATE_LABEL[o.state]+' → '+STATE_LABEL[n.state]);if((o.sex||'')!==(n.sex||''))out.push('Paziente: '+(SEX[o.sex]||'—')+' → '+(SEX[n.sex]||'—'));if((o.date||'')!==(n.date||''))out.push('Ingresso previsto: '+(itDate(o.date)||'—')+' → '+(itDate(n.date)||'—'));if((o.reason||'')!==(n.reason||''))out.push('Motivo: '+(o.reason||'—')+' → '+(n.reason||'—'));if((o.notes||'')!==(n.notes||''))out.push('Nota: '+(o.notes||'—')+' → '+(n.notes||'—'));return out}
+// Toglie dal letto tutti i dati del paziente (il nome del letto resta).
+function clearPatient(p){Object.assign(p,{sex:'',date:'',reason:'',notes:''});delete p.scheduledDate;delete p.admittedAt;delete p.isoSource}
+// Fine dell'isolamento: la stanza torna normale e i letti bloccati tornano liberi.
+function endIso(fr){fr.iso='Nessuno';fr.isoNote='';fr.beds.forEach(b=>{delete b.isoSource;if(b.state==='blocked'){b.state='free';b.reason=''}})}
+// Un paziente lascia il letto (dimissione o ricovero annullato): il letto si azzera.
+// Se era il paziente in isolamento, o la stanza resta senza pazienti, l'isolamento termina;
+// se la stanza resta senza pazienti, tutti i suoi letti (tranne quelli chiusi) tornano liberi e puliti.
+function patientLeaves(fr,k,newState='free',reason='',notes=''){const p=fr.beds[k],wasSource=!!p.isoSource,out=[];clearPatient(p);p.state='free';
+  const empty=!fr.beds.some(b=>PATIENT.includes(b.state));
+  if(fr.iso!=='Nessuno'&&(wasSource||empty)){out.push('Isolamento della stanza terminato ('+fr.iso+')');endIso(fr)}
+  if(empty){let n=0;fr.beds.forEach((b,i)=>{if(i===k||b.state==='closed')return;if(b.state!=='free'||b.notes||b.reason)n++;b.state='free';clearPatient(b)});if(n)out.push('Stanza senza pazienti: azzerati anche '+n+(n===1?' altro letto':' altri letti'))}
+  p.state=newState;p.reason=reason;p.notes=notes;return out}
 
 // ================= LOGICA POSTI LETTO =================
 function roomSex(r,exclude=-1){const s=[...new Set(r.beds.filter((b,k)=>k!==exclude&&(b.state==='occupied'||b.state==='reserved'&&b.date<=date)).map(b=>b.sex).filter(Boolean))];return s.length>1?'mixed':s[0]||''}
 function availability(d,r){if(d.mixed)return 'Uomo o donna';const v=roomSex(r);return v==='M'?'Per uomo':v==='F'?'Per donna':v==='mixed'?'Camera mista':'Uomo o donna'}
-async function confirmMixedRoom(d,j){if(d.mixed)return true;if(!await appMessage('Nella stanza '+(j+1)+' ci sono già pazienti di sesso diverso. Vuoi creare una camera mista?','Camera mista · 1 di 2',true))return false;return appMessage('Confermi la camera mista nella stanza '+(j+1)+'? Il salvataggio avviene solo dopo questa seconda conferma.','Camera mista · 2 di 2',true,{yes:'Sì, confermo'})}
+async function confirmMixedRoom(d,j){if(d.mixed)return true;const rl=roomLabel(d.rooms[j],j);if(!await appMessage('In “'+rl+'” ci sono già pazienti di sesso diverso. Vuoi creare una camera mista?','Camera mista · 1 di 2',true))return false;return appMessage('Confermi la camera mista in “'+rl+'”? Il salvataggio avviene solo dopo questa seconda conferma.','Camera mista · 2 di 2',true,{yes:'Sì, confermo'})}
 function psBreakdown(d){const c={male:0,female:0,neutral:0,mixed:0,isolationFree:0,infectionBlocked:0};d.rooms.forEach(r=>{const sex=roomSex(r);r.beds.forEach(b=>{if(b.state==='closed'||b.state==='occupied'||b.state==='reserved'&&b.date<=nextDate())return;if(b.state==='blocked'||r.iso!=='Nessuno'){c.infectionBlocked++;return}c[sex==='M'?'male':sex==='F'?'female':sex==='mixed'?'mixed':'neutral']++;if(r.cap)c.isolationFree++})});return c}
 function counts(d){const c={total:0,active:0,closed:0,occupied:0,reserved:0,tomorrow:0,blocked:0,free:0};d.rooms.forEach(r=>r.beds.forEach(b=>{c.total++;if(b.state==='closed'){c.closed++;return}c.active++;if(b.state==='reserved'&&b.date===nextDate()){c.tomorrow++;return}if(b.state==='occupied')c.occupied++;else if(b.state==='blocked'||r.iso!=='Nessuno')c.blocked++;else if(b.state==='reserved'&&b.date<=date)c.reserved++;else c.free++}));return c}
 function dailyAdmissions(d){let total=0,confirmed=0,pending=0,overdue=0;d.rooms.forEach(r=>r.beds.forEach(b=>{const planned=b.scheduledDate||b.date;if(planned===date&&(b.state==='reserved'||b.admittedAt)){total++;if(b.admittedAt)confirmed++;else pending++}if(b.state==='reserved'&&b.date<today)overdue++}));return {total,confirmed,pending,overdue}}
-const roomHasIsolation=r=>r.iso!=='Nessuno'||r.beds.some(b=>b.state==='blocked');
+const roomHasIsolation=r=>r.iso!=='Nessuno';
 
 // ================= ACCESSO =================
 // Elenco pubblico dei reparti (solo nome e posizione) letto dalla schermata di accesso.
@@ -632,20 +669,28 @@ function render(opts={}){
 
 const dateBar=()=>`<div class="datebar"><span>Disponibilità al</span><input type="date" id="dateSel" aria-label="Data" value="${date}" onchange="setDate(this.value)">${date!==today?`<button class="btn ghost sm" onclick="setDate('${today}')">Torna a oggi</button>`:''}<span>I letti prenotati per domani sono già esclusi dai disponibili.</span></div>`;
 function setDate(v){date=isDate(v)||today;render()}
+// Posti disponibili per sesso. Una stanza vuota vale sia per uomo sia per donna.
+// Nei reparti con camere miste consentite ogni posto libero vale per entrambi.
+function sexAvail(d){const b=psBreakdown(d),free=b.male+b.female+b.neutral+b.mixed;if(d.mixed)return {free,men:free,women:free,neutral:free,mixed:0,all:true};return {free,men:b.male+b.neutral,women:b.female+b.neutral,neutral:b.neutral,mixed:b.mixed,all:false}}
+const nz=(n,cls='')=>n?`<b class="${cls}">${n}</b>`:'<span class="nomark">0</span>';
+function availTable(highlight){const rows=depts.map(d=>({d,a:sexAvail(d)}));const tm=rows.reduce((x,r)=>x+r.a.men,0),tw=rows.reduce((x,r)=>x+r.a.women,0),tf=rows.reduce((x,r)=>x+r.a.free,0);
+  return `<div class="tablewrap"><table class="avail"><thead><tr><th>Reparto</th><th>Disponibili</th><th>♂ Per uomo</th><th>♀ Per donna</th><th>Stanze vuote<br><span style="text-transform:none;letter-spacing:0;font-weight:500">uomo o donna</span></th><th>Aggiornato</th></tr></thead><tbody>${rows.map(({d,a})=>`<tr class="${d.id===highlight?'mine':''}" onclick="go('${esc(d.id)}')" title="Apri ${esc(d.name)}"><td><b>${esc(d.name)}</b>${d.id===highlight?' <span class="chip accent">il tuo</span>':''}${a.all?' <span class="chip">camere miste</span>':''}${isoRooms(d)?` <span class="chip red">${isoRooms(d)} in isolamento</span>`:''}</td><td>${a.free?`<span class="pillnum free">${a.free}</span>`:'<span class="pillnum zero">0</span>'}</td><td class="sexcell">${nz(a.men,'c-occ')}</td><td class="sexcell">${nz(a.women,'c-pink')}</td><td>${a.all?'<span class="muted small">tutti</span>':nz(a.neutral)}${a.mixed?` <span class="muted small">+${a.mixed} in camera mista</span>`:''}</td><td class="small">${updatedText(d)}</td></tr>`).join('')}</tbody><tfoot><tr><td><b>Totale ospedale</b></td><td><b>${tf}</b></td><td class="sexcell"><b class="c-occ">${tm}</b></td><td class="sexcell"><b class="c-pink">${tw}</b></td><td colspan="2" class="muted small">Una stanza vuota conta sia per uomo sia per donna, quindi uomo + donna può superare il totale.</td></tr></tfoot></table></div>`}
+const isoRooms=d=>d.rooms.filter(r=>r.iso!=='Nessuno').length;
 const kpiHtml=c=>`<div class="kpis"><div class="card kpi"><small>Letti disponibili</small><strong class="c-free">${c.free}</strong><em>Pronti per un ricovero</em></div><div class="card kpi"><small>Letti occupati</small><strong>${c.occupied}<span> / ${c.active}</span></strong><em>Su ${c.active} letti attivi</em></div><div class="card kpi"><small>Ricoveri previsti domani</small><strong class="c-res">${c.tomorrow}</strong><em>Già tolti dai disponibili</em></div><div class="card kpi"><small>Bloccati · chiusi</small><strong class="c-blk">${c.blocked}<span> · ${c.closed}</span></strong><em>Isolamento · non utilizzabili</em></div></div>`;
 
 function overviewHtml(){
   const all=depts.map(counts),zero={total:0,active:0,closed:0,occupied:0,reserved:0,tomorrow:0,blocked:0,free:0},tot=all.reduce((a,x)=>{for(const k in x)a[k]+=x[k];return a},{...zero});
   const q=searchText.trim().toLowerCase();
-  const cards=depts.map((d,i)=>{if(q&&!d.name.toLowerCase().includes(q))return '';const c=all[i],own=!isAdmin&&d.id===myDept,b=d.mixed?null:psBreakdown(d),act=c.active||1;
+  const cards=depts.map((d,i)=>{if(q&&!d.name.toLowerCase().includes(q))return '';const c=all[i],own=!isAdmin&&d.id===myDept,sa=sexAvail(d),act=c.active||1;
     return `<article class="card dcard ${own?'own':''}" tabindex="0" role="button" onclick="go('${esc(d.id)}')" onkeydown="if(event.key==='Enter')go('${esc(d.id)}')">
       <div class="dcard-h"><h3>${esc(d.name)}</h3>${own?'<span class="chip accent">Il tuo reparto</span>':d.mixed?'<span class="chip">Camere miste</span>':''}</div>
       <div class="dbig"><strong class="${c.free?'c-free':''}" style="${c.free?'':'color:var(--danger)'}">${c.free}</strong><span>${c.free===1?'letto disponibile':'letti disponibili'}</span></div>
       <div class="meter" title="Occupati, programmati, bloccati"><i style="width:${c.occupied/act*100}%;background:#7ea5ea"></i><i style="width:${(c.reserved+c.tomorrow)/act*100}%;background:#ecc565"></i><i style="width:${c.blocked/act*100}%;background:#b39ef0"></i></div>
       <div class="dline"><span>Occupati <b>${c.occupied}/${c.active}</b></span><span>Domani <b>${c.tomorrow}</b></span><span>Bloccati <b>${c.blocked}</b></span></div>
-      ${b&&c.free?`<div class="sexrow">${b.male?`<span class="chip">♂ Uomo ${b.male}</span>`:''}${b.female?`<span class="chip">♀ Donna ${b.female}</span>`:''}${b.neutral?`<span class="chip green">Uomo o donna ${b.neutral}</span>`:''}${b.mixed?`<span class="chip amber">Camera mista ${b.mixed}</span>`:''}${b.isolationFree?`<span class="chip violet">Adatti all’isolamento ${b.isolationFree}</span>`:''}</div>`:''}
+      <div class="sexnum"><span>♂ Per uomo<b class="${sa.men?'c-occ':''}">${sa.men}</b></span><span>♀ Per donna<b class="${sa.women?'c-pink':''}">${sa.women}</b></span></div>
       <div class="dfoot"><span>${d.updatedAt?'Aggiornato '+updatedText(d):'<span class="muted">Mai aggiornato</span>'}</span><span>${d.updatedBy?esc(d.updatedBy):''}</span></div></article>`}).join('');
   return `<div class="phead"><div><h1 class="title">Quadro dei posti letto</h1><p class="sub">Tutti i reparti in un colpo d’occhio. Tocca un reparto per vedere le stanze.</p></div></div>${dateBar()}${kpiHtml(tot)}
+  <section class="card" style="margin-bottom:24px"><div class="card-h"><h2>Posti disponibili in ogni reparto · uomini e donne</h2><span class="muted small">Tocca una riga per aprire il reparto</span></div>${availTable(!isAdmin?myDept:null)}</section>
   <div class="toolbar"><h2>Reparti <span class="muted small">· ${depts.length}</span></h2><div class="search">${ico('search')}<input id="search" placeholder="Cerca un reparto" value="${esc(searchText)}" oninput="setSearch(this.value)"></div></div>
   <div class="dgrid">${cards||`<div class="empty">${depts.length?'Nessun reparto trovato.':'Nessun reparto configurato.'+(isAdmin?' Crealo dall’Area amministratore.':'')}</div>`}</div>
   <div class="note">${ico('info')}<div>Ogni reparto aggiorna solo i propri letti; il Pronto Soccorso consulta. “Uomo o donna” indica una stanza vuota; la camera mista richiede doppia conferma. Un aggiornamento in rosso è più vecchio di 12 ore.</div></div>`}
@@ -653,8 +698,9 @@ function overviewHtml(){
 function bedTile(d,r,b,j,k,ce){
   const s=b.state==='free'&&r.iso!=='Nessuno'?'blocked':b.state,info=[];
   if(s==='free')info.push(availability(d,r));
-  if(['occupied','reserved'].includes(b.state))info.push((({M:'♂ Uomo',F:'♀ Donna'})[b.sex])||'Sesso non indicato');
+  if(PATIENT.includes(b.state))info.push((({M:'♂ Uomo',F:'♀ Donna'})[b.sex])||'Sesso non indicato');
   if(b.state==='reserved')info.push((b.date===today?'Oggi':b.date===nextDate()?'Domani':'Il '+itDate(b.date)));
+  if(b.isoSource)info.push('<b style="color:#b42f2f">● In isolamento</b>');
   if(b.state==='free'&&r.iso!=='Nessuno')info.push('Isolamento in stanza');
   if(b.reason)info.push('<b>'+esc(b.reason)+'</b>');
   if(b.notes)info.push('<i>'+esc(b.notes)+'</i>');
@@ -662,69 +708,102 @@ function bedTile(d,r,b,j,k,ce){
   if(ce&&b.state==='reserved'&&b.date<=today)acts.push(`<button class="btn primary" onclick="event.stopPropagation();confirmAdmission(${j},${k})">${ico('check')}È arrivato</button>`);
   if(ce&&b.state==='occupied')acts.push(`<button class="btn" onclick="event.stopPropagation();discharge(${j},${k})">${ico('door')}Dimesso</button>`);
   const click=ce?` click" role="button" tabindex="0" title="Tocca per modificare" onclick="editBed(${j},${k})" onkeydown="if(event.key==='Enter')editBed(${j},${k})`:'';
-  return `<div class="bed s-${s}${click}"><div class="bed-h"><span>Letto ${k+1}</span>${b.state==='reserved'&&b.date<=today?'<span title="Ingresso da confermare">●</span>':''}</div><div class="bed-s">${STATE_LABEL[s]}</div><div class="bed-d">${info.join('<br>')}</div>${acts.length?'<div class="bed-a">'+acts.join('')+'</div>':''}</div>`}
+  return `<div class="bed s-${s}${click}"><div class="bed-h"><span>${esc(bedLabel(b,k))}</span>${b.state==='reserved'&&b.date<=today?'<span title="Ingresso da confermare">●</span>':''}</div><div class="bed-s">${STATE_LABEL[s]}</div><div class="bed-d">${info.join('<br>')}</div>${acts.length?'<div class="bed-a">'+acts.join('')+'</div>':''}</div>`}
+function othersPanel(d){let tm=0,tw=0,tf=0;depts.forEach(x=>{const a=sexAvail(x);tm+=a.men;tw+=a.women;tf+=a.free});let open=false;try{open=localStorage.getItem('pl-others-open')==='1'}catch{}
+  return `<details class="card others" ${open?'open':''} ontoggle="try{localStorage.setItem('pl-others-open',this.open?'1':'0')}catch{}"><summary>Posti disponibili in tutti i reparti <span class="pillnum ${tf?'free':'zero'}">${tf}</span><span class="chip">♂ Per uomo ${tm}</span><span class="chip" style="color:#c2417a">♀ Per donna ${tw}</span></summary>${availTable(d.id)}</details>`}
 function deptHtml(d){
-  const ce=canEdit(d.id),c=counts(d),a=dailyAdmissions(d);
-  const rooms=d.rooms.map((r,j)=>{const sx=roomSex(r);return `<article class="card room ${roomHasIsolation(r)?'iso':''}"><div class="room-h"><h3>Stanza ${j+1}</h3>${ce?`<button class="btn ghost sm" onclick="editRoom(${j})">${ico('sliders')}Isolamento</button>`:''}</div>
-    <div class="room-tags">${sx==='M'?'<span class="chip">♂ Uomini</span>':sx==='F'?'<span class="chip">♀ Donne</span>':sx==='mixed'?'<span class="chip amber">Camera mista</span>':'<span class="chip">Stanza vuota</span>'}${r.iso!=='Nessuno'?`<span class="chip violet">Isolamento: ${esc(r.iso)}</span>`:r.cap?'<span class="chip">Adatta all’isolamento</span>':''}</div>
+  const ce=canEdit(d.id),c=counts(d),a=dailyAdmissions(d),ni=isoRooms(d);
+  const rooms=d.rooms.map((r,j)=>{const sx=roomSex(r),iso=r.iso!=='Nessuno';return `<article class="card room ${iso?'iso':''}"><div class="room-h"><h3>${esc(roomLabel(r,j))}</h3>${ce?`<button class="btn ghost sm" onclick="editRoom(${j})">${ico('sliders')}Modifica</button>`:''}</div>
+    <div class="room-tags">${iso?`<span class="chip red">● Isolamento: ${esc(r.iso)}</span>`:''}${sx==='M'?'<span class="chip">♂ Uomini</span>':sx==='F'?'<span class="chip">♀ Donne</span>':sx==='mixed'?'<span class="chip amber">Camera mista</span>':'<span class="chip">Stanza vuota</span>'}</div>
+    ${iso&&r.isoNote?`<div class="iso-note"><b>Motivo dell’isolamento</b>${esc(r.isoNote)}</div>`:''}
     <div class="beds">${r.beds.map((b,k)=>bedTile(d,r,b,j,k,ce)).join('')||'<span class="muted small">Nessun letto</span>'}</div></article>`}).join('');
   return `<button class="btn ghost sm back" onclick="go('overview')">${ico('back')} Quadro generale</button>
   <div class="phead"><div><h1 class="title">${esc(d.name)}</h1><p class="sub">${ce?(isAdmin?'Stai modificando come amministratore.':'Tocca un letto per aggiornarlo.'):'Sola consultazione.'} ${d.updatedAt?'Aggiornato '+updatedText(d)+(d.updatedBy?' da '+esc(d.updatedBy):'')+'.':'Non ancora aggiornato.'}</p></div>${ce?`<button class="btn" onclick="openStructure()">${ico('building')}Stanze e letti</button>`:''}</div>
   ${dateBar()}${kpiHtml(c)}
+  ${othersPanel(d)}
   ${a.total||a.overdue?`<div class="card strip"><b>Ricoveri programmati${date===today?' oggi':' il '+itDate(date)}: ${a.total}</b><span class="chip green">${a.confirmed} arrivati</span><span class="chip amber">${a.pending} da confermare</span>${a.overdue?`<span class="chip red">${a.overdue} di giorni passati ancora aperti</span>`:''}${ce?'<span class="muted small">Quando il paziente arriva premi “È arrivato” sul letto.</span>':''}</div>`:''}
-  <div class="toolbar"><h2>Stanze</h2><div class="legend">${STATES.map(s=>`<span><i class="l-${s}"></i>${STATE_LABEL[s]}</span>`).join('')}</div></div>
+  <div class="toolbar"><h2>Stanze${ni?` <span class="chip red" style="vertical-align:3px">${ni} in isolamento</span>`:''}</h2><div class="legend">${STATES.map(s=>`<span><i class="l-${s}"></i>${STATE_LABEL[s]}</span>`).join('')}<span><i class="lred"></i>Stanza in isolamento</span></div></div>
   <div class="rooms">${rooms||`<div class="empty">Nessuna stanza configurata.${ce?' Premi “Stanze e letti” per aggiungerle.':''}</div>`}</div>`}
 
 // ================= MODIFICA LETTO =================
 function editBed(j,k){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.rooms[j],b=r?.beds[k];if(!b)return;
   editing={id:d.id,j,k,room:JSON.stringify(r)};
-  $('#bedSub').textContent=d.name+' · Stanza '+(j+1);$('#bedTitle').textContent='Letto '+(k+1);
+  $('#bedSub').textContent=d.name+' · '+roomLabel(r,j);$('#bedTitle').textContent=bedLabel(b,k);
+  $('#bedName').value=b.name||'';$('#bedName').placeholder='Letto '+(k+1);$('#fBedName').hidden=true;
   $('#stateChoices').innerHTML=STATES.map(s=>`<label class="choice"><input type="radio" name="st" value="${s}" ${b.state===s?'checked':''} onchange="bedFields()"><span><i class="l-${s}"></i><span class="ct"><b>${STATE_LABEL[s]}</b><small>${STATE_HINT[s]}</small></span></span></label>`).join('');
   $$('input[name=sex]').forEach(x=>x.checked=x.value===b.sex);
   $('#bedDate').value=b.date||'';$('#bedDate').min=today;$('#bedReason').value=b.reason||'';$('#bedNotes').value=b.notes||'';
+  const iso=r.iso!=='Nessuno';$('#bedIso').checked=iso&&PATIENT.includes(b.state);
+  $('#bisoChoices').innerHTML=ISOS.filter(x=>x!=='Nessuno').map(x=>`<label class="choice"><input type="radio" name="biso" value="${esc(x)}" ${r.iso===x?'checked':''}><span>${esc(x)}</span></label>`).join('');
+  $('#bedIsoNote').value=r.isoNote||'';
+  $('#isoInfo').textContent=iso&&!b.isoSource&&r.beds.some((x,i)=>i!==k&&x.isoSource)?'La stanza è già in isolamento per un altro paziente: le modifiche valgono per tutta la stanza.':iso&&!PATIENT.includes(b.state)?'La stanza è già in isolamento ('+r.iso+').':'';
   $('#fNotes').hidden=!b.notes;$('#addNote').hidden=!!b.notes;$('#bedErr').textContent='';
   bedFields();$('#bedDlg').showModal()}
-function bedFields(){const s=$('input[name=st]:checked')?.value||'free';$('#fSex').hidden=!['occupied','reserved'].includes(s);$('#fDate').hidden=s!=='reserved';$('#fReason').hidden=!['blocked','closed'].includes(s);
+function toggleBedName(){const f=$('#fBedName');f.hidden=!f.hidden;if(!f.hidden)$('#bedName').focus()}
+function bedFields(){const s=$('input[name=st]:checked')?.value||'free';$('#fSex').hidden=!PATIENT.includes(s);$('#fDate').hidden=s!=='reserved';$('#fReason').hidden=!['blocked','closed'].includes(s);
+  $('#fBedIso').hidden=!PATIENT.includes(s);$('#isoBox').hidden=!$('#bedIso').checked;
   $('#reasonQuick').innerHTML=(REASONS[s]||[]).map(x=>`<button type="button" onclick="$('#bedReason').value=this.textContent">${esc(x)}</button>`).join('');
   if(s==='reserved'&&!$('#bedDate').value)$('#bedDate').value=nextDate();$('#bedErr').textContent=''}
 function showNote(){$('#fNotes').hidden=false;$('#addNote').hidden=true;$('#bedNotes').focus()}
 async function saveBed(){if(!editing)return;const {id,j,k,room}=editing,d=byId(id);if(!d||!canEdit(id))return;
-  const state=$('input[name=st]:checked')?.value||'free',sex=$('input[name=sex]:checked')?.value||'',admit=$('#bedDate').value,reason=$('#bedReason').value.trim().slice(0,120),notes=$('#bedNotes').value.trim().slice(0,300);
-  const r=JSON.parse(room),old=r.beds[k],err=m=>{$('#bedErr').textContent=m};
-  if(['occupied','reserved'].includes(state)&&!sex)return err('Indica se il paziente è uomo o donna.');
+  const state=$('input[name=st]:checked')?.value||'free',sex=$('input[name=sex]:checked')?.value||'',admit=$('#bedDate').value,reason=$('#bedReason').value.trim().slice(0,120),notes=$('#bedNotes').value.trim().slice(0,300),name=$('#bedName').value.trim().slice(0,30);
+  const isPatient=PATIENT.includes(state),isoOn=isPatient&&$('#bedIso').checked,isoType=isoOn?($('input[name=biso]:checked')?.value||''):'',isoNote=isoOn?$('#bedIsoNote').value.trim().slice(0,200):'';
+  const r=JSON.parse(room),old=r.beds[k],err=m=>{$('#bedErr').textContent=m;$('#bedErr').scrollIntoView({block:'nearest'})};
+  if(isPatient&&!sex)return err('Indica se il paziente è uomo o donna.');
   if(state==='reserved'&&!admit)return err('Indica il giorno previsto per l’ingresso.');
   if(state==='reserved'&&admit!==old.date&&admit<today)return err('Il giorno dell’ingresso non può essere nel passato.');
+  if(isoOn&&!isoType)return err('Scegli il tipo di isolamento.');
+  if(isoOn&&!isoNote)return err('Scrivi il motivo dell’isolamento: è obbligatorio.');
   if(['blocked','closed'].includes(state)&&!reason)return err('Scrivi il motivo, oppure scegline uno dai suggerimenti.');
-  const conflicts=r.beds.some((b,n)=>n!==k&&['occupied','reserved'].includes(b.state)&&b.sex&&sex&&b.sex!==sex);
-  if(['occupied','reserved'].includes(state)&&conflicts&&(old.state!==state||old.sex!==sex||state==='reserved'&&old.date!==admit)&&!await confirmMixedRoom(d,j))return;
-  const nb={state,sex:['occupied','reserved'].includes(state)?sex:'',date:state==='reserved'?admit:'',reason:['blocked','closed'].includes(state)?reason:'',notes};
-  const details=bedDiff(old,nb);if(!details.length){$('#bedDlg').close();return}
-  await guarded(async()=>{await mutate(id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==room)throw new AppError('Nel frattempo questa stanza è stata modificata da un altro computer. Riapri il letto e riprova.');const p=fr.beds[k];if(state==='occupied'&&p.state==='reserved'){p.scheduledDate=p.date;p.admittedAt=new Date().toISOString()}else if(state!=='occupied'){delete p.scheduledDate;delete p.admittedAt}Object.assign(p,nb)},{type:'letto',action:`Stanza ${j+1}, letto ${k+1}: ${STATE_LABEL[old.state]} → ${STATE_LABEL[state]}`,details});$('#bedDlg').close();editing=null;toast('Letto aggiornato')})}
+  const conflicts=r.beds.some((b,n)=>n!==k&&PATIENT.includes(b.state)&&b.sex&&sex&&b.sex!==sex);
+  if(isPatient&&conflicts&&(old.state!==state||old.sex!==sex||state==='reserved'&&old.date!==admit)&&!await confirmMixedRoom(d,j))return;
+  const leaving=PATIENT.includes(old.state)&&!isPatient;
+  const nb={state,sex:isPatient?sex:'',date:state==='reserved'?admit:'',reason:['blocked','closed'].includes(state)?reason:'',notes:leaving&&state==='free'?'':notes};
+  const details=bedDiff(old,nb);
+  if((old.name||'')!==name)details.unshift('Nome del letto: '+bedLabel(old,k)+' → '+(name||'Letto '+(k+1)));
+  if(isPatient){if(isoOn&&r.iso!==isoType)details.push('Isolamento stanza: '+r.iso+' → '+isoType);if(isoOn&&(r.isoNote||'')!==isoNote)details.push('Motivo dell’isolamento: '+isoNote);if(!isoOn&&r.iso!=='Nessuno')details.push('Isolamento della stanza terminato ('+r.iso+')')}
+  if(!details.length){$('#bedDlg').close();return}
+  if(leaving&&!await appMessage('Il paziente lascia '+bedLabel(old,k)+': i suoi dati vengono cancellati.'+(r.iso!=='Nessuno'&&(old.isoSource||!r.beds.some((b,n)=>n!==k&&PATIENT.includes(b.state)))?' Termina anche l’isolamento della stanza e i letti bloccati tornano liberi.':''),'Il paziente lascia il letto',true,{yes:'Conferma'}))return;
+  const label=roomLabel(r,j)+', '+(name||bedLabel(old,k));
+  const log={type:isoOn&&r.iso!==isoType?'isolamento':'letto',action:`${label}: ${old.state!==state?STATE_LABEL[old.state]+' → '+STATE_LABEL[state]:(old.name||'')!==name&&details.length===1?'letto rinominato':'dati aggiornati'}${isoOn&&r.iso!==isoType?' · isolamento '+isoType:''}`,details};
+  await guarded(async()=>{await mutate(id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==room)throw new AppError('Nel frattempo questa stanza è stata modificata da un altro computer. Riapri il letto e riprova.');const p=fr.beds[k];p.name=name;
+      if(leaving){log.details=[...details,...patientLeaves(fr,k,state,nb.reason,nb.notes)];return}
+      if(state==='occupied'&&p.state==='reserved'){p.scheduledDate=p.date;p.admittedAt=new Date().toISOString()}else if(state!=='occupied'){delete p.scheduledDate;delete p.admittedAt}
+      Object.assign(p,nb);
+      if(isPatient){if(isoOn){fr.iso=isoType;fr.isoNote=isoNote;fr.cap=true;if(!fr.beds.some(b=>b.isoSource))p.isoSource=true}else if(fr.iso!=='Nessuno')endIso(fr)}},log);
+    $('#bedDlg').close();editing=null;toast('Letto aggiornato')})}
 async function confirmAdmission(j,k){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.rooms[j],b=r?.beds[k];if(!b||b.state!=='reserved')return;
   if(b.date>today)return appMessage('L’ingresso è previsto per un giorno futuro: si può confermare dal giorno stabilito.');
   if(!b.sex)return appMessage('Indica prima se il paziente è uomo o donna: tocca il letto e completa i dati.');
   if(r.beds.some((o,n)=>n!==k&&o.state==='occupied'&&o.sex&&o.sex!==b.sex)&&!await confirmMixedRoom(d,j))return;
-  if(!await appMessage('Il paziente è arrivato e occupa il letto '+(k+1)+' della stanza '+(j+1)+'?','Conferma ingresso',true,{yes:'Sì, è arrivato'}))return;
+  if(!await appMessage('Il paziente è arrivato e occupa '+bedLabel(b,k)+' di '+roomLabel(r,j)+'?'+(r.iso!=='Nessuno'?'\n\nLa stanza resta in isolamento ('+r.iso+'). Se serve modificarlo, tocca il letto.':''),'Conferma ingresso',true,{yes:'Sì, è arrivato'}))return;
   const snap=JSON.stringify(r);
-  await guarded(()=>mutate(d.id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==snap)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Ricontrolla e riprova.');const fb=fr.beds[k];fb.scheduledDate=fb.date;fb.admittedAt=new Date().toISOString();fb.state='occupied'},{type:'ricovero',action:`Stanza ${j+1}, letto ${k+1}: ingresso confermato`,details:['Ricovero programmato del '+itDate(b.date),'Paziente: '+(SEX[b.sex]||'—')]}))}
+  await guarded(()=>mutate(d.id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==snap)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Ricontrolla e riprova.');const fb=fr.beds[k];fb.scheduledDate=fb.date;fb.admittedAt=new Date().toISOString();fb.state='occupied'},{type:'ricovero',action:`${roomLabel(r,j)}, ${bedLabel(b,k)}: ingresso confermato`,details:['Ricovero programmato del '+itDate(b.date),'Paziente: '+(SEX[b.sex]||'—'),r.iso!=='Nessuno'?'In isolamento: '+r.iso:'']}))}
 async function discharge(j,k){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.rooms[j],b=r?.beds[k];if(!b||b.state!=='occupied')return;
-  if(!await appMessage('Il paziente del letto '+(k+1)+' (stanza '+(j+1)+') è stato dimesso? Il letto tornerà libero.','Dimissione',true,{yes:'Sì, libera il letto'}))return;
-  const snap=JSON.stringify(r);
-  await guarded(()=>mutate(d.id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==snap)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Ricontrolla e riprova.');const p=fr.beds[k];Object.assign(p,{state:'free',sex:'',date:'',reason:''});delete p.scheduledDate;delete p.admittedAt},{type:'letto',action:`Stanza ${j+1}, letto ${k+1}: dimissione, letto libero`,details:['Stato: Occupato → Libero','Paziente: '+(SEX[b.sex]||'—')]}))}
+  const isoEnds=r.iso!=='Nessuno'&&(b.isoSource||!r.beds.some((x,n)=>n!==k&&PATIENT.includes(x.state)));
+  if(!await appMessage('Il paziente di '+bedLabel(b,k)+' ('+roomLabel(r,j)+') è stato dimesso?\n\nIl letto torna libero e i suoi dati vengono cancellati.'+(isoEnds?'\nTermina anche l’isolamento della stanza ('+r.iso+') e i letti bloccati tornano liberi.':'')+(!r.beds.some((x,n)=>n!==k&&PATIENT.includes(x.state))?'\nLa stanza resta senza pazienti: tutti i suoi letti vengono azzerati, tranne quelli chiusi.':''),'Dimissione',true,{yes:'Sì, dimesso'}))return;
+  const snap=JSON.stringify(r),log={type:'letto',action:`${roomLabel(r,j)}, ${bedLabel(b,k)}: dimissione`,details:[]};
+  await guarded(()=>mutate(d.id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==snap)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Ricontrolla e riprova.');log.details=['Stato: Occupato → Libero','Paziente: '+(SEX[b.sex]||'—'),...patientLeaves(fr,k)]},log))}
 
-// ---- impostazioni stanza (isolamento) ----
+// ---- stanza: nome e isolamento ----
 function editRoom(j){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.rooms[j];if(!r)return;roomEditing={id:d.id,j,room:JSON.stringify(r)};
-  $('#roomSub').textContent=d.name;$('#roomTitle').textContent='Stanza '+(j+1);$('#roomCap').checked=r.cap;
-  $('#isoChoices').innerHTML=ISOS.map(x=>`<label class="choice"><input type="radio" name="iso" value="${esc(x)}" ${r.iso===x?'checked':''}><span>${x==='Nessuno'?'Nessun isolamento':esc(x)}</span></label>`).join('');
-  $('#roomErr').textContent='';roomCapChanged();$('#roomDlg').showModal()}
-function roomCapChanged(){const cap=$('#roomCap').checked;$('#fIso').hidden=!cap;if(!cap)$$('input[name=iso]').forEach(x=>x.checked=x.value==='Nessuno')}
-async function saveRoom(){if(!roomEditing)return;const {id,j,room}=roomEditing,old=JSON.parse(room);const cap=$('#roomCap').checked,iso=cap?($('input[name=iso]:checked')?.value||'Nessuno'):'Nessuno';
-  const details=[];if(old.cap!==cap)details.push('Adatta all’isolamento: '+(old.cap?'Sì':'No')+' → '+(cap?'Sì':'No'));if(old.iso!==iso)details.push('Isolamento: '+old.iso+' → '+iso);if(!details.length){$('#roomDlg').close();return}
-  await guarded(async()=>{await mutate(id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==room)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Riapri e riprova.');fr.cap=cap;fr.iso=iso},{type:'isolamento',action:`Stanza ${j+1}: `+(iso!=='Nessuno'?'isolamento '+iso:old.iso!=='Nessuno'?'isolamento terminato':'impostazioni stanza'),details});$('#roomDlg').close();roomEditing=null;toast('Stanza aggiornata')})}
+  $('#roomSub').textContent=d.name;$('#roomTitle').textContent=roomLabel(r,j);$('#roomName').value=r.name||'';$('#roomName').placeholder='Stanza '+(j+1);
+  const iso=r.iso!=='Nessuno';$('#fRoomIso').hidden=!iso;$('#roomIsoHint').hidden=iso;
+  $('#risoChoices').innerHTML=ISOS.filter(x=>x!=='Nessuno').map(x=>`<label class="choice"><input type="radio" name="riso" value="${esc(x)}" ${r.iso===x?'checked':''}><span>${esc(x)}</span></label>`).join('');
+  $('#roomIsoNote').value=r.isoNote||'';$('#roomErr').textContent='';$('#roomDlg').showModal()}
+async function saveRoom(){if(!roomEditing)return;const {id,j,room}=roomEditing,old=JSON.parse(room),name=$('#roomName').value.trim().slice(0,30),iso=old.iso!=='Nessuno';
+  const type=iso?($('input[name=riso]:checked')?.value||old.iso):old.iso,note=iso?$('#roomIsoNote').value.trim().slice(0,200):'';
+  if(iso&&!note){$('#roomErr').textContent='Scrivi il motivo dell’isolamento: è obbligatorio.';return}
+  const details=[];if((old.name||'')!==name)details.push('Nome della stanza: '+roomLabel(old,j)+' → '+(name||'Stanza '+(j+1)));if(iso&&type!==old.iso)details.push('Isolamento: '+old.iso+' → '+type);if(iso&&note!==(old.isoNote||''))details.push('Motivo dell’isolamento: '+note);
+  if(!details.length){$('#roomDlg').close();return}
+  await guarded(async()=>{await mutate(id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==room)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Riapri e riprova.');fr.name=name;if(iso){fr.iso=type;fr.isoNote=note}},{type:iso&&(type!==old.iso||note!==(old.isoNote||''))?'isolamento':'struttura',action:`${name||roomLabel(old,j)}: stanza modificata`,details});$('#roomDlg').close();roomEditing=null;toast('Stanza aggiornata')})}
+async function endIsolation(){if(!roomEditing)return;const {id,j,room}=roomEditing,old=JSON.parse(room);
+  if(!await appMessage('Terminare l’isolamento di “'+roomLabel(old,j)+'”? I letti bloccati della stanza tornano liberi.','Termina isolamento',true,{yes:'Termina'}))return;
+  await guarded(async()=>{await mutate(id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==room)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Riapri e riprova.');endIso(fr)},{type:'isolamento',action:`${roomLabel(old,j)}: isolamento terminato`,details:['Isolamento: '+old.iso+' → Nessuno','Motivo era: '+(old.isoNote||'—')]});$('#roomDlg').close();roomEditing=null;toast('Isolamento terminato')})}
 
 // ---- struttura del reparto ----
 function openStructure(){const d=byId(page);if(!d||!canEdit(d.id))return;structDraft={id:d.id,snap:JSON.stringify(d.rooms),rows:d.rooms.map((r,j)=>({orig:j,size:r.beds.length}))};$('#structSub').textContent=d.name;$('#structErr').textContent='';drawStructure();$('#structDlg').showModal()}
-function drawStructure(){const d=byId(structDraft.id);$('#structRows').innerHTML=structDraft.rows.map((x,j)=>{const r=x.orig!==null?d.rooms[x.orig]:null,busy=r&&(r.iso!=='Nessuno'||r.beds.some(b=>b.state!=='free'||b.reason||b.notes));return `<div class="rowitem"><b>Stanza ${j+1}</b><div class="stepper"><button type="button" onclick="structStep(${j},-1)" aria-label="Un letto in meno">−</button><output>${x.size}</output><button type="button" onclick="structStep(${j},1)" aria-label="Un letto in più">+</button></div><span class="muted small">${x.size===1?'letto':'letti'}${x.orig===null?' · nuova':x.orig!==j?' · era la stanza '+(x.orig+1):''}</span><button type="button" class="btn ghost sm" style="margin-left:auto" ${busy?'disabled title="Ci sono letti occupati, programmati, bloccati, con note o un isolamento attivo"':''} onclick="structRemove(${j})">Togli</button></div>`}).join('')||'<div class="empty">Nessuna stanza. Premi “Aggiungi stanza”.</div>'}
+function drawStructure(){const d=byId(structDraft.id);$('#structRows').innerHTML=structDraft.rows.map((x,j)=>{const r=x.orig!==null?d.rooms[x.orig]:null,busy=r&&(r.iso!=='Nessuno'||r.beds.some(b=>b.state!=='free'||b.reason||b.notes));return `<div class="rowitem"><b>${r&&r.name?esc(r.name):'Stanza '+(j+1)}</b><div class="stepper"><button type="button" onclick="structStep(${j},-1)" aria-label="Un letto in meno">−</button><output>${x.size}</output><button type="button" onclick="structStep(${j},1)" aria-label="Un letto in più">+</button></div><span class="muted small">${x.size===1?'letto':'letti'}${x.orig===null?' · nuova':x.orig!==j&&!(r&&r.name)?' · era la stanza '+(x.orig+1):''}</span><button type="button" class="btn ghost sm" style="margin-left:auto" ${busy?'disabled title="Ci sono letti occupati, programmati, bloccati, con note o un isolamento attivo"':''} onclick="structRemove(${j})">Togli</button></div>`}).join('')||'<div class="empty">Nessuna stanza. Premi “Aggiungi stanza”.</div>'}
 function structStep(j,v){const x=structDraft.rows[j];x.size=Math.max(0,Math.min(12,x.size+v));drawStructure()}
 function structAdd(){if(structDraft.rows.length>=50)return;structDraft.rows.push({orig:null,size:2});drawStructure()}
 function structRemove(j){structDraft.rows.splice(j,1);drawStructure()}
@@ -895,7 +974,7 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.__bip=e;ref
 addEventListener('appinstalled',()=>{window.__bip=null;toast('Posti letto è installato');if(user)audit('sistema',isAdmin?'':myDept,'Programma installato come app');setTimeout(refreshInstallBtn,500)});
 
 // ================= AVVIO =================
-Object.assign(window,{$,go,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,roomCapChanged,saveRoom,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
+Object.assign(window,{$,go,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,saveRoom,endIsolation,toggleBedName,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
 window.render=render;
 refreshInstallBtn();$('#gateVer').textContent='Versione '+APP_VERSION+' · '+APP_DATE;tick();setInterval(tick,1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();beat()}});
