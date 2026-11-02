@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- Posti letto · Ospedale di Stato RSM · versione 3.3.0 (02/11/2026)
+<!-- Posti letto · Ospedale di Stato RSM · versione 3.5.0 (02/11/2026)
      Nuova grafica chiara, accesso per reparto, registro attività completo per l'amministratore. -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<meta name="version" content="3.3.0">
+<meta name="version" content="3.5.0">
 <title>Posti letto · Ospedale di Stato RSM</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f4f7f9">
@@ -305,6 +305,65 @@ tr.ld td{background:#fbfdfd;border-top:0;padding-top:4px}
 .pwth{white-space:nowrap}
 .eyebtn{border:0;background:var(--accent-50);color:var(--accent-d);border-radius:8px;width:28px;height:24px;display:inline-grid;place-items:center;vertical-align:middle;margin-left:4px}
 .eyebtn .ico{width:16px;height:16px}
+/* schermo monitor */
+body.monitor .side,body.monitor .top,body.monitor #reminder{display:none}
+body.monitor .shell{grid-template-columns:minmax(0,1fr)}
+body.monitor .content{max-width:none;padding:clamp(14px,1.8vw,28px)}
+body.monitor{background:#eef3f6}
+body.monitor.idle,body.monitor.idle *{cursor:none!important}
+body.monitor.idle .mon-ctrl{opacity:0;pointer-events:none}
+.mon{display:flex;flex-direction:column;gap:clamp(12px,1.5vw,22px);min-height:calc(100vh - 2 * clamp(14px,1.8vw,28px))}
+.mon-h{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.mon-brand{display:flex;align-items:center;gap:clamp(10px,1vw,16px)}
+.mon-brand img{width:clamp(44px,4vw,66px);height:clamp(44px,4vw,66px);border-radius:16px;box-shadow:var(--shadow)}
+.mon-brand b{display:block;font-size:clamp(22px,2.4vw,40px);letter-spacing:-.8px;line-height:1.1}
+.mon-brand span{color:var(--muted);font-size:clamp(13px,1.1vw,18px);font-weight:500}
+.mon-clock{text-align:right}
+.mon-clock b{display:block;font-size:clamp(36px,4.6vw,76px);letter-spacing:-2px;line-height:1;font-variant-numeric:tabular-nums}
+.mon-clock span{color:var(--muted);font-size:clamp(13px,1.15vw,19px);font-weight:600}
+.mon-tot{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:clamp(8px,1vw,14px)}
+.mon-tot>div{background:#fff;border:1px solid var(--line);border-radius:18px;padding:clamp(10px,1vw,16px) clamp(12px,1.3vw,20px);box-shadow:var(--shadow)}
+.mon-tot small{display:block;color:var(--muted);font-weight:700;font-size:clamp(11px,.9vw,14px);text-transform:uppercase;letter-spacing:.5px}
+.mon-tot b{display:block;font-size:clamp(30px,3.4vw,58px);letter-spacing:-1.5px;line-height:1.1}
+.mon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(230px,17vw,330px),1fr));gap:clamp(10px,1.2vw,16px);flex:1;align-content:start}
+.mt{background:#fff;border:1px solid var(--line);border-top:7px solid var(--free);border-radius:18px;padding:clamp(12px,1.2vw,18px);display:flex;flex-direction:column;gap:clamp(6px,.7vw,10px);box-shadow:var(--shadow)}
+.mt.zero{border-top-color:var(--danger);background:#fffafa}
+.mt-h{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.mt-h b{font-size:clamp(16px,1.45vw,24px);line-height:1.2;letter-spacing:-.3px}
+.mt-big{font-size:clamp(48px,5.2vw,92px);font-weight:800;letter-spacing:-3px;line-height:.95;color:var(--free)}
+.mt.zero .mt-big{color:var(--danger)}
+.mt-big small{font-size:clamp(13px,1.05vw,18px);letter-spacing:0;color:var(--muted);font-weight:600;margin-left:8px}
+.mt-sex{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.mt-sex span{background:#f4f7f9;border-radius:11px;padding:6px 9px;font-size:clamp(11px,.85vw,14px);color:var(--muted);font-weight:600;line-height:1.25}
+.mt-sex b{display:block;font-size:clamp(22px,2vw,34px);color:var(--text);letter-spacing:-.5px;line-height:1.1}
+.mt-sex .m b{color:var(--occ)}.mt-sex .w b{color:#c2417a}
+.mt-f{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:clamp(11px,.9vw,14px);color:var(--muted);margin-top:auto;font-weight:500}
+.mon-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:clamp(12px,.9vw,14px)}
+.mon-ctrl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;transition:opacity .3s}
+.conn{display:inline-flex;align-items:center;gap:7px;font-weight:700}
+.conn.ok{color:var(--free)}.conn.off{color:var(--danger)}
+.chk{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text2);font-weight:600;margin:0}
+.chk input{width:16px;height:16px;padding:0}
+/* statistiche */
+.viz{width:100%;height:auto;display:block;font-family:inherit}
+.viz .gl{stroke:#eef2f6;stroke-width:1}
+.viz .bl{stroke:#cfd8e0;stroke-width:1}
+.viz .al{fill:#8593a0;font-size:11px}
+.viz .ln{fill:none;stroke:#2a78d6;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;pointer-events:none}
+.viz .mk{fill:#2a78d6;stroke:#fff;stroke-width:2;pointer-events:none}
+.viz .hit{fill:transparent}
+.viz .xh{stroke:#8593a0;stroke-width:1;stroke-dasharray:3 3;opacity:0;pointer-events:none}
+.viz .band:hover .xh{opacity:1}
+.viz .band:hover .bar{opacity:.85}
+.viztip{position:fixed;z-index:2000;background:#15303b;color:#fff;border-radius:10px;padding:8px 11px;font-size:12.5px;line-height:1.5;pointer-events:none;box-shadow:var(--shadow-lg);max-width:260px}
+.viztip b{font-weight:800}
+.vlegend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--text2);font-weight:600}
+.vlegend i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:6px;vertical-align:-1px}
+.chartgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(460px,100%),1fr));gap:16px;margin-bottom:16px}
+.meter8{height:8px;border-radius:8px;background:var(--line2);overflow:hidden;width:110px;display:inline-block;vertical-align:middle;margin-right:8px}
+.meter8 i{display:block;height:100%;border-radius:8px;background:#2a78d6}
+details.daily>summary{cursor:pointer;padding:14px 20px;font-weight:700;list-style:none}
+details.daily>summary::-webkit-details-marker{display:none}
 /* guida */
 .help-btn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--accent-100);background:var(--accent-50);color:var(--accent-d);border-radius:13px;padding:10px 12px;font-weight:700;font-size:13.5px;margin-top:auto}
 .help-btn:hover{background:#e2f6f1}
@@ -359,25 +418,28 @@ dialog.wide{width:min(640px,calc(100vw - 24px))}
 .hs4 .hs-cur{animation:hs4cur 7s infinite}
 @keyframes hs4cur{0%{transform:translate(230px,160px)}20%{transform:translate(48px,98px)}25%{transform:translate(48px,98px) scale(.8)}29%{transform:translate(48px,98px) scale(1)}54%{transform:translate(48px,98px)}58%{transform:translate(48px,98px) scale(.8)}62%,100%{transform:translate(48px,98px) scale(1)}}
 /* 5 isolamento */
-.hs5{width:300px;height:172px}
-.hs5room{padding:12px;height:172px;border:3px solid var(--line);animation:hs5bd 5s infinite}
+.hs5{width:410px;height:172px;display:flex;gap:12px;align-items:center}
+.hs5form{width:168px;padding:10px 11px;display:flex;flex-direction:column;gap:7px;font-size:11.5px}
+.hs5form small{color:var(--muted);font-weight:600}
+.hs5row{display:flex;gap:5px;flex-wrap:wrap}
+.hs5room{flex:1;padding:12px;height:160px;border:3px solid var(--line);animation:hs5bd 5s infinite}
 @keyframes hs5bd{0%,34%{border-color:var(--line);box-shadow:var(--shadow)}40%,92%{border-color:#d93636;box-shadow:0 0 0 4px rgba(217,54,54,.13)}100%{border-color:var(--line)}}
 .hs5 .room-h{margin-bottom:10px}
-.hs5sw{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:600}
+.hs5sw{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:11px;color:var(--text2);font-weight:700}
 .hs5sw .trk{width:36px;height:20px;border-radius:99px;background:#d6dee6;position:relative;animation:hs5trk 5s infinite}
 .hs5sw .knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);animation:hs5knob 5s infinite}
 @keyframes hs5trk{0%,26%{background:#d6dee6}30%,92%{background:var(--accent)}100%{background:#d6dee6}}
 @keyframes hs5knob{0%,26%{left:2px}30%,92%{left:18px}100%{left:2px}}
 .hs5beds{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.hs5beds .bed{min-height:62px;padding:8px 10px;gap:2px}
-.hs5b2{position:relative;min-height:62px}
+.hs5beds .bed{min-height:80px;padding:8px 10px;gap:2px}
+.hs5b2{position:relative;min-height:80px}
 .hs5f{animation:hs5f 5s infinite}.hs5k{animation:hs5k 5s infinite}
 @keyframes hs5f{0%,38%{opacity:1}44%,92%{opacity:0}100%{opacity:1}}
 @keyframes hs5k{0%,38%{opacity:0}44%,92%{opacity:1}100%{opacity:0}}
-.hs5note{margin-top:8px;font-size:11.5px;color:#9b2c2c;background:var(--danger-bg);border-radius:8px;padding:5px 9px;opacity:0;animation:hs5n 5s infinite}
+.hs5note{margin-top:0;font-size:11.5px;color:#9b2c2c;background:var(--danger-bg);border-radius:8px;padding:5px 9px;opacity:0;animation:hs5n 5s infinite}
 @keyframes hs5n{0%,44%{opacity:0}50%,92%{opacity:1}100%{opacity:0}}
 .hs5 .hs-cur{animation:hs5cur 5s infinite}
-@keyframes hs5cur{0%{transform:translate(320px,190px)}20%{transform:translate(250px,16px)}24%{transform:translate(250px,16px) scale(.8)}28%,100%{transform:translate(250px,16px) scale(1)}}
+@keyframes hs5cur{0%{transform:translate(400px,190px)}20%{transform:translate(150px,90px)}24%{transform:translate(150px,90px) scale(.8)}28%,100%{transform:translate(150px,90px) scale(1)}}
 /* 6 altri reparti */
 .hs6{width:310px}
 .hs6t{padding:4px 0;overflow:hidden}
@@ -417,7 +479,7 @@ dialog.wide{width:min(640px,calc(100vw - 24px))}
 .hs9 .btn{padding:11px 16px;font-size:14px}
 .hs9a{animation:hs9 4s infinite}.hs9b{animation:hs9 4s infinite 2s}
 @keyframes hs9{0%,10%{transform:scale(1);box-shadow:none}20%{transform:scale(1.1);box-shadow:0 0 0 6px var(--accent-100)}35%,100%{transform:scale(1);box-shadow:none}}
-@media (max-width:600px){.hs2{grid-template-columns:repeat(3,88px)}.hs2 .bed{min-height:64px}.help-stage .hs:not(.hs2){transform:scale(.82)}}
+@media (max-width:600px){.hs2{grid-template-columns:repeat(3,88px)}.hs2 .bed{min-height:64px}.help-stage .hs:not(.hs2){transform:scale(.82)}.help-stage .hs5{transform:scale(.74)}}
 @media (prefers-reduced-motion:reduce){.help-stage *{animation-duration:0s!important;animation-iteration-count:1!important}}
 
 @media (max-width:980px){
@@ -551,9 +613,9 @@ dialog.wide{width:min(640px,calc(100vw - 24px))}
     <div class="isohead">● Stanza in isolamento</div>
     <div class="field"><span class="lbl">Tipo di isolamento</span><div class="choices c5" id="risoChoices"></div></div>
     <div class="field"><label for="roomIsoNote">Motivo dell’isolamento <span style="color:var(--danger)">(obbligatorio)</span></label><textarea id="roomIsoNote" rows="2" maxlength="200"></textarea></div>
-    <button type="button" class="btn danger sm" style="margin-top:14px" onclick="endIsolation()">Termina isolamento</button>
+    <p class="small" id="roomIsoCount" style="color:#9b2c2c;margin-top:12px"></p>
   </div>
-  <p class="small" id="roomIsoHint">L’isolamento si attiva dal letto, quando inserisci il paziente: tocca il letto e attiva “Paziente in isolamento”.</p>
+  <p class="small" id="roomIsoHint">L’isolamento si attiva solo inserendo un nuovo ricovero: tocca un letto libero, scegli Occupato o Programmato e attiva “Paziente in isolamento”. Termina da solo quando viene dimesso l’ultimo paziente in isolamento.</p>
   <div class="err" id="roomErr" role="alert"></div>
   <div class="actions"><button type="button" class="btn" onclick="closeDlg(this)">Annulla</button><button class="btn primary">Salva</button></div>
 </form></dialog>
@@ -614,12 +676,13 @@ dialog.wide{width:min(640px,calc(100vw - 24px))}
   <div class="actions"><button class="btn" id="msgNo">Annulla</button><button class="btn primary" id="msgYes">Conferma</button></div>
 </div></dialog>
 
+<div id="vizTip" class="viztip" hidden></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden onchange="handleImport(this)">
 
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
 import {getAuth,initializeAuth,inMemoryPersistence,browserLocalPersistence,browserSessionPersistence,setPersistence,signInWithEmailAndPassword,signOut,onAuthStateChanged,createUserWithEmailAndPassword,updatePassword,reauthenticateWithCredential,EmailAuthProvider} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js';
-import {getFirestore,doc,getDoc,getDocs,setDoc,deleteDoc,collection,onSnapshot,runTransaction,writeBatch,addDoc,query,where,orderBy,limit,deleteField,serverTimestamp,Timestamp,FieldPath} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
+import {getFirestore,doc,getDoc,getDocs,setDoc,deleteDoc,collection,onSnapshot,runTransaction,writeBatch,addDoc,query,where,orderBy,limit,deleteField,serverTimestamp,Timestamp,FieldPath,increment} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
 
 // ================= CONFIGURAZIONE =================
 const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomain:"gestionale-reparti-ospedale.firebaseapp.com",projectId:"gestionale-reparti-ospedale",storageBucket:"gestionale-reparti-ospedale.firebasestorage.app",messagingSenderId:"398239423904",appId:"1:398239423904:web:af3007359ca0af7f8998c5"};
@@ -627,7 +690,7 @@ const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomai
 // Deve coincidere con l'email scritta in firestore.rules.
 const ADMIN_EMAIL='admin@ospedale.local';
 const ACCOUNT_DOMAIN='ospedale.local';
-const APP_VERSION='3.3.0',APP_DATE='02/11/2026';
+const APP_VERSION='3.5.0',APP_DATE='02/11/2026';
 const PS='__ps',PS_LABEL='Pronto Soccorso',ADMIN='__admin',LEGACY_KEY='beds-rsm-configurable-v3';
 const ADMIN_IDLE_MIN=30;
 const TZ='Europe/San_Marino';
@@ -655,7 +718,7 @@ function randomId(n=10){const cs='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwx
 const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 const DEVICE=(()=>{const u=navigator.userAgent;const b=/Edg\//.test(u)?'Edge':/OPR\//.test(u)?'Opera':/Firefox\/|FxiOS/.test(u)?'Firefox':/Chrome\/|CriOS/.test(u)?'Chrome':/Safari\//.test(u)?'Safari':'Browser';const o=/Windows/.test(u)?'Windows':/Android/.test(u)?'Android':/iPhone|iPad|iPod/.test(u)?'iOS':/Mac OS X/.test(u)?'macOS':/Linux/.test(u)?'Linux':'';return b+(o?' · '+o:'')+(isStandalone()?' · app':'')})();
 const SID=(()=>{let s=sessionStorage.getItem('pl-sid');if(!s){s=randomId(10);sessionStorage.setItem('pl-sid',s)}return s})();
-const ICONS={eyeoff:'<path d="M3 3l18 18M10.6 6.2A9.8 9.8 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.3 4M6.5 7.6C3.7 9.4 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>',bed:'<path d="M3 6v13M3 14h18v5M21 14v-2.5A2.5 2.5 0 0 0 18.5 9H11v5"/><circle cx="7" cy="11" r="2"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',activity:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.5 3.5 5.2"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 21v-4h6v4M12 7v4M10 9h4"/>',sliders:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',logout:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11"/>',download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',upload:'<path d="M12 16V5M7 10l5-5 5 5M5 20h14"/>',chart:'<path d="M4 20V11M10 20V5M16 20v-6M2 20h20"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M15 18l-6-6 6-6"/>',lock:'<rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/>',switch:'<path d="M7 7h11l-3-3M17 17H6l3 3"/>',door:'<path d="M5 21V4a1 1 0 0 1 1-1h9l4 2v16M3 21h18"/><circle cx="12.5" cy="12" r=".8"/>',refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>'};
+const ICONS={tv:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',trend:'<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',expand:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',eyeoff:'<path d="M3 3l18 18M10.6 6.2A9.8 9.8 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.3 4M6.5 7.6C3.7 9.4 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>',bed:'<path d="M3 6v13M3 14h18v5M21 14v-2.5A2.5 2.5 0 0 0 18.5 9H11v5"/><circle cx="7" cy="11" r="2"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',activity:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.5 3.5 5.2"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 21v-4h6v4M12 7v4M10 9h4"/>',sliders:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',logout:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11"/>',download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',upload:'<path d="M12 16V5M7 10l5-5 5 5M5 20h14"/>',chart:'<path d="M4 20V11M10 20V5M16 20v-6M2 20h20"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M15 18l-6-6 6-6"/>',lock:'<rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/>',switch:'<path d="M7 7h11l-3-3M17 17H6l3 3"/>',door:'<path d="M5 21V4a1 1 0 0 1 1-1h9l4 2v16M3 21h18"/><circle cx="12.5" cy="12" r=".8"/>',refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>'};
 const ico=n=>`<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]||''}</svg>`;
 const AV=['#0f9b8e','#2c6bd8','#c7820f','#7650d3','#c84a7c','#1d88b0','#4f8a2a','#b8571a','#0d7a8a'];
 function avColor(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return AV[h%AV.length]}
@@ -718,9 +781,14 @@ function endIso(fr){fr.iso='Nessuno';fr.isoNote='';fr.beds.forEach(b=>{delete b.
 // Un paziente lascia il letto (dimissione o ricovero annullato): il letto si azzera.
 // Se era il paziente in isolamento, o la stanza resta senza pazienti, l'isolamento termina;
 // se la stanza resta senza pazienti, tutti i suoi letti (tranne quelli chiusi) tornano liberi e puliti.
-function patientLeaves(fr,k,newState='free',reason='',notes=''){const p=fr.beds[k],wasSource=!!p.isoSource,out=[];clearPatient(p);p.state='free';
+// Ogni paziente può essere in isolamento (isoSource). La stanza resta in isolamento finché ne resta almeno uno:
+// torna normale solo quando esce l'ultimo paziente in isolamento. Per i dati vecchi senza segno sul paziente,
+// l'isolamento finisce quando la stanza resta senza pazienti.
+const isoPatients=(r,except=-1)=>r.beds.filter((b,n)=>n!==except&&b.isoSource&&PATIENT.includes(b.state)).length;
+function isoEndsIfLeaves(r,k){if(r.iso==='Nessuno')return false;if(r.beds.some(b=>b.isoSource))return isoPatients(r,k)===0;return !r.beds.some((b,n)=>n!==k&&PATIENT.includes(b.state))}
+function patientLeaves(fr,k,newState='free',reason='',notes=''){const p=fr.beds[k],ends=isoEndsIfLeaves(fr,k),wasIso=!!p.isoSource,out=[];clearPatient(p);p.state='free';
   const empty=!fr.beds.some(b=>PATIENT.includes(b.state));
-  if(fr.iso!=='Nessuno'&&(wasSource||empty)){out.push('Isolamento della stanza terminato ('+fr.iso+')');endIso(fr)}
+  if(ends){out.push('Isolamento della stanza terminato ('+fr.iso+')');endIso(fr)}else if(fr.iso!=='Nessuno'&&wasIso){const n=isoPatients(fr);out.push('La stanza resta in isolamento: '+(n===1?'c’è ancora 1 paziente':'ci sono ancora '+n+' pazienti')+' in isolamento')}
   if(empty){let n=0;fr.beds.forEach((b,i)=>{if(i===k||b.state==='closed')return;if(b.state!=='free'||b.notes||b.reason)n++;b.state='free';clearPatient(b)});if(n)out.push('Stanza senza pazienti: azzerati anche '+n+(n===1?' altro letto':' altri letti'))}
   p.state=newState;p.reason=reason;p.notes=notes;return out}
 
@@ -783,15 +851,16 @@ onSnapshot(doc(db,'public','logins'),s=>{const data=s.exists()?s.data():{};login
 
 onAuthStateChanged(auth,async u=>{
   authReady=true;stopListeners();user=u;isAdmin=false;myDept=null;myLabel='';depts=[];deptsLoaded=false;viewed=new Set();auditRows=[];todayRows=[];presenceRows=[];auditLoaded=false;
-  if(!u){renderGate();return}
+  if(!u){document.body.classList.remove('monitor');keepAwake(false);renderGate();return}
   if(u.email===ADMIN_EMAIL){isAdmin=true;myLabel='Amministratore'}
   else{try{const s=await getDoc(doc(db,'accounts',u.uid));if(s.exists()){myDept=s.data().dept;myLabel=s.data().label||'Reparto'}}catch(e){console.warn(e)}
     if(!myDept){pendingLogin=null;gateErr='Accesso non più valido: la password di questo profilo è stata cambiata o revocata.';await signOut(auth);return}
     unsubs.push(onSnapshot(doc(db,'accounts',u.uid),s=>{if(!s.exists()){gateErr='La password di questo profilo è stata cambiata dall’amministratore. Accedi con quella nuova.';signOut(auth)}else if(s.data().label&&s.data().label!==myLabel){myLabel=s.data().label;render({soft:true})}},()=>{}))}
   sessionSince=new Date().toISOString();lastActivity=Date.now();date=today;
-  page=isAdmin?'admin':(myDept===PS?'overview':myDept);adminTab='attivita';gateSel=null;gateErr='';
+  let autoMon=false;try{autoMon=localStorage.getItem('pl-monitor-auto')==='1'}catch{}
+  page=location.hash==='#monitor'||autoMon?'monitor':isAdmin?'admin':(myDept===PS?'overview':myDept);adminTab='attivita';gateSel=null;gateErr='';
   $('#gate').hidden=true;$('#shell').hidden=false;
-  unsubs.push(onSnapshot(collection(db,'departments'),snap=>{depts=snap.docs.map(x=>normalize({id:x.id,...x.data()}));sortDepts();deptsLoaded=true;syncPublicDepts();render({soft:true});if(editing&&$('#bedDlg').open&&!byId(editing.id))$('#bedDlg').close()},e=>{console.error(e);if(e.code==='permission-denied'&&!isAdmin){gateErr='Il profilo non ha più accesso ai dati.';signOut(auth)}else appMessage(errMsg(e),'Errore di collegamento')}));
+  unsubs.push(onSnapshot(collection(db,'departments'),snap=>{depts=snap.docs.map(x=>normalize({id:x.id,...x.data()}));sortDepts();deptsLoaded=true;syncPublicDepts();scheduleStats();render({soft:true});if(editing&&$('#bedDlg').open&&!byId(editing.id))$('#bedDlg').close()},e=>{console.error(e);if(e.code==='permission-denied'&&!isAdmin){gateErr='Il profilo non ha più accesso ai dati.';signOut(auth)}else appMessage(errMsg(e),'Errore di collegamento')}));
   if(isAdmin)startAdminFeeds();
   const dept=isAdmin?'':myDept;
   if(pendingLogin){const f=pendingLogin.failed;audit('accesso',dept,'Accesso effettuato',[f?f+(f===1?' tentativo':' tentativi')+' con password sbagliata prima dell’accesso':'',isStandalone()?'Aperto dall’app installata':'']);pendingLogin=null;sessionStorage.setItem('pl-open-'+u.uid,'1')}
@@ -802,27 +871,29 @@ onAuthStateChanged(auth,async u=>{
 
 // ---- sessioni aperte ----
 let lastBeat=0;
-function pageLabel(){return page==='overview'?'Quadro generale':page==='admin'?'Area amministratore':deptName(page)}
+function pageLabel(){return page==='overview'?'Quadro generale':page==='admin'?'Area amministratore':page==='monitor'?'Schermo monitor':deptName(page)}
 async function beat(force){if(!user)return;if(!force&&Date.now()-lastBeat<4000)return;lastBeat=Date.now();try{await setDoc(doc(db,'presence',user.uid+'_'+SID),{uid:user.uid,who:myLabel,dept:isAdmin?'':myDept,page:pageLabel(),device:DEVICE,since:sessionSince,lastSeen:serverTimestamp()})}catch(e){}}
 
 // ================= NAVIGAZIONE E RENDER =================
-function go(p){if(p!=='overview'&&p!=='admin'&&!byId(p))return;page=p;if(!isAdmin&&byId(p)&&p!==myDept&&!viewed.has(p)){viewed.add(p);audit('consultazione',p,'Consultato il reparto '+deptName(p))}beat();render();window.scrollTo(0,0)}
+function go(p){if(p!=='overview'&&p!=='admin'&&p!=='monitor'&&!byId(p))return;page=p;if(!isAdmin&&byId(p)&&p!==myDept&&!viewed.has(p)){viewed.add(p);audit('consultazione',p,'Consultato il reparto '+deptName(p))}beat();render();window.scrollTo(0,0)}
 function freeCnt(d){return counts(d).free}
 function navItem(p,icon,label,cnt){return `<button class="nav-i ${page===p?'on':''}" onclick="go('${esc(p)}')">${icon?ico(icon):'<span class="ndot"></span>'}<span class="nl">${esc(label)}</span>${cnt!=null?`<span class="cnt ${cnt?'':'z'}" title="Letti disponibili">${cnt}</span>`:''}</button>`}
 function renderSide(){
   const own=!isAdmin&&myDept!==PS?byId(myDept):null;
   let h=navItem('overview','grid','Quadro generale');
   if(own)h+=navItem(own.id,'bed','Il mio reparto',freeCnt(own));
+  h+=navItem('monitor','tv','Schermo monitor');
   if(isAdmin)h+=navItem('admin','shield','Area amministratore');
   h+='<div class="nav-l">Reparti</div>'+(deptsLoaded?depts.map(d=>navItem(d.id,null,d.name,freeCnt(d))).join(''):'<div class="small muted" style="padding:6px 10px">Caricamento…</div>');
   $('#nav').innerHTML=h;
   $('#who').innerHTML=`<span class="avatar" style="background:${isAdmin?'#3a4a58':avColor(myLabel)}">${isAdmin?ico('shield'):esc(initials(myLabel))}</span><div><b>${esc(myLabel)}</b><small>${isAdmin?'Accesso completo':myDept===PS?'Sola consultazione':'Modifica il proprio reparto'}</small></div>`;
   $('#sidefoot').innerHTML='I numeri accanto ai reparti sono i letti disponibili.<br>Dati condivisi in tempo reale, senza dati dei pazienti.<br><br>Versione '+APP_VERSION+' · '+APP_DATE;
   $('#logoutBtn').innerHTML=isAdmin?ico('logout')+'<span class="bl">Esci</span>':ico('switch')+'<span class="bl">Cambia reparto</span>';
-  $('#crumb').textContent=page==='overview'?'Quadro generale':page==='admin'?'Area amministratore':'Reparti / '+deptName(page);
+  $('#crumb').textContent=page==='overview'?'Quadro generale':page==='admin'?'Area amministratore':page==='monitor'?'Schermo monitor':'Reparti / '+deptName(page);
   refreshInstallBtn()}
 function render(opts={}){
   if(!signedInOk())return;
+  document.body.classList.toggle('monitor',page==='monitor');keepAwake(page==='monitor');
   renderSide();updateReminder();
   if(opts.soft&&page==='admin'&&['attivita','collegati'].includes(adminTab)&&$('#admBody')){if(adminTab==='attivita')updateLog();else updatePresence();return}
   const act=document.activeElement,fid=act&&act.id&&$('#content').contains(act)?act.id:null,sel=fid&&'selectionStart'in act?[act.selectionStart,act.selectionEnd]:null;
@@ -830,8 +901,8 @@ function render(opts={}){
   if(page==='admin'){if(isAdmin)renderAdmin();else page='overview'}
   if(page!=='admin'){
     if(!deptsLoaded){c.innerHTML='<div class="kpis"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>';return}
-    if(page!=='overview'&&!byId(page))page='overview';
-    c.innerHTML=page==='overview'?overviewHtml():deptHtml(byId(page))}
+    if(page!=='overview'&&page!=='monitor'&&!byId(page))page='overview';
+    c.innerHTML=page==='overview'?overviewHtml():page==='monitor'?monitorHtml():deptHtml(byId(page))}
   labelTables();
   if(fid){const el=document.getElementById(fid);if(el){el.focus();try{sel&&el.setSelectionRange(...sel)}catch{}}}}
 
@@ -905,10 +976,11 @@ function editBed(j,k){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.
   $('#stateChoices').innerHTML=STATES.map(s=>`<label class="choice"><input type="radio" name="st" value="${s}" ${b.state===s?'checked':''} onchange="bedFields()"><span><i class="l-${s}"></i><span class="ct"><b>${STATE_LABEL[s]}</b><small>${STATE_HINT[s]}</small></span></span></label>`).join('');
   $$('input[name=sex]').forEach(x=>x.checked=x.value===b.sex);
   $('#bedDate').value=b.date||'';$('#bedDate').min=today;$('#bedReason').value=b.reason||'';$('#bedNotes').value=b.notes||'';
-  const iso=r.iso!=='Nessuno';$('#bedIso').checked=iso&&PATIENT.includes(b.state);
+  const iso=r.iso!=='Nessuno',legacy=iso&&!r.beds.some(x=>x.isoSource),others=isoPatients(r,k),isPat=PATIENT.includes(b.state);
+  $('#bedIso').checked=isPat?(!!b.isoSource||legacy):iso;
   $('#bisoChoices').innerHTML=ISOS.filter(x=>x!=='Nessuno').map(x=>`<label class="choice"><input type="radio" name="biso" value="${esc(x)}" ${r.iso===x?'checked':''}><span>${esc(x)}</span></label>`).join('');
   $('#bedIsoNote').value=r.isoNote||'';
-  $('#isoInfo').textContent=iso&&!b.isoSource&&r.beds.some((x,i)=>i!==k&&x.isoSource)?'La stanza è già in isolamento per un altro paziente: le modifiche valgono per tutta la stanza.':iso&&!PATIENT.includes(b.state)?'La stanza è già in isolamento ('+r.iso+').':'';
+  $('#isoInfo').textContent=!iso?'':!isPat?(others?`In questa stanza ${others===1?'c’è già un paziente':'ci sono già '+others+' pazienti'} in isolamento (${r.iso}): il nuovo ricovero è già segnato in isolamento. Togli la spunta solo se il paziente non è infetto.`:'La stanza è in isolamento ('+r.iso+'): il nuovo ricovero è già segnato in isolamento.'):others?`Nella stanza ${others===1?'c’è un altro paziente':'ci sono altri '+others+' pazienti'} in isolamento: la stanza resta in isolamento finché non vengono dimessi tutti.`:'Se togli la spunta, la stanza torna normale.';
   $('#fNotes').hidden=!b.notes;$('#addNote').hidden=!!b.notes;$('#bedErr').textContent='';
   bedFields();$('#bedDlg').showModal()}
 function toggleBedName(){const f=$('#fBedName');f.hidden=!f.hidden;if(!f.hidden)$('#bedName').focus()}
@@ -933,34 +1005,34 @@ async function saveBed(){if(!editing)return;const {id,j,k,room}=editing,d=byId(i
   const nb={state,sex:isPatient?sex:'',date:state==='reserved'?admit:'',reason:['blocked','closed'].includes(state)?reason:'',notes:leaving&&state==='free'?'':notes};
   const details=bedDiff(old,nb);
   if((old.name||'')!==name)details.unshift('Nome del letto: '+bedLabel(old,k)+' → '+(name||'Letto '+(k+1)));
-  if(isPatient){if(isoOn&&r.iso!==isoType)details.push('Isolamento stanza: '+r.iso+' → '+isoType);if(isoOn&&(r.isoNote||'')!==isoNote)details.push('Motivo dell’isolamento: '+isoNote);if(!isoOn&&r.iso!=='Nessuno')details.push('Isolamento della stanza terminato ('+r.iso+')')}
+  if(isPatient){if(isoOn&&r.iso!==isoType)details.push('Isolamento stanza: '+r.iso+' → '+isoType);if(isoOn&&(r.isoNote||'')!==isoNote)details.push('Motivo dell’isolamento: '+isoNote);if(!isoOn&&r.iso!=='Nessuno'&&(old.isoSource||!r.beds.some(x=>x.isoSource))){const left=isoPatients(r,k);if(r.beds.some(x=>x.isoSource)?left===0:!r.beds.some((x,n)=>n!==k&&PATIENT.includes(x.state)))details.push('Isolamento della stanza terminato ('+r.iso+')');else if(old.isoSource)details.push('Paziente non più in isolamento · la stanza resta in isolamento ('+left+' '+(left===1?'paziente':'pazienti')+')')}else if(isoOn&&!old.isoSource&&PATIENT.includes(old.state)===false&&r.iso!=='Nessuno')details.push('Nuovo paziente in isolamento nella stanza')}
   if(!details.length){$('#bedDlg').close();return}
-  if(leaving&&!await appMessage('Il paziente lascia '+bedLabel(old,k)+': i suoi dati vengono cancellati.'+(r.iso!=='Nessuno'&&(old.isoSource||!r.beds.some((b,n)=>n!==k&&PATIENT.includes(b.state)))?' Termina anche l’isolamento della stanza e i letti bloccati tornano liberi.':''),'Il paziente lascia il letto',true,{yes:'Conferma'}))return;
+  if(leaving&&!await appMessage('Il paziente lascia '+bedLabel(old,k)+': i suoi dati vengono cancellati.'+(isoEndsIfLeaves(r,k)?' Era l’ultimo paziente in isolamento: la stanza torna normale e i letti bloccati tornano liberi.':r.iso!=='Nessuno'&&old.isoSource?' La stanza resta in isolamento perché ci sono altri pazienti in isolamento.':''),'Il paziente lascia il letto',true,{yes:'Conferma'}))return;
   const label=roomLabel(r,j)+', '+(name||bedLabel(old,k));
   const log={type:isoOn&&r.iso!==isoType?'isolamento':'letto',action:`${label}: ${old.state!==state?STATE_LABEL[old.state]+' → '+STATE_LABEL[state]:(old.name||'')!==name&&details.length===1?'letto rinominato':'dati aggiornati'}${isoOn&&r.iso!==isoType?' · isolamento '+isoType:''}`,details};
   await guarded(async()=>{await mutate(id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==room)throw new AppError('Nel frattempo questa stanza è stata modificata da un altro computer. Riapri il letto e riprova.');const p=fr.beds[k];p.name=name;
       if(leaving){log.details=[...details,...patientLeaves(fr,k,state,nb.reason,nb.notes)];return}
       if(state==='occupied'&&p.state==='reserved'){p.scheduledDate=p.date;p.admittedAt=new Date().toISOString()}else if(state!=='occupied'){delete p.scheduledDate;delete p.admittedAt}
       Object.assign(p,nb);
-      if(isPatient){if(isoOn){fr.iso=isoType;fr.isoNote=isoNote;fr.cap=true;if(!fr.beds.some(b=>b.isoSource))p.isoSource=true}else if(fr.iso!=='Nessuno')endIso(fr)}},log);
-    $('#bedDlg').close();editing=null;toast('Letto aggiornato')})}
+      if(isPatient){if(isoOn){fr.iso=isoType;fr.isoNote=isoNote;fr.cap=true;p.isoSource=true}else{const hadFlags=fr.beds.some(b=>b.isoSource);delete p.isoSource;if(fr.iso!=='Nessuno'&&(hadFlags?isoPatients(fr)===0:!fr.beds.some((b,n)=>n!==k&&PATIENT.includes(b.state))))endIso(fr)}}},log);
+    $('#bedDlg').close();editing=null;if(old.state!=='occupied'&&state==='occupied')countEvent(id,'in');if(old.state==='occupied'&&state!=='occupied')countEvent(id,'out');toast('Letto aggiornato')})}
 async function confirmAdmission(j,k){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.rooms[j],b=r?.beds[k];if(!b||b.state!=='reserved')return;
   if(b.date>today)return appMessage('L’ingresso è previsto per un giorno futuro: si può confermare dal giorno stabilito.');
   if(!b.sex)return appMessage('Indica prima se il paziente è uomo o donna: tocca il letto e completa i dati.');
   if(r.beds.some((o,n)=>n!==k&&o.state==='occupied'&&o.sex&&o.sex!==b.sex)&&!await confirmMixedRoom(d,j))return;
   if(!await appMessage('Il paziente è arrivato e occupa '+bedLabel(b,k)+' di '+roomLabel(r,j)+'?'+(r.iso!=='Nessuno'?'\n\nLa stanza resta in isolamento ('+r.iso+'). Se serve modificarlo, tocca il letto.':''),'Conferma ingresso',true,{yes:'Sì, è arrivato'}))return;
   const snap=JSON.stringify(r);
-  await guarded(()=>mutate(d.id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==snap)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Ricontrolla e riprova.');const fb=fr.beds[k];fb.scheduledDate=fb.date;fb.admittedAt=new Date().toISOString();fb.state='occupied'},{type:'ricovero',action:`${roomLabel(r,j)}, ${bedLabel(b,k)}: ingresso confermato`,details:['Ricovero programmato del '+itDate(b.date),'Paziente: '+(SEX[b.sex]||'—'),r.iso!=='Nessuno'?'In isolamento: '+r.iso:'']}))}
+  await guarded(()=>mutate(d.id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==snap)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Ricontrolla e riprova.');const fb=fr.beds[k];fb.scheduledDate=fb.date;fb.admittedAt=new Date().toISOString();fb.state='occupied'},{type:'ricovero',action:`${roomLabel(r,j)}, ${bedLabel(b,k)}: ingresso confermato`,details:['Ricovero programmato del '+itDate(b.date),'Paziente: '+(SEX[b.sex]||'—'),r.iso!=='Nessuno'?'In isolamento: '+r.iso:'']}).then(()=>countEvent(d.id,'in')))}
 async function discharge(j,k){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.rooms[j],b=r?.beds[k];if(!b||b.state!=='occupied')return;
-  const isoEnds=r.iso!=='Nessuno'&&(b.isoSource||!r.beds.some((x,n)=>n!==k&&PATIENT.includes(x.state)));
-  if(!await appMessage('Il paziente di '+bedLabel(b,k)+' ('+roomLabel(r,j)+') è stato dimesso?\n\nIl letto torna libero e i suoi dati vengono cancellati.'+(isoEnds?'\nTermina anche l’isolamento della stanza ('+r.iso+') e i letti bloccati tornano liberi.':'')+(!r.beds.some((x,n)=>n!==k&&PATIENT.includes(x.state))?'\nLa stanza resta senza pazienti: tutti i suoi letti vengono azzerati, tranne quelli chiusi.':''),'Dimissione',true,{yes:'Sì, dimesso'}))return;
+  const isoEnds=isoEndsIfLeaves(r,k),isoStays=r.iso!=='Nessuno'&&!isoEnds&&b.isoSource,left=isoPatients(r,k);
+  if(!await appMessage('Il paziente di '+bedLabel(b,k)+' ('+roomLabel(r,j)+') è stato dimesso?\n\nIl letto torna libero e i suoi dati vengono cancellati.'+(isoEnds?'\nEra l’ultimo paziente in isolamento: la stanza torna normale e i letti bloccati tornano liberi.':isoStays?'\nLa stanza resta in isolamento: '+(left===1?'c’è ancora 1 paziente':'ci sono ancora '+left+' pazienti')+' in isolamento.':'')+(!r.beds.some((x,n)=>n!==k&&PATIENT.includes(x.state))?'\nLa stanza resta senza pazienti: tutti i suoi letti vengono azzerati, tranne quelli chiusi.':''),'Dimissione',true,{yes:'Sì, dimesso'}))return;
   const snap=JSON.stringify(r),log={type:'letto',action:`${roomLabel(r,j)}, ${bedLabel(b,k)}: dimissione`,details:[]};
-  await guarded(()=>mutate(d.id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==snap)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Ricontrolla e riprova.');log.details=['Stato: Occupato → Libero','Paziente: '+(SEX[b.sex]||'—'),...patientLeaves(fr,k)]},log))}
+  await guarded(()=>mutate(d.id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==snap)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Ricontrolla e riprova.');log.details=['Stato: Occupato → Libero','Paziente: '+(SEX[b.sex]||'—'),...patientLeaves(fr,k)]},log).then(()=>countEvent(d.id,'out')))}
 
 // ---- stanza: nome e isolamento ----
 function editRoom(j){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.rooms[j];if(!r)return;roomEditing={id:d.id,j,room:JSON.stringify(r)};
   $('#roomSub').textContent=d.name;$('#roomTitle').textContent=roomLabel(r,j);$('#roomName').value=r.name||'';$('#roomName').placeholder='Stanza '+(j+1);
-  const iso=r.iso!=='Nessuno';$('#fRoomIso').hidden=!iso;$('#roomIsoHint').hidden=iso;
+  const iso=r.iso!=='Nessuno';$('#fRoomIso').hidden=!iso;$('#roomIsoHint').hidden=iso;const np=isoPatients(r);$('#roomIsoCount').textContent=iso?(np?(np===1?'1 paziente':np+' pazienti')+' in isolamento. ':'')+'La stanza torna normale da sola quando viene dimesso l’ultimo paziente in isolamento.':'';
   $('#risoChoices').innerHTML=ISOS.filter(x=>x!=='Nessuno').map(x=>`<label class="choice"><input type="radio" name="riso" value="${esc(x)}" ${r.iso===x?'checked':''}><span>${esc(x)}</span></label>`).join('');
   $('#roomIsoNote').value=r.isoNote||'';$('#roomErr').textContent='';$('#roomDlg').showModal()}
 async function saveRoom(){if(!roomEditing)return;const {id,j,room}=roomEditing,old=JSON.parse(room),name=$('#roomName').value.trim().slice(0,30),iso=old.iso!=='Nessuno';
@@ -969,9 +1041,6 @@ async function saveRoom(){if(!roomEditing)return;const {id,j,room}=roomEditing,o
   const details=[];if((old.name||'')!==name)details.push('Nome della stanza: '+roomLabel(old,j)+' → '+(name||'Stanza '+(j+1)));if(iso&&type!==old.iso)details.push('Isolamento: '+old.iso+' → '+type);if(iso&&note!==(old.isoNote||''))details.push('Motivo dell’isolamento: '+note);
   if(!details.length){$('#roomDlg').close();return}
   await guarded(async()=>{await mutate(id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==room)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Riapri e riprova.');fr.name=name;if(iso){fr.iso=type;fr.isoNote=note}},{type:iso&&(type!==old.iso||note!==(old.isoNote||''))?'isolamento':'struttura',action:`${name||roomLabel(old,j)}: stanza modificata`,details});$('#roomDlg').close();roomEditing=null;toast('Stanza aggiornata')})}
-async function endIsolation(){if(!roomEditing)return;const {id,j,room}=roomEditing,old=JSON.parse(room);
-  if(!await appMessage('Terminare l’isolamento di “'+roomLabel(old,j)+'”? I letti bloccati della stanza tornano liberi.','Termina isolamento',true,{yes:'Termina'}))return;
-  await guarded(async()=>{await mutate(id,f=>{const fr=f.rooms[j];if(!fr||JSON.stringify(fr)!==room)throw new AppError('Nel frattempo la stanza è stata modificata da un altro computer. Riapri e riprova.');endIso(fr)},{type:'isolamento',action:`${roomLabel(old,j)}: isolamento terminato`,details:['Isolamento: '+old.iso+' → Nessuno','Motivo era: '+(old.isoNote||'—')]});$('#roomDlg').close();roomEditing=null;toast('Isolamento terminato')})}
 
 // ---- struttura del reparto ----
 function openStructure(){const d=byId(page);if(!d||!canEdit(d.id))return;structDraft={id:d.id,snap:JSON.stringify(d.rooms),rows:d.rooms.map((r,j)=>({orig:j,size:r.beds.length}))};$('#structSub').textContent=d.name;$('#structErr').textContent='';drawStructure();$('#structDlg').showModal()}
@@ -1001,12 +1070,14 @@ async function acknowledgeCheck(){const slot=reminderSlot(new Date());if(!slot)r
 function tick(now=new Date()){$('#clock').textContent=cap(new Intl.DateTimeFormat('it-IT',{timeZone:TZ,weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(now).replace(' alle ore ',' · '));
   const day=localTimeParts(now).day;if(day!==today){const old=today;today=day;if(date===old)date=day;if(isAdmin)startToday();render({soft:true})}
   updateReminder(now);
-  if(isAdmin&&user&&Date.now()-lastActivity>ADMIN_IDLE_MIN*60e3){lastActivity=Date.now();logout(true)}
-  if(page==='admin'&&adminTab==='collegati'&&now.getSeconds()%15===0)updatePresence()}
+  if(isAdmin&&user&&page!=='monitor'&&Date.now()-lastActivity>ADMIN_IDLE_MIN*60e3){lastActivity=Date.now();logout(true)}
+  if(page==='admin'&&adminTab==='collegati'&&now.getSeconds()%15===0)updatePresence()
+  if(page==='monitor')monitorTick(now);
+  if(user&&now.getSeconds()===7)scheduleStats()}
 ['pointerdown','keydown','wheel','touchstart'].forEach(e=>addEventListener(e,()=>{lastActivity=Date.now()},{passive:true}));
 
 // ================= AREA AMMINISTRATORE =================
-const ADMIN_TABS=[['attivita','activity','Registro attività'],['collegati','users','Collegati ora'],['riepilogo','chart','Riepilogo di oggi'],['accessi','key','Password'],['reparti','building','Reparti'],['manutenzione','sliders','Dati e sicurezza']];
+const ADMIN_TABS=[['attivita','activity','Registro attività'],['collegati','users','Collegati ora'],['riepilogo','chart','Riepilogo di oggi'],['statistiche','trend','Statistiche'],['accessi','key','Password'],['reparti','building','Reparti'],['manutenzione','sliders','Dati e sicurezza']];
 function startAdminFeeds(){startAudit();startToday();
   vaultUnsub=onSnapshot(doc(db,'vault','passwords'),s=>{vault=(s.exists()&&s.data().entries)||{};vaultState='ok';if(page==='admin'&&adminTab==='accessi')render()},e=>{console.warn('archivio password',e);vaultState='error';if(page==='admin'&&adminTab==='accessi')render()});
   presenceUnsub=onSnapshot(collection(db,'presence'),s=>{const now=Date.now();presenceRows=[];s.docs.forEach(x=>{const d=x.data({serverTimestamps:'estimate'}),t=toDate(d.lastSeen);if(!t||now-t>864e5){deleteDoc(x.ref).catch(()=>{});return}presenceRows.push({id:x.id,...d})});presenceRows.sort((a,b)=>toDate(b.lastSeen)-toDate(a.lastSeen));if(page==='admin'){if(adminTab==='collegati')updatePresence();else if(adminTab==='riepilogo')render();updateTabBadges()}},e=>console.warn('presence',e))}
@@ -1025,8 +1096,8 @@ function updateTabBadges(){const b=$('#onlineBadge');if(b){const n=onlineNow().l
 function renderAdmin(){
   $('#content').innerHTML=`<div class="phead"><div><h1 class="title">Area amministratore</h1><p class="sub">Cosa succede nei reparti, chi è collegato, password e dati.</p></div></div>
   <div class="tabs" role="tablist">${ADMIN_TABS.map(([id,ic,l])=>`<button class="tab ${adminTab===id?'on':''}" role="tab" onclick="setTab('${id}')">${ico(ic)}${l}${id==='collegati'?'<span class="badge" id="onlineBadge" hidden></span>':''}</button>`).join('')}</div>
-  <div id="admBody">${({attivita:admAttivita,collegati:admCollegati,riepilogo:admRiepilogo,accessi:admAccessi,reparti:admReparti,manutenzione:admManutenzione})[adminTab]()}</div>`;
-  updateTabBadges();if(adminTab==='attivita')updateLog();if(adminTab==='collegati')updatePresence()}
+  <div id="admBody">${({attivita:admAttivita,collegati:admCollegati,riepilogo:admRiepilogo,statistiche:admStatistiche,accessi:admAccessi,reparti:admReparti,manutenzione:admManutenzione})[adminTab]()}</div>`;
+  updateTabBadges();if(adminTab==='attivita')updateLog();if(adminTab==='collegati')updatePresence();if(adminTab==='statistiche'){if(!statsDocs||statsLoadedFor!==statsRange)loadStats();else updateStatsBody()}}
 
 // ---- registro attività ----
 function admAttivita(){const deptOpts=[...depts.map(d=>[d.id,d.name]),[PS,PS_LABEL],['-','Nessun reparto (amministratore)']];
@@ -1143,6 +1214,106 @@ function openAdminPw(){['#admCur','#admNew','#admNew2'].forEach(s=>$(s).value=''
 async function saveAdminPw(){const cur=$('#admCur').value,n=$('#admNew').value,n2=$('#admNew2').value,err=$('#admErr');if(n.length<10){err.textContent='La nuova password deve avere almeno 10 caratteri.';return}if(n!==n2){err.textContent='Le due password non coincidono.';return}
   try{await reauthenticateWithCredential(auth.currentUser,EmailAuthProvider.credential(ADMIN_EMAIL,cur));await updatePassword(auth.currentUser,n);audit('password','','Password amministratore cambiata');$('#admPwDlg').close();toast('Password amministratore aggiornata')}catch(e){err.textContent=errMsg(e)}}
 
+// ================= SCHERMO MONITOR =================
+let wakeLock=null,monIdle=null;
+async function keepAwake(on){try{if(on&&'wakeLock'in navigator&&!wakeLock&&document.visibilityState==='visible'){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null})}else if(!on&&wakeLock){const w=wakeLock;wakeLock=null;await w.release()}}catch(e){}}
+function monitorHtml(){
+  const rows=depts.map(d=>({d,c:counts(d),a:sexAvail(d),e:emptyRooms(d),i:isoRooms(d)}));
+  const T=rows.reduce((t,r)=>({f:t.f+r.a.free,m:t.m+r.a.men,w:t.w+r.a.women,e:t.e+r.e,t:t.t+r.c.tomorrow,i:t.i+r.i}),{f:0,m:0,w:0,e:0,t:0,i:0});
+  const last=depts.filter(d=>d.updatedAt).sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt))[0];
+  let auto=false;try{auto=localStorage.getItem('pl-monitor-auto')==='1'}catch{}
+  const tiles=rows.map(({d,c,a,e,i})=>{const stale=d.updatedAt&&Date.now()-new Date(d.updatedAt)>12*3600e3;return `<div class="mt ${a.free?'':'zero'}"><div class="mt-h"><b>${esc(d.name)}</b>${i?`<span class="chip red">● ${i} in isolamento</span>`:''}</div>
+    <div class="mt-big">${a.free}<small>${a.free===1?'letto libero':'letti liberi'}</small></div>
+    <div class="mt-sex"><span class="m">♂ Uomo<b>${a.men}</b></span><span class="w">♀ Donna<b>${a.women}</b></span><span>Stanze vuote<b>${e}</b></span></div>
+    <div class="mt-f"><span>${c.tomorrow?'Domani in arrivo: <b>'+c.tomorrow+'</b>':'Occupati '+c.occupied+'/'+c.active}</span><span class="${stale?'stale':''}">${d.updatedAt?'agg. '+(dayKey(d.updatedAt)===today?fmtTime(d.updatedAt):fmtDT(d.updatedAt)):'mai aggiornato'}</span></div></div>`}).join('');
+  return `<div class="mon">
+  <div class="mon-h"><div class="mon-brand"><img src="icons/icon-192.png" alt=""><div><b>Posti letto disponibili</b><span>Ospedale di Stato · Repubblica di San Marino</span></div></div><div class="mon-clock"><b id="monClock">${fmtTime(new Date())}</b><span id="monDate">${cap(fmtDayLong(new Date()))}</span></div></div>
+  <div class="mon-tot"><div><small>Letti liberi</small><b class="c-free">${T.f}</b></div><div><small>♂ Per uomo</small><b class="c-occ">${T.m}</b></div><div><small>♀ Per donna</small><b class="c-pink">${T.w}</b></div><div><small>Stanze vuote</small><b>${T.e}</b></div><div><small>Ricoveri domani</small><b class="c-res">${T.t}</b></div><div><small>Stanze in isolamento</small><b style="color:#c53030">${T.i}</b></div></div>
+  <div class="mon-grid">${tiles||'<div class="empty">Nessun reparto configurato.</div>'}</div>
+  <div class="mon-foot"><span><span class="conn ${navigator.onLine?'ok':'off'}" id="monConn">${navigator.onLine?'● Collegato · dati in tempo reale':'● Connessione assente · i numeri potrebbero non essere aggiornati'}</span>${last?` · Ultima modifica alle ${fmtTime(last.updatedAt)} (${esc(last.name)})`:''}</span>
+  <span class="mon-ctrl"><label class="chk"><input type="checkbox" ${auto?'checked':''} onchange="setMonitorAuto(this.checked)">Apri il monitor all’avvio su questo computer</label><button class="btn sm" onclick="toggleFullscreen()">${ico('expand')}Schermo intero</button><button class="btn sm" onclick="exitMonitor()">${ico('back')}Esci dal monitor</button></span></div></div>`}
+function monitorTick(now){const c=$('#monClock');if(!c)return;c.textContent=fmtTime(now);$('#monDate').textContent=cap(fmtDayLong(now))}
+function toggleFullscreen(){if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});else document.documentElement.requestFullscreen?.().catch(()=>{})}
+function setMonitorAuto(v){try{localStorage.setItem('pl-monitor-auto',v?'1':'0')}catch{}toast(v?'Il monitor si aprirà all’avvio su questo computer':'Avvio normale ripristinato')}
+function exitMonitor(){if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});if(location.hash==='#monitor')history.replaceState(null,'',location.pathname+location.search);go(isAdmin?'admin':(myDept===PS?'overview':myDept))}
+addEventListener('pointermove',()=>{if(!document.body.classList.contains('monitor'))return;document.body.classList.remove('idle');clearTimeout(monIdle);monIdle=setTimeout(()=>document.body.classList.add('idle'),3500)},{passive:true});
+['online','offline'].forEach(ev=>addEventListener(ev,()=>{if(page==='monitor')render()}));
+
+// ================= STATISTICHE =================
+// Ogni ora, finché il programma è aperto su almeno un computer, viene salvata la situazione di tutti i reparti
+// in stats/AAAA-MM-GG (snaps.HH). Gli ingressi e le dimissioni vengono contati quando avvengono (ev.reparto.in / out).
+const dayOffset=n=>{const d=new Date(today+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)};
+const dm=d=>d.slice(8,10)+'/'+d.slice(5,7);
+let statsTimer=null,statsLast={slot:'',key:'',at:0},statsDocs=null,statsState='',statsErr='',statsRange=30,statsDept='',statsLoadedFor=0;
+function snapAll(){const o={};depts.forEach(d=>{const c=counts(d),a=sexAvail(d);o[d.id]={n:d.name.slice(0,40),a:c.active,o:c.occupied,f:c.free,t:c.tomorrow,b:c.blocked,m:a.men,w:a.women,e:emptyRooms(d),i:isoRooms(d)}});return o}
+function scheduleStats(){if(!user||!deptsLoaded)return;clearTimeout(statsTimer);statsTimer=setTimeout(recordStats,3000)}
+async function recordStats(){if(!user||!deptsLoaded||!depts.length)return;const p=localTimeParts(new Date()),hh=String(p.hour).padStart(2,'0'),slot=p.day+'-'+hh,snap=snapAll(),key=JSON.stringify(snap);
+  if(slot===statsLast.slot&&key===statsLast.key)return;
+  const wait=120000-(Date.now()-statsLast.at);if(slot===statsLast.slot&&wait>0){clearTimeout(statsTimer);statsTimer=setTimeout(recordStats,wait);return}
+  statsLast={slot,key,at:Date.now()};
+  try{await setDoc(doc(db,'stats',p.day),{day:p.day,snaps:{[hh]:snap},updatedAt:serverTimestamp()},{merge:true})}catch(e){console.warn('statistiche',e)}}
+async function countEvent(dept,kind){if(!dept||dept===PS)return;const day=localTimeParts(new Date()).day;try{await setDoc(doc(db,'stats',day),{day,ev:{[dept]:{[kind]:increment(1)}}},{merge:true})}catch(e){console.warn('statistiche',e)}}
+async function loadStats(){statsState='loading';statsErr='';updateStatsBody();try{const from=dayOffset(-(statsRange-1));const s=await getDocs(query(collection(db,'stats'),where('day','>=',from),orderBy('day'),limit(400)));statsDocs=s.docs.map(x=>x.data());statsState='ok';statsLoadedFor=statsRange}catch(e){console.error(e);statsState='error';statsErr=errMsg(e)}updateStatsBody()}
+function setStatsRange(n){statsRange=n;$$('.rangebtn').forEach(b=>b.classList.toggle('primary',Number(b.dataset.r)===n));loadStats()}
+function setStatsDept(v){statsDept=v;updateStatsBody()}
+const mean=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+function scopeSum(sn){let a=0,o=0,f=0,any=false;for(const [id,v] of Object.entries(sn||{})){if(statsDept&&id!==statsDept)continue;any=true;a+=v.a||0;o+=v.o||0;f+=v.f||0}return any?{a,o,f}:null}
+function statsSeries(){const by=Object.fromEntries((statsDocs||[]).map(d=>[d.day,d])),out=[];
+  for(let i=statsRange-1;i>=0;i--){const day=dayOffset(-i),dd=by[day];if(!dd){out.push({day,has:false,pct:null,inn:0,out:0,hours:0,zero:0});continue}
+    const pts=Object.values(dd.snaps||{}).map(scopeSum).filter(Boolean),pct=pts.filter(x=>x.a).map(x=>x.o/x.a*100);
+    let inn=0,ou=0;for(const [id,v] of Object.entries(dd.ev||{})){if(statsDept&&id!==statsDept)continue;inn+=v.in||0;ou+=v.out||0}
+    out.push({day,has:pts.length>0||inn+ou>0,hours:pts.length,pct:mean(pct),peak:pts.length?Math.max(...pts.map(x=>x.o)):null,active:pts.length?Math.max(...pts.map(x=>x.a)):null,minFree:pts.length?Math.min(...pts.map(x=>x.f)):null,avgFree:mean(pts.map(x=>x.f)),zero:pts.filter(x=>x.f===0).length,inn,out:ou})}
+  return out}
+function hourProfile(){const sum=Array(24).fill(0),n=Array(24).fill(0);(statsDocs||[]).forEach(dd=>Object.entries(dd.snaps||{}).forEach(([h,sn])=>{const x=scopeSum(sn);if(x){sum[+h]+=x.f;n[+h]++}}));return sum.map((v,i)=>n[i]?v/n[i]:null)}
+function deptStats(){const m={};(statsDocs||[]).forEach(dd=>{Object.values(dd.snaps||{}).forEach(sn=>Object.entries(sn).forEach(([id,v])=>{const x=m[id]||(m[id]={id,name:v.n||deptName(id),pct:[],peak:0,act:0,minFree:Infinity,zero:0,inn:0,out:0,days:new Set()});x.name=byId(id)?.name||v.n||x.name;if(v.a)x.pct.push(v.o/v.a*100);x.peak=Math.max(x.peak,v.o||0);x.act=Math.max(x.act,v.a||0);x.minFree=Math.min(x.minFree,v.f??Infinity);if(v.f===0)x.zero++;x.days.add(dd.day)}));Object.entries(dd.ev||{}).forEach(([id,v])=>{const x=m[id]||(m[id]={id,name:deptName(id),pct:[],peak:0,act:0,minFree:Infinity,zero:0,inn:0,out:0,days:new Set()});x.inn+=v.in||0;x.out+=v.out||0;x.days.add(dd.day)})});
+  return Object.values(m).map(x=>({...x,avg:mean(x.pct),minFree:x.minFree===Infinity?null:x.minFree,days:x.days.size})).sort((a,b)=>(b.avg??-1)-(a.avg??-1))}
+// --- grafici SVG (un solo asse, barre sottili con estremità arrotondate, linea 2px, suggerimento al passaggio)
+function niceMax(v){if(v<=4)return 4;const p=10**Math.floor(Math.log10(v));for(const k of [1,1.2,1.5,2,2.5,3,4,5,6,8,10])if(k*p>=v)return k*p;return v}
+function topBar(x,y,w,h,r=4){if(h<=0)return '';r=Math.min(r,h,w/2);return `M${x} ${y+h}V${y+r}Q${x} ${y} ${x+r} ${y}H${x+w-r}Q${x+w} ${y} ${x+w} ${y+r}V${y+h}Z`}
+function svgLine(S,W=760){W=Math.max(300,Math.round(W));const H=240,L=46,R=16,T=14,B=30,pw=W-L-R,ph=H-T-B,n=S.length,x=i=>L+(n===1?pw/2:i*pw/(n-1)),y=v=>T+ph-v/100*ph;let g='';
+  [0,25,50,75,100].forEach(v=>g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="${v?'gl':'bl'}"/><text x="${L-8}" y="${y(v)+4}" class="al" text-anchor="end">${v}%</text>`);
+  const step=Math.max(1,Math.ceil(n/Math.max(3,Math.floor(pw/64))));S.forEach((s,i)=>{if(i===n-1||i%step===0&&n-1-i>=step*.6)g+=`<text x="${x(i)}" y="${H-8}" class="al" text-anchor="middle">${dm(s.day)}</text>`});
+  let path='',pen=false;S.forEach((s,i)=>{if(s.pct==null){pen=false;return}path+=(pen?'L':'M')+x(i).toFixed(1)+' '+y(s.pct).toFixed(1);pen=true});
+  const bw=pw/Math.max(n-1,1),bands=S.map((s,i)=>`<g class="band" data-tip="${esc(`<b>${dm(s.day)}</b><br>`+(s.pct==null?'Nessun dato':`Occupazione media <b>${Math.round(s.pct)}%</b><br>Massimo occupati ${s.peak} su ${s.active}<br>Minimo letti liberi ${s.minFree}`))}"><rect class="hit" x="${(x(i)-bw/2).toFixed(1)}" y="${T}" width="${bw.toFixed(1)}" height="${ph}"/><line class="xh" x1="${x(i)}" x2="${x(i)}" y1="${T}" y2="${T+ph}"/></g>`).join('');
+  const marks=S.map((s,i)=>s.pct==null?'':`<circle class="mk" cx="${x(i).toFixed(1)}" cy="${y(s.pct).toFixed(1)}" r="${n>45?3:4}"/>`).join('');
+  return `<svg class="viz" viewBox="0 0 ${W} ${H}" role="img" aria-label="Occupazione media per giorno">${g}${bands}<path class="ln" d="${path}"/>${marks}</svg>`}
+function svgBars(groups,series,lab,W=760){W=Math.max(300,Math.round(W));const H=240,L=46,R=16,T=14,B=30,pw=W-L-R,ph=H-T-B,n=groups.length,k=series.length;
+  const max=niceMax(Math.max(1,...groups.flatMap(g=>g.vals.map(v=>v||0)))),y=v=>T+ph-v/max*ph,band=pw/n,bw=Math.max(2,Math.min(24,(band-4-(k-1)*2)/k));let g='';
+  const dv=max%4===0?4:max%5===0?5:max%3===0?3:2;Array.from({length:dv+1},(_,i)=>i/dv).forEach(f=>{const v=max*f;g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="${f?'gl':'bl'}"/><text x="${L-8}" y="${y(v)+4}" class="al" text-anchor="end">${Number.isInteger(v)?v:v.toFixed(1)}</text>`});
+  const step=Math.max(1,Math.ceil(n/Math.max(3,Math.floor(pw/(n>24?64:34)))));
+  groups.forEach((gr,i)=>{const x0=L+i*band+(band-(k*bw+(k-1)*2))/2;let bars='';gr.vals.forEach((v,j)=>{if(v)bars+=`<path class="bar" fill="${series[j].color}" d="${topBar(x0+j*(bw+2),y(v),bw,T+ph-y(v))}"/>`});
+    g+=`<g class="band" data-tip="${esc(gr.tip)}"><rect class="hit" x="${L+i*band}" y="${T}" width="${band}" height="${ph}"/>${bars}</g>`;if(i===n-1||i%step===0&&n-1-i>=step*.6)g+=`<text x="${L+i*band+band/2}" y="${H-8}" class="al" text-anchor="middle">${esc(gr.label)}</text>`});
+  return `<svg class="viz" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(lab)}">${g}</svg>`}
+document.addEventListener('pointermove',e=>{const tip=$('#vizTip');if(!tip)return;const t=e.target.closest?.('.viz [data-tip]');if(!t){tip.hidden=true;return}tip.innerHTML=t.dataset.tip;tip.hidden=false;const x=Math.min(e.clientX+14,innerWidth-tip.offsetWidth-8),y=e.clientY-tip.offsetHeight-12;tip.style.left=Math.max(8,x)+'px';tip.style.top=(y<8?e.clientY+18:y)+'px'},{passive:true});
+function admStatistiche(){return `<section class="card" style="margin-bottom:16px"><div class="filters" style="border-bottom:0"><span class="small muted">Periodo</span>${[7,30,90].map(n=>`<button class="btn sm rangebtn ${statsRange===n?'primary':''}" data-r="${n}" onclick="setStatsRange(${n})">${n} giorni</button>`).join('')}
+  <select id="stDept" onchange="setStatsDept(this.value)" aria-label="Reparto"><option value="">Tutto l’ospedale</option>${depts.map(d=>`<option value="${esc(d.id)}" ${statsDept===d.id?'selected':''}>${esc(d.name)}</option>`).join('')}</select>
+  <button class="btn ghost sm" onclick="loadStats()">${ico('refresh')}Aggiorna</button><button class="btn sm" style="margin-left:auto" onclick="exportStatsCsv()">${ico('download')}Esporta Excel (CSV)</button></div></section><div id="statsBody"></div>`}
+function updateStatsBody(){const el=$('#statsBody');if(!el)return;
+  if(statsState==='loading'&&!statsDocs){el.innerHTML='<div class="card card-b muted">Caricamento delle statistiche…</div>';return}
+  if(statsState==='error'){el.innerHTML=`<div class="card card-b"><span class="stale">${esc(statsErr)}</span><p class="muted small" style="margin:8px 0 0">Se l’errore riguarda i permessi, pubblica le regole Firestore della versione 3.4.</p></div>`;return}
+  const S=statsSeries(),has=S.filter(x=>x.has),scope=statsDept?deptName(statsDept):'tutto l’ospedale';
+  if(!has.length){el.innerHTML=`<div class="card card-b"><b>Non ci sono ancora dati per questo periodo.</b><p class="muted" style="margin:8px 0 0;line-height:1.6">Le statistiche si raccolgono da sole da questa versione in poi: ogni ora, finché il programma è aperto su almeno un computer, viene salvata la situazione di ogni reparto, e ogni ingresso e dimissione viene contato. Lascia acceso lo <b>Schermo monitor</b> del Pronto Soccorso per avere dati continui, giorno e notte.</p></div>`;return}
+  const pcts=S.filter(x=>x.pct!=null),avgPct=mean(pcts.map(x=>x.pct)),peak=Math.max(...has.map(x=>x.peak??0)),minF=Math.min(...has.filter(x=>x.minFree!=null).map(x=>x.minFree)),inn=S.reduce((a,x)=>a+x.inn,0),out=S.reduce((a,x)=>a+x.out,0),zero=S.reduce((a,x)=>a+x.zero,0),hours=S.reduce((a,x)=>a+x.hours,0);
+  const kp=`<div class="kpis"><div class="card kpi"><small>Occupazione media</small><strong class="c-occ">${avgPct==null?'—':Math.round(avgPct)+'%'}</strong><em>${esc(scope)} · ${has.length} giorni con dati</em></div><div class="card kpi"><small>Massimo letti occupati</small><strong>${peak}</strong><em>Minimo letti liberi: ${isFinite(minF)?minF:'—'}</em></div><div class="card kpi"><small>Ingressi · dimissioni</small><strong><span style="color:#2a78d6;font-size:inherit;letter-spacing:inherit">${inn}</span><span> · </span><span style="color:#eb6834;font-size:inherit;letter-spacing:inherit">${out}</span></strong><em>Nel periodo scelto</em></div><div class="card kpi"><small>Ore senza posti liberi</small><strong class="${zero?'':'c-free'}" style="${zero?'color:var(--danger)':''}">${zero}</strong><em>Su ${hours} ore registrate</em></div></div>`;
+  const cw=el.clientWidth||1000,fullW=cw-42,halfW=cw>=936?(cw-16)/2-42:fullW;
+  const hp=hourProfile(),profile=svgBars(hp.map((v,h)=>({label:String(h).padStart(2,'0'),vals:[v==null?0:Math.round(v*10)/10],tip:`<b>Ore ${String(h).padStart(2,'0')}:00</b><br>`+(v==null?'Nessun dato':`In media <b>${(Math.round(v*10)/10).toString().replace('.',',')}</b> letti liberi`)})),[{name:'Letti liberi',color:'#2a78d6'}],'Letti liberi in media per ora del giorno',fullW);
+  const mov=svgBars(S.map(s=>({label:dm(s.day),vals:[s.inn,s.out],tip:`<b>${dm(s.day)}</b><br><span style="color:#8fbcf0">■</span> Ingressi <b>${s.inn}</b><br><span style="color:#f5a37f">■</span> Dimissioni <b>${s.out}</b>`})),[{name:'Ingressi',color:'#2a78d6'},{name:'Dimissioni',color:'#eb6834'}],'Ingressi e dimissioni per giorno',halfW);
+  const ds=deptStats().filter(x=>!statsDept||x.id===statsDept);
+  const table=`<section class="card" style="margin-bottom:16px"><div class="card-h"><h2>Per reparto · ultimi ${statsRange} giorni</h2><span class="muted small">Tocca un reparto per vedere solo i suoi grafici</span></div><div class="tablewrap"><table class="avail"><thead><tr><th>Reparto</th><th>Occupazione media</th><th>Massimo occupati</th><th>Minimo liberi</th><th>Ore senza posti</th><th>Ingressi</th><th>Dimissioni</th></tr></thead><tbody>${ds.map(x=>`<tr onclick="setStatsDept('${esc(x.id)}');$('#stDept').value='${esc(x.id)}'"><td><b>${esc(x.name)}</b></td><td>${x.avg==null?'—':`<span class="meter8"><i style="width:${Math.min(100,x.avg)}%"></i></span>${Math.round(x.avg)}%`}</td><td>${x.peak} / ${x.act}</td><td>${x.minFree??'—'}</td><td>${x.zero?`<b style="color:var(--danger)">${x.zero}</b>`:'0'}</td><td>${x.inn}</td><td>${x.out}</td></tr>`).join('')||'<tr><td colspan="7" class="muted">Nessun dato</td></tr>'}</tbody></table></div></section>`;
+  const daily=`<details class="card daily"><summary>Dati giorno per giorno (${esc(scope)}) ▾</summary><div class="tablewrap"><table><thead><tr><th>Giorno</th><th>Occupazione media</th><th>Massimo occupati</th><th>Minimo liberi</th><th>Ore senza posti</th><th>Ingressi</th><th>Dimissioni</th><th>Ore registrate</th></tr></thead><tbody>${S.slice().reverse().map(s=>`<tr><td><b>${itDate(s.day)}</b></td><td>${s.pct==null?'—':Math.round(s.pct)+'%'}</td><td>${s.peak??'—'}${s.active?' / '+s.active:''}</td><td>${s.minFree??'—'}</td><td>${s.zero}</td><td>${s.inn}</td><td>${s.out}</td><td>${s.hours}</td></tr>`).join('')}</tbody></table></div></details>`;
+  el.innerHTML=kp+`<div class="chartgrid"><section class="card"><div class="card-h"><h2>Occupazione media per giorno</h2><span class="muted small">${esc(scope)}</span></div><div class="card-b">${svgLine(S,halfW)}</div></section>
+  <section class="card"><div class="card-h"><h2>Ingressi e dimissioni</h2><span class="vlegend"><span><i style="background:#2a78d6"></i>Ingressi</span><span><i style="background:#eb6834"></i>Dimissioni</span></span></div><div class="card-b">${mov}</div></section></div>
+  <section class="card" style="margin-bottom:16px"><div class="card-h"><h2>Letti liberi in media per ora del giorno</h2><span class="muted small">Quando ci sono più posti · ${esc(scope)}</span></div><div class="card-b">${profile}</div></section>${table}${daily}
+  <div class="note">${ico('info')}<div>I dati vengono salvati ogni ora mentre il programma è aperto su almeno un computer: le ore in cui nessuno lo usa restano vuote. Con lo Schermo monitor del Pronto Soccorso sempre acceso la raccolta è continua.</div></div>`;
+  labelTables()}
+let statsResize=null;addEventListener('resize',()=>{clearTimeout(statsResize);statsResize=setTimeout(()=>{if(page==='admin'&&adminTab==='statistiche'&&statsDocs)updateStatsBody()},200)});
+function exportStatsCsv(){const S=statsSeries();if(!S.some(x=>x.has))return appMessage('Non ci sono dati da esportare per questo periodo.');const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"',scope=statsDept?deptName(statsDept):'Tutto l’ospedale';
+  const L=[['Ambito','Giorno','Occupazione media %','Massimo occupati','Letti attivi','Minimo liberi','Ore senza posti','Ingressi','Dimissioni','Ore registrate'].map(q).join(';')];
+  S.forEach(s=>L.push([scope,itDate(s.day),s.pct==null?'':Math.round(s.pct),s.peak??'',s.active??'',s.minFree??'',s.zero,s.inn,s.out,s.hours].map(q).join(';')));
+  L.push('');L.push(['Reparto','Occupazione media %','Massimo occupati','Letti attivi','Minimo liberi','Ore senza posti','Ingressi','Dimissioni','Giorni con dati'].map(q).join(';'));
+  deptStats().forEach(x=>L.push([x.name,x.avg==null?'':Math.round(x.avg),x.peak,x.act,x.minFree??'',x.zero,x.inn,x.out,x.days].map(q).join(';')));
+  download('statistiche-posti-letto-'+today+'.csv','﻿'+L.join('\r\n'),'text/csv;charset=utf-8');audit('backup','','Statistiche esportate ('+statsRange+' giorni, '+scope+')')}
+
 // ================= GUIDA RAPIDA =================
 const CUR='<svg class="hs-cur" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 8-6.2 1.7L10 19.5z" fill="#14232f" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
 const miniBed=(s,title,lines='',extra='',cls='')=>`<div class="bed s-${s} ${cls}"><div class="bed-h"><span>${title}</span></div><div class="bed-s">${STATE_LABEL[s]}</div><div class="bed-d">${lines}</div>${extra}</div>`;
@@ -1155,12 +1326,14 @@ const HELP=[
   h:()=>`<div class="hs hs3">${miniBed('free','Letto 2','Uomo o donna','','hs-abs hs3a')}${miniBed('occupied','Letto 2','♂ Uomo','','hs-abs hs3b')}${CUR}</div>`},
  {edit:1,t:'Paziente arrivato, paziente dimesso',x:'Quando il paziente arriva premi <b>È arrivato</b>. Quando va a casa premi <b>Dimesso</b>: il letto torna libero e i suoi dati si cancellano da soli.',
   h:()=>`<div class="hs hs4">${miniBed('reserved','Letto 3','♂ Uomo · Oggi',`<div class="bed-a"><span class="btn primary">${ico('check')}È arrivato</span></div>`,'hs-abs hs4a')}${miniBed('occupied','Letto 3','♂ Uomo',`<div class="bed-a"><span class="btn">${ico('door')}Dimesso</span></div>`,'hs-abs hs4b')}${miniBed('free','Letto 3','Uomo o donna','','hs-abs hs4c')}${CUR}</div>`},
- {edit:1,t:'Paziente in isolamento',x:'Quando inserisci il paziente, attiva <b>Paziente in isolamento</b> e scrivi il motivo. La stanza diventa <b style="color:#c53030">rossa</b> e gli altri letti si bloccano. Alla dimissione torna tutto normale.',
-  h:()=>`<div class="hs hs5"><div class="card hs5room"><div class="room-h"><h3>Stanza 3</h3><span class="hs5sw">Isolamento<i class="trk"><b class="knob"></b></i></span></div><div class="hs5beds">${miniBed('occupied','Letto 1','♂ Uomo')}<div class="hs5b2">${miniBed('free','Letto 2','','','hs-abs hs5f')}${miniBed('blocked','Letto 2','Isolamento','','hs-abs hs5k')}</div></div><div class="hs5note">Motivo dell’isolamento: obbligatorio</div></div>${CUR}</div>`},
+ {edit:1,t:'Paziente in isolamento',x:'L’isolamento si attiva <b>solo quando inserisci un nuovo ricovero</b>: nella scheda del paziente attiva <b>Paziente in isolamento</b> e scrivi il motivo. La stanza diventa <b style="color:#c53030">rossa</b>. Se ricoveri un altro paziente nella stessa stanza la spunta è già messa. La stanza torna normale solo quando sono dimessi <b>tutti</b> i pazienti in isolamento.',
+  h:()=>`<div class="hs hs5"><div class="card hs5form"><small>Nuovo ricovero · Letto 1</small><div class="hs5row"><span class="chip" style="background:var(--occ-bg);color:var(--occ)">Occupato</span><span class="chip">♂ Uomo</span></div><div class="hs5sw">Paziente in isolamento<i class="trk"><b class="knob"></b></i></div><div class="hs5note">Motivo: obbligatorio</div></div><div class="card hs5room"><div class="room-h"><h3>Stanza 3</h3></div><div class="hs5beds"><div class="hs5b2">${miniBed('free','Letto 1','','','hs-abs hs5f')}${miniBed('occupied','Letto 1','<b style="color:#b42f2f">● In isolamento</b>','','hs-abs hs5k')}</div><div class="hs5b2">${miniBed('free','Letto 2','','','hs-abs hs5f')}${miniBed('blocked','Letto 2','Isolamento','','hs-abs hs5k')}</div></div></div>${CUR}</div>`},
  {t:'I posti liberi di tutti i reparti',x:'Nel <b>Quadro generale</b> vedi quanti letti liberi ha ogni reparto, per uomini <b class="c-occ">♂</b> e per donne <b class="c-pink">♀</b>. Tocca un reparto per vedere le sue stanze.',
   h:()=>`<div class="hs hs6"><div class="card hs6t"><div class="r h"><span>Reparto</span><span>♂</span><span>♀</span></div>${[['Chirurgia',4,4,1],['Medicina interna',2,1,0],['Pediatria',0,3,0],['Geriatria',1,2,0]].map(([n,m,f,me],i)=>`<div class="r ${me?'me':''}" style="animation-delay:${i*.3}s"><span>${n}</span><b class="c-occ">${m}</b><b class="c-pink">${f}</b></div>`).join('')}</div></div>`},
  {edit:1,t:'Stanze, letti e nomi',x:'Con <b>Stanze e letti</b> aggiungi o togli stanze e letti. Con <b>Modifica</b> cambi il nome della stanza. Dentro il letto trovi <b>Rinomina letto</b>.',
   h:()=>`<div class="hs hs7"><div class="card hs7c"><div class="hs7title"><span class="hs-abs a">Stanza 1</span><span class="hs-abs b">Camera A</span></div><div class="stepper"><button type="button" tabindex="-1">−</button><output><span class="n2">2</span><span class="n3">3</span></output><button type="button" tabindex="-1">+</button></div> <span class="muted small">letti</span></div>${CUR}</div>`},
+ {t:'Lo schermo monitor',x:'<b>Schermo monitor</b> mostra tutti i reparti a caratteri grandi, sempre aggiornati: ideale per uno schermo acceso in Pronto Soccorso. Premi <b>Schermo intero</b>.',
+  h:()=>`<div class="hs hs6"><div class="card hs6t" style="padding:10px 12px"><div style="display:flex;justify-content:space-between;align-items:baseline"><b>Posti letto disponibili</b><b style="font-size:22px">16:54</b></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">${[['Chirurgia',5],['Medicina',2],['Pediatria',0],['Geriatria',3]].map(([n,f],i)=>`<div class="r" style="display:block;border:1px solid var(--line);border-top:4px solid ${f?'var(--free)':'var(--danger)'};border-radius:10px;padding:6px 8px;animation-delay:${i*.3}s"><span class="small">${n}</span><b style="display:block;font-size:24px;color:${f?'var(--free)':'var(--danger)'}">${f}</b></div>`).join('')}</div></div></div>`},
  {t:'Il controllo delle 12 e delle 21',x:'A mezzogiorno e alle 21 compare un avviso giallo. Controlla i tuoi letti e premi <b>Ho controllato</b>.',
   h:()=>`<div class="hs hs8"><div class="reminder hs8b"><div><b>Controllo delle 12:00</b><small>Verifica i letti del reparto</small></div><span class="btn sm">${ico('check')}Ho controllato</span></div><div class="hs8ok hs-abs"><span>✓</span>Fatto!</div>${CUR}</div>`},
  {t:'Uscire e installare',x:'<b>Cambia reparto</b> ti fa uscire. <b>Installa</b> mette il programma sul desktop come un’app. Questa guida è sempre nel pulsante <b>Come funziona</b>.',
@@ -1189,10 +1362,10 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.__bip=e;ref
 addEventListener('appinstalled',()=>{window.__bip=null;toast('Posti letto è installato');if(user)audit('sistema',isAdmin?'':myDept,'Programma installato come app');setTimeout(refreshInstallBtn,500)});
 
 // ================= AVVIO =================
-Object.assign(window,{$,go,togglePasswords,copyPw,openHelp,helpGo,helpNext,helpPrev,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,saveRoom,endIsolation,toggleBedName,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
+Object.assign(window,{$,go,toggleFullscreen,setMonitorAuto,exitMonitor,setStatsRange,setStatsDept,loadStats,exportStatsCsv,togglePasswords,copyPw,openHelp,helpGo,helpNext,helpPrev,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,saveRoom,toggleBedName,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
 window.render=render;
 refreshInstallBtn();$('#gateVer').textContent='Versione '+APP_VERSION+' · '+APP_DATE;tick();setInterval(tick,1000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();beat()}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();beat();if(page==='monitor')keepAwake(true)}});
 addEventListener('storage',e=>{if(e.key&&e.key.startsWith('pl-check-'))updateReminder()});
 </script>
 </body>
