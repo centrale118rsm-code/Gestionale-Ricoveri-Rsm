@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- Posti letto · Ospedale di Stato RSM · versione 3.7.0 (02/11/2026)
+<!-- Posti letto · Ospedale di Stato RSM · versione 3.7.1 (06/11/2026)
      Nuova grafica chiara, accesso per reparto, registro attività completo per l'amministratore. -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<meta name="version" content="3.7.0">
+<meta name="version" content="3.7.1">
 <title>Posti letto · Ospedale di Stato RSM</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f4f7f9">
@@ -755,7 +755,7 @@ const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomai
 // Deve coincidere con l'email scritta in firestore.rules.
 const ADMIN_EMAIL='admin@ospedale.local';
 const ACCOUNT_DOMAIN='ospedale.local';
-const APP_VERSION='3.7.0',APP_DATE='02/11/2026';
+const APP_VERSION='3.7.1',APP_DATE='06/11/2026';
 const PS='__ps',PS_LABEL='Pronto Soccorso',ADMIN='__admin',LEGACY_KEY='beds-rsm-configurable-v3';
 const ADMIN_IDLE_MIN=30;
 const TZ='Europe/San_Marino';
@@ -1413,8 +1413,8 @@ const HELP=[
   h:()=>`<div class="hs hs9"><span class="btn soft hs9a">${ico('download')}Installa</span><span class="btn hs9b">${ico('switch')}Cambia reparto</span></div>`}
 ];
 let helpStep=0,helpList=HELP;
-function openHelp(){helpList=HELP.filter(s=>!s.edit||isAdmin||(myDept&&myDept!==PS));helpStep=0;drawHelp();if(!$('#helpDlg').open)$('#helpDlg').showModal();try{localStorage.setItem('pl-help-v1','1')}catch{}}
-function drawHelp(){const s=helpList[helpStep];$('#helpStage').classList.toggle('tall',!!s.tall);$('#helpStage').innerHTML=s.h();$('#helpTitle').textContent=(helpStep+1)+' di '+helpList.length+' · '+s.t;$('#helpText').innerHTML=s.x;$('#helpDots').innerHTML=helpList.map((_,i)=>`<button class="hdot ${i===helpStep?'on':''}" onclick="helpGo(${i})" aria-label="Passo ${i+1}"></button>`).join('');$('#helpPrev').disabled=helpStep===0;$('#helpNext').textContent=helpStep===helpList.length-1?'Ho capito':'Avanti'}
+function openHelp(){helpList=HELP;helpStep=0;drawHelp();if(!$('#helpDlg').open)$('#helpDlg').showModal();try{localStorage.setItem('pl-help-v1','1')}catch{}}
+function drawHelp(){const s=helpList[helpStep];$('#helpStage').classList.toggle('tall',!!s.tall);$('#helpStage').innerHTML=s.h();$('#helpTitle').textContent=(helpStep+1)+' di '+helpList.length+' · '+s.t;$('#helpText').innerHTML=s.x+(s.edit&&user&&!isAdmin&&myDept===PS?'<br><span class="chip" style="margin-top:8px">Il Pronto Soccorso consulta soltanto: questa operazione la fanno i reparti</span>':'');$('#helpDots').innerHTML=helpList.map((_,i)=>`<button class="hdot ${i===helpStep?'on':''}" onclick="helpGo(${i})" aria-label="Passo ${i+1}"></button>`).join('');$('#helpPrev').disabled=helpStep===0;$('#helpNext').textContent=helpStep===helpList.length-1?'Ho capito':'Avanti'}
 function helpGo(i){helpStep=i;drawHelp()}
 function helpNext(){if(helpStep>=helpList.length-1){$('#helpDlg').close();return}helpStep++;drawHelp()}
 function helpPrev(){if(helpStep>0){helpStep--;drawHelp()}}
