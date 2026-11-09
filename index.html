@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- Posti letto · Ospedale di Stato RSM · versione 3.8.0 (09/11/2026)
+<!-- Posti letto · Ospedale di Stato RSM · versione 3.9.0 (09/11/2026)
      Nuova grafica chiara, accesso per reparto, registro attività completo per l'amministratore. -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<meta name="version" content="3.8.0">
+<meta name="version" content="3.9.0">
 <title>Posti letto · Ospedale di Stato RSM</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f4f7f9">
@@ -542,6 +542,45 @@ html[data-theme="dark"] .hsimg img{filter:brightness(.92)}
 html[data-theme="dark"] .tile.off{background:var(--s2)}
 .theme-btn .ico{width:17px;height:17px}
 
+/* ---- barre di avviso, segnalazioni e console tecnica ---- */
+.netbar,.updbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:13.5px;font-weight:600;line-height:1.4}
+.netbar{background:#c53030;color:#fff}.netbar .btn{margin-left:auto;background:#fff;color:#9b2c2c;border-color:#fff;flex:none}
+.updbar{background:var(--occ-bg);color:var(--occ);border-bottom:1px solid var(--occ-bd)}.updbar .btn{margin-left:auto;flex:none}
+.netbar .ico,.updbar .ico{flex:none}
+.badge.red{background:var(--danger)}
+.help-btn .badge{margin-left:auto}
+.rep-btn{background:var(--res-bg)!important;border-color:var(--res-bd,#f1dca8)!important;color:var(--res)!important}.rep-btn .q{background:var(--res)!important}
+.top-act .btn .badge{margin-left:4px}
+.choices.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.rep-list{display:flex;flex-direction:column}
+.rep-row{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line2);padding:12px 20px;cursor:pointer;color:inherit;font:inherit}
+.rep-row:first-child{border-top:0}
+.rep-row:hover{background:var(--s2)}
+.rep-row.urgent{box-shadow:inset 4px 0 0 var(--danger)}
+.rep-top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-bottom:4px}
+.rep-top .muted{margin-left:auto}
+.rep-text{color:var(--text2);font-size:13.5px;line-height:1.5;white-space:pre-line;overflow-wrap:anywhere}
+.rep-item{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px}
+.rep-reply{margin-top:8px;background:var(--accent-50);border-radius:10px;padding:8px 10px;font-size:13px;color:var(--text2);white-space:pre-line;overflow-wrap:anywhere}.rep-reply b{display:block;color:var(--accent-d);font-size:12px;margin-bottom:2px}
+.rep-h{font-size:14px;margin:22px 0 2px}
+.iss{display:flex;align-items:center;gap:10px;padding:10px 20px;border-top:1px solid var(--line2)}
+.iss:first-child{border-top:0}
+.iss>div{flex:1;min-width:0;font-size:13.5px;line-height:1.45;color:var(--text2)}.iss>div b{display:block;font-size:12.5px;color:var(--text)}
+.iss .dot{flex:none;margin:0}.iss .btn{flex:none}
+.diag{display:flex;gap:10px;padding:10px 20px;border-top:1px solid var(--line2);font-size:13.5px;align-items:flex-start;line-height:1.45}
+.diag:first-child{border-top:0}
+.diag>i{font-style:normal;flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff;margin-top:1px}
+.diag>i.ok{background:var(--free)}.diag>i.warn{background:var(--res)}.diag>i.ko{background:var(--danger)}.diag>i.run{background:var(--soft)}
+.diag b{display:block}.diag span{color:var(--muted);overflow-wrap:anywhere}
+.congrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:16px;align-items:start}
+.congrid>.card,.conwide{min-width:0}
+.conwide{margin-bottom:16px}
+.techbox{background:var(--s2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:12.5px;line-height:1.7;color:var(--text2);margin-top:12px;overflow-wrap:anywhere}
+.reptext{background:var(--s2);border-radius:12px;padding:12px 14px;white-space:pre-line;line-height:1.55;color:var(--text);overflow-wrap:anywhere;margin-top:10px}
+.kpi strong.kstate{font-size:21px;letter-spacing:-.4px;margin:10px 0 6px}
+@media (max-width:1100px){.congrid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){.iss,.diag,.rep-row{padding-left:16px;padding-right:16px}.iss{flex-wrap:wrap}.iss .btn{margin-left:19px}.choices.c3{grid-template-columns:1fr}}
+
 @media (max-width:980px){
   .shell{grid-template-columns:minmax(0,1fr)}
   .main,.side{min-width:0;max-width:100vw}
@@ -601,6 +640,8 @@ html[data-theme="dark"] .tile.off{background:var(--s2)}
 </style>
 </head>
 <body>
+<div id="netbar" class="netbar" role="alert" hidden></div>
+<div id="updbar" class="updbar" role="status" hidden></div>
 
 <!-- ===================== ACCESSO ===================== -->
 <section id="gate" class="gate">
@@ -624,6 +665,7 @@ html[data-theme="dark"] .tile.off{background:var(--s2)}
     <nav class="nav" id="nav"></nav>
     <button class="help-btn install-card" data-install hidden onclick="installApp()"><span class="q" style="background:#2c6bd8"><svg class="ico" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></span><span>Installa applicazione<small>Icona sul desktop, si apre come un programma</small></span></button>
     <button class="help-btn" onclick="openHelp()" style="margin-top:8px"><span class="q">?</span><span>Come funziona<small>Guida rapida con animazioni</small></span></button>
+    <button class="help-btn rep-btn" data-noadmin onclick="openReport()" style="margin-top:8px"><span class="q">!</span><span>Segnala un problema<small>Scrivi all’amministratore</small></span><span class="badge red rep-badge" hidden></span></button>
     <div class="side-foot" id="sidefoot"></div>
   </aside>
   <div class="main">
@@ -632,6 +674,7 @@ html[data-theme="dark"] .tile.off{background:var(--s2)}
       <div class="top-act">
         <button class="btn sm theme-btn" onclick="toggleTheme()" title="Modalità notturna" aria-label="Modalità notturna"></button>
         <button class="btn soft sm only-m" onclick="openHelp()" aria-label="Come funziona">?</button>
+        <button class="btn soft sm only-m" data-noadmin onclick="openReport()" aria-label="Segnala un problema" title="Segnala un problema">!<span class="badge red rep-badge" hidden></span></button>
         <button class="btn soft sm" data-install hidden onclick="installApp()" title="Installa come app sul computer"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M12 7v6M9.5 10.5 12 13l2.5-2.5"/></svg><span class="bl">Installa</span></button>
         <button class="btn sm" id="logoutBtn" onclick="logout()"></button>
       </div>
@@ -729,6 +772,26 @@ html[data-theme="dark"] .tile.off{background:var(--s2)}
   <div class="help-foot"><div class="hdots" id="helpDots"></div><div class="row-actions"><button class="btn" id="helpPrev" onclick="helpPrev()">Indietro</button><button class="btn primary" id="helpNext" onclick="helpNext()">Avanti</button></div></div>
 </div></dialog>
 
+<dialog id="repDlg"><form class="dlg" onsubmit="event.preventDefault();sendReport()">
+  <div class="dlg-h"><div><small>Assistenza</small><h2>Segnala un problema</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <div class="field"><span class="lbl">Di cosa si tratta?</span><div class="choices c2" id="repCats"></div></div>
+  <label class="switch"><div><b>È urgente</b><small>Il programma non permette di lavorare</small></div><input type="checkbox" id="repUrgent"></label>
+  <div class="field"><label for="repText">Descrivi il problema</label><textarea id="repText" rows="4" maxlength="1000" placeholder="Cosa stavi facendo, cosa è successo, cosa ti aspettavi"></textarea>
+    <p class="small">Non scrivere nomi o dati dei pazienti. Versione, computer e pagina vengono allegati da soli.</p></div>
+  <div class="err" id="repErr" role="alert"></div>
+  <div class="actions"><button type="button" class="btn" onclick="closeDlg(this)">Annulla</button><button class="btn primary" id="repSend">Invia segnalazione</button></div>
+  <div id="repMine"></div>
+</form></dialog>
+
+<dialog id="repAdmDlg"><form class="dlg" onsubmit="event.preventDefault();saveReportAdmin()">
+  <div class="dlg-h"><div><small id="raSub">Segnalazione</small><h2 id="raTitle">Segnalazione</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <div id="raBody"></div>
+  <div class="field"><span class="lbl">Stato</span><div class="choices c3" id="raStatus"></div></div>
+  <div class="field"><label for="raReply">Risposta al reparto</label><textarea id="raReply" rows="3" maxlength="1000" placeholder="Il reparto la legge in “Segnala un problema”"></textarea></div>
+  <div class="err" id="raErr" role="alert"></div>
+  <div class="actions"><button type="button" class="btn danger" style="margin-right:auto" onclick="deleteReport()">Elimina</button><button type="button" class="btn" onclick="closeDlg(this)">Annulla</button><button class="btn primary">Salva</button></div>
+</form></dialog>
+
 <dialog id="msgDlg"><div class="dlg">
   <div class="dlg-h"><h2 id="msgTitle"></h2></div>
   <div id="msgText" style="color:var(--text2);margin-top:8px;white-space:pre-line;line-height:1.6"></div>
@@ -741,7 +804,7 @@ html[data-theme="dark"] .tile.off{background:var(--s2)}
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
 import {getAuth,initializeAuth,inMemoryPersistence,browserLocalPersistence,browserSessionPersistence,setPersistence,signInWithEmailAndPassword,signOut,onAuthStateChanged,createUserWithEmailAndPassword,updatePassword,reauthenticateWithCredential,EmailAuthProvider} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js';
-import {getFirestore,doc,getDoc,getDocs,setDoc,deleteDoc,collection,onSnapshot,runTransaction,writeBatch,addDoc,query,where,orderBy,limit,deleteField,serverTimestamp,Timestamp,FieldPath,increment} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
+import {getFirestore,doc,getDoc,getDocs,getDocFromServer,setDoc,deleteDoc,collection,onSnapshot,runTransaction,writeBatch,addDoc,query,where,orderBy,limit,deleteField,serverTimestamp,Timestamp,FieldPath,increment} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
 
 // ================= CONFIGURAZIONE =================
 const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomain:"gestionale-reparti-ospedale.firebaseapp.com",projectId:"gestionale-reparti-ospedale",storageBucket:"gestionale-reparti-ospedale.firebasestorage.app",messagingSenderId:"398239423904",appId:"1:398239423904:web:af3007359ca0af7f8998c5"};
@@ -749,7 +812,7 @@ const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomai
 // Deve coincidere con l'email scritta in firestore.rules.
 const ADMIN_EMAIL='admin@ospedale.local';
 const ACCOUNT_DOMAIN='ospedale.local';
-const APP_VERSION='3.8.0',APP_DATE='09/11/2026';
+const APP_VERSION='3.9.0',APP_DATE='09/11/2026';
 const PS='__ps',PS_LABEL='Pronto Soccorso',ADMIN='__admin',LEGACY_KEY='beds-rsm-configurable-v3';
 const ADMIN_IDLE_MIN=30;
 const TZ='Europe/San_Marino';
@@ -770,6 +833,15 @@ let secAuth=null;
 // ================= UTILITÀ =================
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 class AppError extends Error{}
+// Memoria del browser: in alcune modalità (privata, criteri aziendali) può non essere disponibile; il programma funziona lo stesso.
+const store=get=>({get:k=>{try{return get().getItem(k)}catch{return null}},set:(k,v)=>{try{get().setItem(k,v)}catch{}},del:k=>{try{get().removeItem(k)}catch{}}});
+const LS=store(()=>localStorage),SS=store(()=>sessionStorage);
+// Errori dei computer: raccolti da soli (senza ripetizioni, al massimo 15 per finestra) e mostrati nella Console tecnica.
+const ERR_BUF=[],errSeen=new Set(),errQueue=[];let errSent=0;
+function reportError(kind,msg,where=''){try{msg=String(msg||'Errore sconosciuto').replace(/\s+/g,' ').slice(0,300);if(/ResizeObserver|^Script error\.?$/.test(msg))return;ERR_BUF.push({at:new Date().toISOString(),kind,msg});if(ERR_BUF.length>20)ERR_BUF.shift();const key=kind+'|'+msg;if(errSeen.has(key))return;errSeen.add(key);errQueue.push({kind,msg,where:String(where||'').slice(0,200),when:new Date().toISOString()});flushErrors()}catch{}}
+function flushErrors(){try{if(!user)return;while(errQueue.length&&errSent<15){const e=errQueue.shift();errSent++;addDoc(collection(db,'errors'),{at:serverTimestamp(),uid:user.uid,who:myLabel,dept:isAdmin?'':(myDept||''),kind:e.kind,msg:e.msg,where:e.where,when:e.when,ver:APP_VERSION,device:DEVICE,page:pageLabel(),online:navigator.onLine}).catch(()=>{})}}catch{}}
+addEventListener('error',e=>reportError('programma',e.message||e.error?.message,(e.filename||'').split('/').pop()+(e.lineno?':'+e.lineno+':'+e.colno:'')));
+addEventListener('unhandledrejection',e=>{const r=e.reason;reportError('programma',(r?.code?r.code+' ':'')+(r?.message||r),'promessa')});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const str=(v,n)=>typeof v==='string'?v.slice(0,n):'';
 const isDate=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)?v:'';
@@ -777,8 +849,8 @@ const itDate=v=>v?v.split('-').reverse().join('/'):'';
 function randomId(n=10){const cs='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';return Array.from(crypto.getRandomValues(new Uint32Array(n)),x=>cs[x%cs.length]).join('')}
 const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 const DEVICE=(()=>{const u=navigator.userAgent;const b=/Edg\//.test(u)?'Edge':/OPR\//.test(u)?'Opera':/Firefox\/|FxiOS/.test(u)?'Firefox':/Chrome\/|CriOS/.test(u)?'Chrome':/Safari\//.test(u)?'Safari':'Browser';const o=/Windows/.test(u)?'Windows':/Android/.test(u)?'Android':/iPhone|iPad|iPod/.test(u)?'iOS':/Mac OS X/.test(u)?'macOS':/Linux/.test(u)?'Linux':'';return b+(o?' · '+o:'')+(isStandalone()?' · app':'')})();
-const SID=(()=>{let s=sessionStorage.getItem('pl-sid');if(!s){s=randomId(10);sessionStorage.setItem('pl-sid',s)}return s})();
-const ICONS={moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',tv:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',trend:'<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',expand:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',eyeoff:'<path d="M3 3l18 18M10.6 6.2A9.8 9.8 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.3 4M6.5 7.6C3.7 9.4 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>',bed:'<path d="M3 6v13M3 14h18v5M21 14v-2.5A2.5 2.5 0 0 0 18.5 9H11v5"/><circle cx="7" cy="11" r="2"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',activity:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.5 3.5 5.2"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 21v-4h6v4M12 7v4M10 9h4"/>',sliders:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',logout:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11"/>',download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',upload:'<path d="M12 16V5M7 10l5-5 5 5M5 20h14"/>',chart:'<path d="M4 20V11M10 20V5M16 20v-6M2 20h20"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M15 18l-6-6 6-6"/>',lock:'<rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/>',switch:'<path d="M7 7h11l-3-3M17 17H6l3 3"/>',door:'<path d="M5 21V4a1 1 0 0 1 1-1h9l4 2v16M3 21h18"/><circle cx="12.5" cy="12" r=".8"/>',refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>'};
+const SID=(()=>{let s=SS.get('pl-sid');if(!s){s=randomId(10);SS.set('pl-sid',s)}return s})();
+const ICONS={cpu:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9.5 9.5h5v5h-5zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',alert:'<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.1"/>',flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',tv:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',trend:'<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',expand:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',eyeoff:'<path d="M3 3l18 18M10.6 6.2A9.8 9.8 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.3 4M6.5 7.6C3.7 9.4 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>',bed:'<path d="M3 6v13M3 14h18v5M21 14v-2.5A2.5 2.5 0 0 0 18.5 9H11v5"/><circle cx="7" cy="11" r="2"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',activity:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.5 3.5 5.2"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 21v-4h6v4M12 7v4M10 9h4"/>',sliders:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',logout:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11"/>',download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',upload:'<path d="M12 16V5M7 10l5-5 5 5M5 20h14"/>',chart:'<path d="M4 20V11M10 20V5M16 20v-6M2 20h20"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M15 18l-6-6 6-6"/>',lock:'<rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/>',switch:'<path d="M7 7h11l-3-3M17 17H6l3 3"/>',door:'<path d="M5 21V4a1 1 0 0 1 1-1h9l4 2v16M3 21h18"/><circle cx="12.5" cy="12" r=".8"/>',refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>'};
 const ico=n=>`<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]||''}</svg>`;
 const AV=['#0f9b8e','#2c6bd8','#c7820f','#7650d3','#c84a7c','#1d88b0','#4f8a2a','#b8571a','#0d7a8a'];
 function avColor(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return AV[h%AV.length]}
@@ -788,8 +860,8 @@ function tint(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${n
 function toast(t){const el=document.createElement('div');el.className='toast';el.textContent=t;document.body.append(el);setTimeout(()=>el.remove(),3000)}
 function closeDlg(el){el.closest('dialog').close()}
 function appMessage(message,title='Attenzione',question=false,opts={}){return new Promise(resolve=>{const d=$('#msgDlg');$('#msgTitle').textContent=title;const t=$('#msgText');if(opts.html)t.innerHTML=message;else t.textContent=message;const yes=$('#msgYes'),no=$('#msgNo');no.hidden=!question;yes.textContent=opts.yes||(question?'Conferma':'Ho capito');yes.className='btn '+(opts.danger?'danger':'primary');const finish=v=>{d.close();t.innerHTML='';resolve(v)};yes.onclick=()=>finish(true);no.onclick=()=>finish(false);d.oncancel=e=>{e.preventDefault();finish(false)};d.showModal();setTimeout(()=>(question?no:yes).focus(),30)})}
-function errMsg(e){const c=e?.code||'';if(/invalid-credential|wrong-password|user-not-found|invalid-login/.test(c))return 'Password non corretta.';if(c.includes('too-many-requests'))return 'Troppi tentativi sbagliati. Attendi qualche minuto e riprova.';if(c.includes('network')||c==='unavailable')return 'Connessione assente. Controlla la rete e riprova.';if(c.includes('permission-denied'))return 'Permessi insufficienti. Controlla che le regole Firestore della versione 3 siano pubblicate.';if(c.includes('weak-password'))return 'Password troppo debole.';if(c.includes('requires-recent-login'))return 'Per sicurezza accedi di nuovo e riprova.';if(c.includes('operation-not-allowed'))return 'L’accesso con email e password non è attivo in Firebase Authentication.';if(c.includes('failed-precondition'))return 'Firestore richiede un indice per questa ricerca.';return 'Operazione non riuscita'+(c?' ('+c+')':'')+'.'}
-async function guarded(fn){try{return await fn()}catch(e){if(e instanceof AppError){if(e.message)await appMessage(e.message)}else{console.error(e);await appMessage(errMsg(e),'Errore')}}}
+function errMsg(e){const c=e?.code||'';if(/invalid-credential|wrong-password|user-not-found|invalid-login/.test(c))return 'Password non corretta.';if(c.includes('too-many-requests'))return 'Troppi tentativi sbagliati. Attendi qualche minuto e riprova.';if(c.includes('network')||c==='unavailable')return 'Connessione assente. Controlla la rete e riprova.';if(c.includes('permission-denied'))return 'Permessi insufficienti. Controlla che le regole Firestore aggiornate (file firestore.rules) siano pubblicate.';if(c.includes('weak-password'))return 'Password troppo debole.';if(c.includes('requires-recent-login'))return 'Per sicurezza accedi di nuovo e riprova.';if(c.includes('operation-not-allowed'))return 'L’accesso con email e password non è attivo in Firebase Authentication.';if(c.includes('failed-precondition'))return 'Firestore richiede un indice per questa ricerca.';if(c.includes('resource-exhausted'))return 'È stato raggiunto il limite giornaliero gratuito di Firebase: i dati riprendono ad aggiornarsi a mezzanotte della California (le 9 del mattino in Italia).';return 'Operazione non riuscita'+(c?' ('+c+')':'')+'.'}
+async function guarded(fn){try{return await fn()}catch(e){if(e instanceof AppError){if(e.message)await appMessage(e.message)}else{console.error(e);reportError('operazione',(e?.code?e.code+' ':'')+(e?.message||e));await appMessage(errMsg(e),'Errore')}}}
 function download(name,text,type='application/json'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 
 // ---- date e ore ----
@@ -812,6 +884,8 @@ let authReady=false,unsubs=[],pendingLogin=null,failCount={},gateSel=null,gateEr
 let auditRows=[],auditUnsub=null,auditLimit=300,auditMode='live',auditLoaded=false,auditErr='',auditOpen=new Set();
 let vault={},vaultUnsub=null,vaultState='',pwShown=false,pwShownTimer=null,todayRows=[],todayUnsub=null,todayKey='',presenceRows=[],presenceUnsub=null,presenceTimer=null,lastActivity=Date.now();
 const lf={type:'',dept:'',who:'',q:'',from:'',to:''};
+let deptUnsub=null,deptRetry=0,deptRetryTimer=null,lastDeptKey='',myRepUnsub=null,reportsUnsub=null,errorsUnsub=null;
+const live={state:'',fromCache:false,lastSnap:0,err:'',retryAt:0};
 const byId=id=>depts.find(d=>d.id===id);
 const canEdit=id=>isAdmin||(!!myDept&&myDept!==PS&&myDept===id);
 // Solo il Pronto Soccorso e l'amministratore vedono tutti i reparti; ogni reparto vede solo i propri letti.
@@ -855,7 +929,9 @@ function patientLeaves(fr,k,newState='free',reason='',notes=''){const p=fr.beds[
   p.state=newState;p.reason=reason;p.notes=notes;return out}
 
 // ================= LOGICA POSTI LETTO =================
-function roomSex(r,exclude=-1){const s=[...new Set(r.beds.filter((b,k)=>k!==exclude&&(b.state==='occupied'||b.state==='reserved'&&b.date<=date)).map(b=>b.sex).filter(Boolean))];return s.length>1?'mixed':s[0]||''}
+// Anche chi arriva domani decide se i letti liberi della stanza sono per uomo o per donna (i suoi letti non sono già contati come liberi).
+const sexHorizon=()=>date>nextDate()?date:nextDate();
+function roomSex(r,exclude=-1){const s=[...new Set(r.beds.filter((b,k)=>k!==exclude&&(b.state==='occupied'||b.state==='reserved'&&b.date<=sexHorizon())).map(b=>b.sex).filter(Boolean))];return s.length>1?'mixed':s[0]||''}
 function availability(d,r){if(d.mixed)return 'Uomo o donna';const v=roomSex(r);return v==='M'?'Per uomo':v==='F'?'Per donna':v==='mixed'?'Camera mista':'Uomo o donna'}
 async function confirmMixedRoom(d,j){if(d.mixed)return true;const rl=roomLabel(d.rooms[j],j);if(!await appMessage('In “'+rl+'” ci sono già pazienti di sesso diverso. Vuoi creare una camera mista?','Camera mista · 1 di 2',true))return false;return appMessage('Confermi la camera mista in “'+rl+'”? Il salvataggio avviene solo dopo questa seconda conferma.','Camera mista · 2 di 2',true,{yes:'Sì, confermo'})}
 function psBreakdown(d){const c={male:0,female:0,neutral:0,mixed:0,isolationFree:0,infectionBlocked:0};d.rooms.forEach(r=>{const sex=roomSex(r);r.beds.forEach(b=>{if(b.state==='closed'||b.state==='occupied'||b.state==='reserved'&&b.date<=nextDate())return;if(b.state==='blocked'||r.iso!=='Nessuno'){c.infectionBlocked++;return}c[sex==='M'?'male':sex==='F'?'female':sex==='mixed'?'mixed':'neutral']++;if(r.cap)c.isolationFree++})});return c}
@@ -877,8 +953,8 @@ function renderGate(){
   $('#gateVer').textContent='Versione '+APP_VERSION+' · '+APP_DATE;
   const body=$('#gateBody');
   if(!gateSel){
-    const last=localStorage.getItem('pl-last-profile');let tiles;
-    if(loginsState==='loading')tiles='<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
+    const last=LS.get('pl-last-profile');let tiles;
+    if(loginsState==='loading')tiles='<div class="skel"></div><div class="skel"></div><div class="skel"></div>'+(loginsSlow?'<div class="empty">'+(navigator.onLine?'Il collegamento al server è lento…':'Connessione internet assente: controlla la rete.')+'</div>':'');
     else if(loginsState==='error')tiles='<div class="empty">Impossibile caricare l’elenco dei reparti. Controlla la connessione e ricarica la pagina.</div>';
     else{const list=gateProfiles();tiles=list.length?list.map(p=>`<button class="tile ${p.active?'':'off'}" onclick="gatePick('${esc(p.id)}')"><span class="avatar" style="background:${p.active?avColor(p.label):'#b7c2cc'}">${esc(initials(p.label))}</span><span><b>${esc(p.label)}</b><small>${!p.active?'Password non ancora creata':p.id===PS?'Sola consultazione':'Reparto'}</small></span>${p.id===last&&p.active?'<span class="chip accent last">Ultimo usato</span>':''}</button>`).join(''):'<div class="empty">Nessun reparto è ancora abilitato.<br>L’amministratore deve creare le password dall’area riservata.</div>'}
     body.innerHTML=`<h2>Seleziona il tuo reparto</h2><p class="sub">Poi inserisci la password che ti ha dato l’amministratore.</p><div class="tiles">${tiles}</div>${gateErr?`<div class="err" role="alert">${esc(gateErr)}</div>`:''}`;
@@ -900,16 +976,20 @@ function togglePw(){const i=$('#gatePw');i.type=i.type==='password'?'text':'pass
 async function doLogin(){const t=gateSel,pw=$('#gatePw').value,err=$('#gateErr');err.textContent='';if(!pw){err.textContent='Inserisci la password.';return}
   const email=t===ADMIN?ADMIN_EMAIL:logins[t]?.email;if(!email){err.textContent='Questo profilo non ha una password attiva. Rivolgiti all’amministratore.';return}
   const btn=$('#gateBtn');btn.disabled=true;btn.textContent='Accesso in corso…';
-  try{await setPersistence(auth,t===ADMIN?browserSessionPersistence:browserLocalPersistence);pendingLogin={failed:failCount[t]||0};await signInWithEmailAndPassword(auth,email,pw);failCount[t]=0;if(t!==ADMIN)localStorage.setItem('pl-last-profile',t)}
+  try{await setPersistence(auth,t===ADMIN?browserSessionPersistence:browserLocalPersistence);pendingLogin={failed:failCount[t]||0};await signInWithEmailAndPassword(auth,email,pw);failCount[t]=0;if(t!==ADMIN)LS.set('pl-last-profile',t)}
   catch(e){pendingLogin=null;failCount[t]=(failCount[t]||0)+1;err.textContent=errMsg(e);btn.disabled=false;btn.innerHTML=ico('lock')+' Entra';$('#gatePw').select()}}
 async function logout(auto=false){if(!user)return;
   if(!auto&&!await appMessage(isAdmin?'Vuoi uscire dall’area amministratore?':'Vuoi uscire da “'+myLabel+'” e tornare alla scelta del reparto?',isAdmin?'Esci':'Cambia reparto',true,{yes:isAdmin?'Esci':'Cambia reparto'}))return;
   await audit('uscita',isAdmin?'':myDept,auto?'Uscita automatica dopo '+ADMIN_IDLE_MIN+' minuti di inattività':'Uscita dal profilo');
   try{await deleteDoc(doc(db,'presence',user.uid+'_'+SID))}catch{}
-  sessionStorage.removeItem('pl-open-'+user.uid);gateSel=null;if(auto)gateErr='Sessione chiusa per inattività.';await signOut(auth)}
-function stopListeners(){[...unsubs,auditUnsub,todayUnsub,presenceUnsub,vaultUnsub].forEach(u=>{try{u&&u()}catch{}});unsubs=[];auditUnsub=todayUnsub=presenceUnsub=vaultUnsub=null;vault={};vaultState='';pwShown=false;clearTimeout(pwShownTimer);clearInterval(presenceTimer);presenceTimer=null}
+  SS.del('pl-open-'+user.uid);gateSel=null;if(auto)gateErr='Sessione chiusa per inattività.';await signOut(auth)}
+function stopListeners(){[...unsubs,auditUnsub,todayUnsub,presenceUnsub,vaultUnsub,deptUnsub,myRepUnsub,reportsUnsub,errorsUnsub].forEach(u=>{try{u&&u()}catch{}});unsubs=[];auditUnsub=todayUnsub=presenceUnsub=vaultUnsub=deptUnsub=myRepUnsub=reportsUnsub=errorsUnsub=null;clearTimeout(deptRetryTimer);live.state='';live.fromCache=false;lastDeptKey='';myReports=[];myRepState='';reportRows=[];errorRows=[];reportsState=errorsState='';repKnown=null;diag.items=[];diag.at=0;updateNetBar();vault={};vaultState='';pwShown=false;clearTimeout(pwShownTimer);clearInterval(presenceTimer);presenceTimer=null}
 
-onSnapshot(doc(db,'public','logins'),s=>{const data=s.exists()?s.data():{};logins=data.entries||{};publicDepts=data.depts||{};loginsState='ok';syncPublicDepts();if(authReady&&!user)renderGate();else if(page==='admin')render({soft:true})},e=>{console.warn('logins',e);loginsState='error';if(authReady&&!user)renderGate()});
+let loginsSlow=false;setTimeout(()=>{if(loginsState==='loading'){loginsSlow=true;if(!user)renderGate()}},8000);
+let reloadBase;
+onSnapshot(doc(db,'public','logins'),s=>{const data=s.exists()?s.data():{};logins=data.entries||{};publicDepts=data.depts||{};loginsState='ok';
+  // “Aggiorna tutti i computer” dalla Console tecnica: ogni finestra si ricarica appena è libera.
+  const ra=data.reloadAt||'';if(reloadBase===undefined)reloadBase=ra;else if(ra!==reloadBase){reloadBase=ra;if(ra&&!isAdmin)askUpdate('L’amministratore ha chiesto di aggiornare il programma.')}syncPublicDepts();if(authReady&&!user)renderGate();else if(page==='admin')render({soft:true})},e=>{console.warn('logins',e);loginsState='error';if(authReady&&!user)renderGate()});
 
 onAuthStateChanged(auth,async u=>{
   authReady=true;stopListeners();user=u;isAdmin=false;myDept=null;myLabel='';depts=[];deptsLoaded=false;viewed=new Set();auditRows=[];todayRows=[];presenceRows=[];auditLoaded=false;
@@ -919,25 +999,55 @@ onAuthStateChanged(auth,async u=>{
     if(!myDept){pendingLogin=null;gateErr='Accesso non più valido: la password di questo profilo è stata cambiata o revocata.';await signOut(auth);return}
     unsubs.push(onSnapshot(doc(db,'accounts',u.uid),s=>{if(!s.exists()){gateErr='La password di questo profilo è stata cambiata dall’amministratore. Accedi con quella nuova.';signOut(auth)}else if(s.data().label&&s.data().label!==myLabel){myLabel=s.data().label;render({soft:true})}},()=>{}))}
   sessionSince=new Date().toISOString();lastActivity=Date.now();date=today;
-  let autoMon=false;try{autoMon=localStorage.getItem('pl-monitor-auto')==='1'}catch{}
+  let autoMon=false;try{autoMon=LS.get('pl-monitor-auto')==='1'}catch{}
   page=!seesAll()?myDept:location.hash==='#monitor'||autoMon?'monitor':isAdmin?'admin':'overview';adminTab='attivita';gateSel=null;gateErr='';
   $('#gate').hidden=true;$('#shell').hidden=false;
-  const onDepts=docs=>{depts=docs.map(x=>normalize({id:x.id,...x.data()}));sortDepts();deptsLoaded=true;syncPublicDepts();scheduleStats();render({soft:true});if(editing&&$('#bedDlg').open&&!byId(editing.id))$('#bedDlg').close()};
-  const onDeptErr=e=>{console.error(e);if(e.code==='permission-denied'&&!isAdmin){gateErr='Il profilo non ha più accesso ai dati.';signOut(auth)}else appMessage(errMsg(e),'Errore di collegamento')};
-  // Un reparto si collega solo alla propria scheda: i dati degli altri reparti non arrivano nemmeno al suo computer.
-  unsubs.push(seesAll()?onSnapshot(collection(db,'departments'),snap=>onDepts(snap.docs),onDeptErr):onSnapshot(doc(db,'departments',myDept),snap=>onDepts(snap.exists()?[snap]:[]),onDeptErr));
+  subscribeDepts();
+  if(!isAdmin)startMyReports();
   if(isAdmin)startAdminFeeds();
   const dept=isAdmin?'':myDept;
-  if(pendingLogin){const f=pendingLogin.failed;audit('accesso',dept,'Accesso effettuato',[f?f+(f===1?' tentativo':' tentativi')+' con password sbagliata prima dell’accesso':'',isStandalone()?'Aperto dall’app installata':'']);pendingLogin=null;sessionStorage.setItem('pl-open-'+u.uid,'1')}
-  else if(!sessionStorage.getItem('pl-open-'+u.uid)){audit('accesso',dept,'Programma aperto con l’accesso già attivo');sessionStorage.setItem('pl-open-'+u.uid,'1')}
-  beat(true);presenceTimer=setInterval(()=>beat(true),5*60000);
-  if(!isAdmin){let seen=null;try{seen=localStorage.getItem('pl-help-v1')}catch{}if(!seen)setTimeout(()=>{if(user&&!document.querySelector('dialog[open]'))openHelp()},900)}
+  if(pendingLogin){const f=pendingLogin.failed;audit('accesso',dept,'Accesso effettuato',[f?f+(f===1?' tentativo':' tentativi')+' con password sbagliata prima dell’accesso':'',isStandalone()?'Aperto dall’app installata':'']);pendingLogin=null;SS.set('pl-open-'+u.uid,'1')}
+  else if(!SS.get('pl-open-'+u.uid)){audit('accesso',dept,'Programma aperto con l’accesso già attivo');SS.set('pl-open-'+u.uid,'1')}
+  beat(true);presenceTimer=setInterval(()=>beat(true),5*60000);flushErrors();updateRepBadge();
+  if(!isAdmin){let seen=null;try{seen=LS.get('pl-help-v1')}catch{}if(!seen)setTimeout(()=>{if(user&&!document.querySelector('dialog[open]'))openHelp()},900)}
   render()});
+
+// ---- collegamento ai dati dei reparti ----
+// Firestore riprova da solo quando cade la rete; se invece il collegamento si interrompe per un errore
+// (limite giornaliero, regole, server) lo riapriamo noi dopo 5, 10, 20… secondi, fino a 1 minuto.
+function onDepts(docs){const list=docs.map(x=>normalize({id:x.id,...x.data()})),key=JSON.stringify(list);if(deptsLoaded&&key===lastDeptKey)return;lastDeptKey=key;depts=list;sortDepts();deptsLoaded=true;syncPublicDepts();scheduleStats();render({soft:true});if(editing&&$('#bedDlg').open&&!byId(editing.id))$('#bedDlg').close()}
+function subscribeDepts(){try{deptUnsub&&deptUnsub()}catch{}deptUnsub=null;clearTimeout(deptRetryTimer);if(!user)return;live.state='connecting';
+  const ok=snap=>{deptRetry=0;live.state='ok';live.err='';live.lastSnap=Date.now();live.fromCache=!!snap.metadata?.fromCache;updateNetBar();onDepts(snap.docs||(snap.exists()?[snap]:[]))};
+  const fail=async e=>{console.error('reparti',e);deptUnsub=null;live.state='error';live.err=e?.code||'errore';reportError('collegamento',(e?.code||'')+' '+(e?.message||''),'dati dei reparti');if(!user)return;
+    if(e?.code==='permission-denied'&&!isAdmin){let acc=null;try{acc=await getDoc(doc(db,'accounts',user.uid))}catch{}if(acc&&!acc.exists()){gateErr='Il profilo non ha più accesso ai dati.';signOut(auth);return}}
+    const wait=Math.min(60,5*2**Math.min(deptRetry++,4));live.retryAt=Date.now()+wait*1000;updateNetBar();deptRetryTimer=setTimeout(subscribeDepts,wait*1000)};
+  const opt={includeMetadataChanges:true};
+  // Un reparto si collega solo alla propria scheda: i dati degli altri reparti non arrivano nemmeno al suo computer.
+  deptUnsub=seesAll()?onSnapshot(collection(db,'departments'),opt,ok,fail):onSnapshot(doc(db,'departments',myDept),opt,ok,fail)}
+// ---- avviso di connessione (barra rossa in alto) ----
+let netShowTimer=null;
+function netProblem(){if(!navigator.onLine)return 'Connessione internet assente: i numeri potrebbero non essere aggiornati e le modifiche non vengono salvate.';if(!user)return '';
+  if(live.state==='error')return 'Collegamento ai dati interrotto ('+esc(live.err)+'). Nuovo tentativo automatico'+(live.retryAt>Date.now()?' tra '+Math.ceil((live.retryAt-Date.now())/1000)+' secondi':'')+'…';
+  if(live.state==='ok'&&live.fromCache)return 'Il server non risponde: i numeri mostrati potrebbero non essere aggiornati.';return ''}
+function updateNetBar(){const b=$('#netbar');if(!b)return;const m=netProblem();
+  if(!m){clearTimeout(netShowTimer);netShowTimer=null;b.hidden=true;return}
+  if(!b.hidden){b.querySelector('span').innerHTML=m;return}
+  if(!netShowTimer)netShowTimer=setTimeout(()=>{netShowTimer=null;const m2=netProblem();if(!m2)return;b.innerHTML=ico('alert')+'<span>'+m2+'</span><button class="btn sm" onclick="location.reload()">Ricarica</button>';b.hidden=false},4000)}
+['online','offline'].forEach(ev=>addEventListener(ev,updateNetBar));
+// ---- aggiornamenti del programma ----
+// Ogni 30 minuti si controlla la versione pubblicata (version.json). Se è più nuova, o se l'amministratore lo chiede,
+// compare una barra blu e la pagina si ricarica da sola appena nessuno la sta usando: i dati sono sul server e non si perdono.
+let pubVer='',clockSkew=null,updPending='';
+const verCmp=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d}return 0};
+async function checkPublished(){try{const t0=Date.now(),r=await fetch('version.json?t='+t0,{cache:'no-store'});if(!r.ok)return;const hd=Date.parse(r.headers.get('date')||'');if(hd)clockSkew=hd-(t0+Date.now())/2;const j=await r.json();pubVer=String(j.version||'');if(pubVer&&verCmp(pubVer,APP_VERSION)>0)askUpdate('È disponibile la versione '+pubVer+' del programma.')}catch{}}
+function askUpdate(msg){updPending=msg;const b=$('#updbar');if(!b)return;b.innerHTML=ico('refresh')+'<span><b>'+esc(msg)+'</b> Si aggiorna da solo appena il computer è libero.</span><button class="btn sm primary" onclick="location.reload()">Aggiorna ora</button>';b.hidden=false}
+function maybeReload(){if(!updPending)return;const a=document.activeElement,busy=document.querySelector('dialog[open]')||(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&a.id!=='search');if(busy)return;if(page==='monitor'||!user||Date.now()-lastActivity>60e3)location.reload()}
+setTimeout(checkPublished,15000);
 
 // ---- sessioni aperte ----
 let lastBeat=0;
 function pageLabel(){return page==='overview'?'Quadro generale':page==='admin'?'Area amministratore':page==='monitor'?'Schermo monitor':deptName(page)}
-async function beat(force){if(!user)return;if(!force&&Date.now()-lastBeat<60000)return;lastBeat=Date.now();try{await setDoc(doc(db,'presence',user.uid+'_'+SID),{uid:user.uid,who:myLabel,dept:isAdmin?'':myDept,page:pageLabel(),device:DEVICE,since:sessionSince,lastSeen:serverTimestamp()})}catch(e){}}
+async function beat(force){if(!user)return;if(!force&&Date.now()-lastBeat<60000)return;lastBeat=Date.now();try{await setDoc(doc(db,'presence',user.uid+'_'+SID),{uid:user.uid,who:myLabel,dept:isAdmin?'':myDept,page:pageLabel(),device:DEVICE,since:sessionSince,ver:APP_VERSION,online:navigator.onLine,app:isStandalone(),errs:errSent,lastSeen:serverTimestamp()})}catch(e){}}
 
 // ================= NAVIGAZIONE E RENDER =================
 function go(p){if(!seesAll()&&p!=='admin')p=myDept;if(p!=='overview'&&p!=='admin'&&p!=='monitor'&&!byId(p))return;page=p;if(!isAdmin&&byId(p)&&p!==myDept&&!viewed.has(p)){viewed.add(p);audit('consultazione',p,'Consultato il reparto '+deptName(p))}beat();render();window.scrollTo(0,0)}
@@ -955,12 +1065,13 @@ function renderSide(){
   $('#sidefoot').innerHTML=(seesAll()?'I numeri accanto ai reparti sono i letti disponibili.':'Il numero accanto al reparto indica i letti disponibili. Vedi solo i letti del tuo reparto.')+'<br>Dati condivisi in tempo reale, senza dati dei pazienti.<br><br>Versione '+APP_VERSION+' · '+APP_DATE;
   $('#logoutBtn').innerHTML=isAdmin?ico('logout')+'<span class="bl">Esci</span>':ico('switch')+'<span class="bl">Cambia reparto</span>';
   $('#crumb').textContent=page==='overview'?'Quadro generale':page==='admin'?'Area amministratore':page==='monitor'?'Schermo monitor':'Reparti / '+deptName(page);
+  $$('[data-noadmin]').forEach(b=>b.hidden=isAdmin);updateRepBadge();
   refreshInstallBtn();paintThemeButtons()}
 function render(opts={}){
   if(!signedInOk())return;
   document.body.classList.toggle('monitor',page==='monitor');keepAwake(page==='monitor');
   renderSide();updateReminder();
-  if(opts.soft&&page==='admin'&&['attivita','collegati'].includes(adminTab)&&$('#admBody')){if(adminTab==='attivita')updateLog();else updatePresence();return}
+  if(opts.soft&&page==='admin'&&['attivita','collegati','console'].includes(adminTab)&&$('#admBody')){if(adminTab==='attivita')updateLog();else if(adminTab==='console')updateConsole();else updatePresence();return}
   const act=document.activeElement,fid=act&&act.id&&$('#content').contains(act)?act.id:null,sel=fid&&'selectionStart'in act?[act.selectionStart,act.selectionEnd]:null;
   const c=$('#content');
   if(page==='admin'){if(isAdmin)renderAdmin();else page='overview'}
@@ -1019,8 +1130,8 @@ function bedTile(d,r,b,j,k,ce){
   if(ce&&b.state==='occupied')acts.push(`<button class="btn" onclick="event.stopPropagation();discharge(${j},${k})">${ico('door')}Dimesso</button>`);
   const click=ce?` click" role="button" tabindex="0" title="Tocca per modificare" onclick="editBed(${j},${k})" onkeydown="if(event.key==='Enter')editBed(${j},${k})`:'';
   return `<div class="bed s-${s}${click}"><div class="bed-h"><span>${esc(bedLabel(b,k))}</span>${b.state==='reserved'&&b.date<=today?'<span title="Ingresso da confermare">●</span>':''}</div><div class="bed-s">${STATE_LABEL[s]}</div><div class="bed-d">${info.join('<br>')}</div>${acts.length?'<div class="bed-a">'+acts.join('')+'</div>':''}</div>`}
-function othersPanel(d){let tm=0,tw=0,tf=0;depts.forEach(x=>{const a=sexAvail(x);tm+=a.men;tw+=a.women;tf+=a.free});let open=false;try{open=localStorage.getItem('pl-others-open')==='1'}catch{}
-  return `<details class="card others" ${open?'open':''} ontoggle="try{localStorage.setItem('pl-others-open',this.open?'1':'0')}catch{}"><summary>Posti disponibili in tutti i reparti <span class="pillnum ${tf?'free':'zero'}">${tf}</span><span class="chip">♂ Per uomo ${tm}</span><span class="chip" style="color:#c2417a">♀ Per donna ${tw}</span></summary>${availTable(d.id)}</details>`}
+function othersPanel(d){let tm=0,tw=0,tf=0;depts.forEach(x=>{const a=sexAvail(x);tm+=a.men;tw+=a.women;tf+=a.free});let open=false;try{open=LS.get('pl-others-open')==='1'}catch{}
+  return `<details class="card others" ${open?'open':''} ontoggle="try{LS.set('pl-others-open',this.open?'1':'0')}catch{}"><summary>Posti disponibili in tutti i reparti <span class="pillnum ${tf?'free':'zero'}">${tf}</span><span class="chip">♂ Per uomo ${tm}</span><span class="chip" style="color:#c2417a">♀ Per donna ${tw}</span></summary>${availTable(d.id)}</details>`}
 function deptHtml(d){
   const ce=canEdit(d.id),c=counts(d),a=dailyAdmissions(d),ni=isoRooms(d);
   const rooms=d.rooms.map((r,j)=>{const sx=roomSex(r),iso=r.iso!=='Nessuno';return `<article class="card room ${iso?'iso':''}"><div class="room-h"><h3>${esc(roomLabel(r,j))}</h3>${ce?`<button class="btn ghost sm" onclick="editRoom(${j})">${ico('sliders')}Modifica</button>`:''}</div>
@@ -1118,10 +1229,10 @@ async function saveStructure(){if(!structDraft)return;const {id,rows,snap}=struc
 function reminderSlot(now){const p=localTimeParts(now);return p.hour>=21?{day:p.day,time:'21:00'}:p.hour>=12?{day:p.day,time:'12:00'}:null}
 const reminderKey=s=>'pl-check-'+s.day+'-'+s.time+'-'+(isAdmin?'admin':myDept);
 let lastReminder='';
-function updateReminder(now=new Date()){const slot=signedInOk()&&!isAdmin?reminderSlot(now):null,ack=slot&&localStorage.getItem(reminderKey(slot)),own=myDept&&myDept!==PS&&byId(myDept);
+function updateReminder(now=new Date()){const slot=signedInOk()&&!isAdmin?reminderSlot(now):null,ack=slot&&LS.get(reminderKey(slot)),own=myDept&&myDept!==PS&&byId(myDept);
   const m=slot&&!ack?`<div class="reminder"><div><b>Controllo delle ${slot.time}</b><small>${own?'Verifica occupazioni, dimissioni, prenotazioni e isolamenti di '+esc(own.name)+'.':'È l’ora del controllo dei posti letto in tutti i reparti.'}</small></div><button class="btn" onclick="acknowledgeCheck()">${ico('check')}${own?'Ho controllato':'Ho letto'}</button></div>`:'';
   if(m!==lastReminder){$('#reminder').innerHTML=m;lastReminder=m}}
-async function acknowledgeCheck(){const slot=reminderSlot(new Date());if(!slot)return;localStorage.setItem(reminderKey(slot),new Date().toISOString());updateReminder();
+async function acknowledgeCheck(){const slot=reminderSlot(new Date());if(!slot)return;LS.set(reminderKey(slot),new Date().toISOString());updateReminder();
   if(myDept&&myDept!==PS&&byId(myDept))await guarded(()=>mutate(myDept,()=>{},{type:'controllo',action:'Controllo posti letto delle '+slot.time+' confermato'}));else audit('controllo',myDept,'Promemoria delle '+slot.time+' letto')}
 
 // ================= OROLOGIO =================
@@ -1131,12 +1242,14 @@ function tick(now=new Date()){$('#clock').textContent=cap(new Intl.DateTimeForma
   if(isAdmin&&user&&page!=='monitor'&&Date.now()-lastActivity>ADMIN_IDLE_MIN*60e3){lastActivity=Date.now();logout(true)}
   if(page==='admin'&&adminTab==='collegati'&&now.getSeconds()%15===0)updatePresence()
   if(page==='monitor')monitorTick(now);
-  if(user&&now.getSeconds()===7)scheduleStats()}
+  if(user&&now.getSeconds()===7)scheduleStats();
+  if(now.getSeconds()%5===0){updateNetBar();maybeReload()}
+  if(now.getMinutes()%30===11&&now.getSeconds()===23)checkPublished()}
 ['pointerdown','keydown','wheel','touchstart'].forEach(e=>addEventListener(e,()=>{lastActivity=Date.now()},{passive:true}));
 
 // ================= AREA AMMINISTRATORE =================
-const ADMIN_TABS=[['attivita','activity','Registro attività'],['collegati','users','Collegati ora'],['riepilogo','chart','Riepilogo di oggi'],['statistiche','trend','Statistiche'],['accessi','key','Password'],['reparti','building','Reparti'],['manutenzione','sliders','Dati e sicurezza']];
-function startAdminFeeds(){startAudit();startToday();
+const ADMIN_TABS=[['attivita','activity','Registro attività'],['collegati','users','Collegati ora'],['riepilogo','chart','Riepilogo di oggi'],['statistiche','trend','Statistiche'],['accessi','key','Password'],['reparti','building','Reparti'],['manutenzione','sliders','Dati e sicurezza'],['console','cpu','Console tecnica']];
+function startAdminFeeds(){startAudit();startToday();startAdminTech();
   vaultUnsub=onSnapshot(doc(db,'vault','passwords'),s=>{vault=(s.exists()&&s.data().entries)||{};vaultState='ok';if(page==='admin'&&adminTab==='accessi')render()},e=>{console.warn('archivio password',e);vaultState='error';if(page==='admin'&&adminTab==='accessi')render()});
   presenceUnsub=onSnapshot(collection(db,'presence'),s=>{const now=Date.now();presenceRows=[];s.docs.forEach(x=>{const d=x.data({serverTimestamps:'estimate'}),t=toDate(d.lastSeen);if(!t||now-t>864e5){deleteDoc(x.ref).catch(()=>{});return}presenceRows.push({id:x.id,...d})});presenceRows.sort((a,b)=>toDate(b.lastSeen)-toDate(a.lastSeen));if(page==='admin'){if(adminTab==='collegati')updatePresence();else if(adminTab==='riepilogo')render();updateTabBadges()}},e=>console.warn('presence',e))}
 const rowOf=x=>({id:x.id,...x.data({serverTimestamps:'estimate'})});
@@ -1151,12 +1264,12 @@ const typeBadge=t=>{const [l,c]=TYPES[t]||TYPES.altro;return `<span class="tb" s
 const ONLINE_MS=11*60000;
 const onlineNow=()=>presenceRows.filter(p=>Date.now()-toDate(p.lastSeen)<ONLINE_MS);
 function setTab(t){if(t!=='accessi')hidePasswords();adminTab=t;render();window.scrollTo(0,0)}
-function updateTabBadges(){const b=$('#onlineBadge');if(b){const n=onlineNow().length;b.textContent=n;b.hidden=!n}}
+function updateTabBadges(){const b=$('#onlineBadge');if(b){const n=onlineNow().length;b.textContent=n;b.hidden=!n}const c=$('#consoleBadge');if(c){const op=openReports(),u=op.some(r=>r.urgent);c.textContent=op.length;c.hidden=!op.length;c.classList.toggle('red',u)}}
 function renderAdmin(){
   $('#content').innerHTML=`<div class="phead"><div><h1 class="title">Area amministratore</h1><p class="sub">Cosa succede nei reparti, chi è collegato, password e dati.</p></div></div>
-  <div class="tabs" role="tablist">${ADMIN_TABS.map(([id,ic,l])=>`<button class="tab ${adminTab===id?'on':''}" role="tab" onclick="setTab('${id}')">${ico(ic)}${l}${id==='collegati'?'<span class="badge" id="onlineBadge" hidden></span>':''}</button>`).join('')}</div>
-  <div id="admBody">${({attivita:admAttivita,collegati:admCollegati,riepilogo:admRiepilogo,statistiche:admStatistiche,accessi:admAccessi,reparti:admReparti,manutenzione:admManutenzione})[adminTab]()}</div>`;
-  updateTabBadges();if(adminTab==='attivita')updateLog();if(adminTab==='collegati')updatePresence();if(adminTab==='statistiche'){if(!statsDocs||statsLoadedFor!==statsRange)loadStats();else updateStatsBody()}}
+  <div class="tabs" role="tablist">${ADMIN_TABS.map(([id,ic,l])=>`<button class="tab ${adminTab===id?'on':''}" role="tab" onclick="setTab('${id}')">${ico(ic)}${l}${id==='collegati'?'<span class="badge" id="onlineBadge" hidden></span>':id==='console'?'<span class="badge" id="consoleBadge" hidden></span>':''}</button>`).join('')}</div>
+  <div id="admBody">${({attivita:admAttivita,collegati:admCollegati,riepilogo:admRiepilogo,statistiche:admStatistiche,accessi:admAccessi,reparti:admReparti,manutenzione:admManutenzione,console:admConsole})[adminTab]()}</div>`;
+  updateTabBadges();if(adminTab==='attivita')updateLog();if(adminTab==='collegati')updatePresence();if(adminTab==='console'){updateConsole();if(!diag.at)runDiag()}if(adminTab==='statistiche'){if(!statsDocs||statsLoadedFor!==statsRange)loadStats();else updateStatsBody()}}
 
 // ---- registro attività ----
 function admAttivita(){const deptOpts=[...depts.map(d=>[d.id,d.name]),[PS,PS_LABEL],['-','Nessun reparto (amministratore)']];
@@ -1201,7 +1314,7 @@ function exportCsv(){const rows=filteredRows();if(!rows.length)return appMessage
 // ---- collegati ----
 function admCollegati(){return `<section class="card"><div class="card-h"><h2>Chi sta usando il programma</h2><span class="muted small">Finestre aperte nelle ultime 24 ore · aggiornamento automatico</span></div><div class="tablewrap" id="presTable"></div></section><div class="note">${ico('info')}<div>Ogni finestra aperta invia un segnale ogni 5 minuti. “Attivo” significa segnale ricevuto negli ultimi 11 minuti. Le sessioni più vecchie di 24 ore vengono rimosse da sole.</div></div>`}
 function updatePresence(){const t=$('#presTable');updateTabBadges();if(!t)return;if(!presenceRows.length){t.innerHTML='<div class="empty" style="margin:16px">Nessuna sessione registrata. Se le regole Firestore non sono ancora state aggiornate alla versione 3, questa sezione resta vuota.</div>';return}
-  t.innerHTML=`<table><thead><tr><th>Stato</th><th>Profilo</th><th>Reparto</th><th>Sta guardando</th><th>Dispositivo</th><th>Collegato da</th><th>Ultimo segnale</th></tr></thead><tbody>${presenceRows.map(p=>{const on=Date.now()-toDate(p.lastSeen)<ONLINE_MS,me=p.id===user.uid+'_'+SID;return `<tr><td style="white-space:nowrap"><span class="dot" style="background:${on?'var(--free)':'#c4cdd6'}"></span>${on?'Attivo':'Inattivo'}</td><td><span class="who-cell"><span class="avatar" style="background:${p.who==='Amministratore'?'#3a4a58':avColor(p.who||'?')}">${esc(initials(p.who||'?'))}</span>${esc(p.who||'—')}${me?' <span class="chip accent">tu</span>':''}</span></td><td>${p.dept?esc(deptName(p.dept)):'—'}</td><td>${esc(p.page||'—')}</td><td class="muted small">${esc(p.device||'—')}</td><td class="small">${fmtDT(p.since)}</td><td class="small">${ago(p.lastSeen)}</td></tr>`}).join('')}</tbody></table>`;labelTables()}
+  t.innerHTML=`<table><thead><tr><th>Stato</th><th>Profilo</th><th>Reparto</th><th>Sta guardando</th><th>Dispositivo</th><th>Collegato da</th><th>Ultimo segnale</th></tr></thead><tbody>${presenceRows.map(p=>{const on=Date.now()-toDate(p.lastSeen)<ONLINE_MS,me=p.id===user.uid+'_'+SID;return `<tr><td style="white-space:nowrap"><span class="dot" style="background:${on?'var(--free)':'#c4cdd6'}"></span>${on?'Attivo':'Inattivo'}</td><td><span class="who-cell"><span class="avatar" style="background:${p.who==='Amministratore'?'#3a4a58':avColor(p.who||'?')}">${esc(initials(p.who||'?'))}</span>${esc(p.who||'—')}${me?' <span class="chip accent">tu</span>':''}</span></td><td>${p.dept?esc(deptName(p.dept)):'—'}</td><td>${esc(p.page||'—')}</td><td class="muted small">${esc(p.device||'—')} · v${esc(p.ver||'3.8 o prec.')}</td><td class="small">${fmtDT(p.since)}</td><td class="small">${ago(p.lastSeen)}</td></tr>`}).join('')}</tbody></table>`;labelTables()}
 
 // ---- riepilogo di oggi ----
 function admRiepilogo(){const rows=[...depts.map(d=>({id:d.id,name:d.name,d})),{id:PS,name:PS_LABEL,d:null}],on=onlineNow();
@@ -1253,7 +1366,7 @@ async function deleteDept(id){const d=byId(id);if(!d)return;if(!await appMessage
 async function seedDefaults(){await guarded(async()=>{const b=writeBatch(db);let n=0;DEFAULT_DEPTS.forEach(([id,name,mixed,order])=>{if(!byId(id)){b.set(doc(db,'departments',id),{name,mixed,order,rooms:[],updatedAt:'',updatedBy:''});n++}});if(n){await b.commit();audit('reparto','',`Creati ${n} reparti standard`);toast(n+' reparti creati')}})}
 
 // ---- dati e sicurezza ----
-function admManutenzione(){const legacy=localStorage.getItem(LEGACY_KEY);
+function admManutenzione(){const legacy=LS.get(LEGACY_KEY);
   return `<div class="grid2">
   <section class="card"><div class="card-h"><h2>Backup dei reparti</h2></div><div class="card-b"><p class="muted" style="margin:0 0 14px">Salva una copia di stanze e letti di tutti i reparti. Conviene farlo almeno una volta al giorno.</p><div class="row-actions" style="justify-content:flex-start"><button class="btn primary" onclick="exportBackup()">${ico('download')}Scarica backup</button><button class="btn" onclick="$('#importFile').click()">${ico('upload')}Ripristina da backup</button>${legacy?'<button class="btn" onclick="importLegacy()">Importa dati della versione 1 da questo browser</button>':''}</div></div></section>
   <section class="card"><div class="card-h"><h2>Pulizia del registro</h2></div><div class="card-b"><p class="muted" style="margin:0 0 14px">Elimina le attività più vecchie per alleggerire il registro. Prima puoi esportarle in Excel dal “Registro attività”.</p><div class="row-actions" style="justify-content:flex-start"><select id="purgeDays" style="width:auto"><option value="90">più vecchie di 3 mesi</option><option value="180" selected>più vecchie di 6 mesi</option><option value="365">più vecchie di 1 anno</option></select><button class="btn danger" onclick="purgeLogs()">Elimina</button><button class="btn danger" onclick="clearAudit()">Svuota tutto il registro</button></div></div></section>
@@ -1263,7 +1376,7 @@ function exportBackup(){download('backup-posti-letto-'+today+'.json',JSON.string
 async function writeDepartments(list,by){const b=writeBatch(db);list.forEach(d=>b.set(doc(db,'departments',d.id),{name:d.name,order:d.order,mixed:d.mixed,rooms:d.rooms,updatedAt:new Date().toISOString(),updatedBy:by}));await b.commit()}
 async function handleImport(input){const file=input.files[0];input.value='';if(!file||!isAdmin)return;await guarded(async()=>{if(file.size>5e6)throw new AppError('File troppo grande.');let j;try{j=JSON.parse(await file.text())}catch{throw new AppError('Il file non è un backup valido.')}if(j?.format!=='posti-letto-backup'||!Array.isArray(j.departments))throw new AppError('Il file non è un backup di questo programma.');const list=j.departments.filter(d=>typeof d?.id==='string'&&/^[a-z0-9-]{1,60}$/.test(d.id)&&d.id!==PS).slice(0,100).map(d=>normalize(d));if(!list.length)throw new AppError('Il backup non contiene reparti.');
   if(!await appMessage(`Ripristinare ${list.length} reparti dal backup del ${fmtDT(j.exportedAt)}?\n\nI dati attuali di questi reparti verranno sostituiti. Gli altri reparti e le password non cambiano.`,'Ripristino backup',true,{danger:true,yes:'Ripristina'}))return;await writeDepartments(list,'Ripristino backup');audit('backup','',`Backup ripristinato`,[list.length+' reparti','Backup del '+fmtDT(j.exportedAt)]);toast('Backup ripristinato')})}
-async function importLegacy(){await guarded(async()=>{let arr;try{arr=JSON.parse(localStorage.getItem(LEGACY_KEY))}catch{}if(!Array.isArray(arr))throw new AppError('Nessun dato della versione 1 in questo browser.');const list=arr.map((d,i)=>{const id=LEGACY_IDS[i],def=DEFAULT_DEPTS.find(x=>x[0]===id);if(!id||!def)return null;const cur=byId(id);return normalize({id,name:cur?.name||def[1],order:cur?.order??def[3],mixed:cur?.mixed??def[2],rooms:d?.rooms})}).filter(d=>d&&d.rooms.length);if(!list.length)throw new AppError('I dati di questo browser non contengono stanze.');if(!await appMessage(`Importare ${list.length} reparti (${list.map(d=>d.name).join(', ')})?\n\nI dati attuali di questi reparti verranno sostituiti.`,'Importazione',true))return;await writeDepartments(list,'Importazione versione 1');audit('backup','','Importati i dati della versione 1',list.map(d=>d.name));toast('Dati importati')})}
+async function importLegacy(){await guarded(async()=>{let arr;try{arr=JSON.parse(LS.get(LEGACY_KEY))}catch{}if(!Array.isArray(arr))throw new AppError('Nessun dato della versione 1 in questo browser.');const list=arr.map((d,i)=>{const id=LEGACY_IDS[i],def=DEFAULT_DEPTS.find(x=>x[0]===id);if(!id||!def)return null;const cur=byId(id);return normalize({id,name:cur?.name||def[1],order:cur?.order??def[3],mixed:cur?.mixed??def[2],rooms:d?.rooms})}).filter(d=>d&&d.rooms.length);if(!list.length)throw new AppError('I dati di questo browser non contengono stanze.');if(!await appMessage(`Importare ${list.length} reparti (${list.map(d=>d.name).join(', ')})?\n\nI dati attuali di questi reparti verranno sostituiti.`,'Importazione',true))return;await writeDepartments(list,'Importazione versione 1');audit('backup','','Importati i dati della versione 1',list.map(d=>d.name));toast('Dati importati')})}
 async function deleteWhere(q){let n=0,s;do{s=await getDocs(q);if(s.size){const b=writeBatch(db);s.docs.forEach(x=>b.delete(x.ref));await b.commit();n+=s.size}}while(s.size);return n}
 async function purgeLogs(){const days=Number($('#purgeDays').value),cut=new Date(Date.now()-days*864e5);if(!await appMessage('Eliminare dal registro le attività precedenti al '+cut.toLocaleDateString('it-IT')+'?','Pulizia del registro',true,{danger:true,yes:'Elimina'}))return;
   await guarded(async()=>{const n=await deleteWhere(query(collection(db,'audit'),where('at','<',Timestamp.fromDate(cut)),limit(400)));await audit('sistema','','Pulizia del registro: eliminate '+n+' attività più vecchie di '+days+' giorni');toast(n+' attività eliminate')})}
@@ -1280,7 +1393,7 @@ function monitorHtml(){
   const rows=depts.map(d=>({d,c:counts(d),a:sexAvail(d),e:emptyRooms(d),i:isoRooms(d)}));
   const T=rows.reduce((t,r)=>({f:t.f+r.a.free,m:t.m+r.a.men,w:t.w+r.a.women,e:t.e+r.e,t:t.t+r.c.tomorrow,i:t.i+r.i}),{f:0,m:0,w:0,e:0,t:0,i:0});
   const last=depts.filter(d=>d.updatedAt).sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt))[0];
-  let auto=false;try{auto=localStorage.getItem('pl-monitor-auto')==='1'}catch{}
+  let auto=false;try{auto=LS.get('pl-monitor-auto')==='1'}catch{}
   const tiles=rows.map(({d,c,a,e,i})=>{const stale=d.updatedAt&&Date.now()-new Date(d.updatedAt)>12*3600e3;return `<div class="mt ${a.free?'':'zero'}"><div class="mt-h"><b>${esc(d.name)}</b>${i?`<span class="chip red">● ${i} in isolamento</span>`:''}</div>
     <div class="mt-big">${a.free}<small>${a.free===1?'letto libero':'letti liberi'}</small></div>
     <div class="mt-sex"><span class="m">♂ Uomo<b>${a.men}</b></span><span class="w">♀ Donna<b>${a.women}</b></span><span>Stanze vuote<b>${e}</b></span></div>
@@ -1293,7 +1406,7 @@ function monitorHtml(){
   <span class="mon-ctrl"><label class="chk"><input type="checkbox" ${auto?'checked':''} onchange="setMonitorAuto(this.checked)">Apri il monitor all’avvio su questo computer</label><button class="btn sm theme-btn" onclick="toggleTheme()"></button><button class="btn sm" onclick="toggleFullscreen()">${ico('expand')}Schermo intero</button><button class="btn sm" onclick="exitMonitor()">${ico('back')}Esci dal monitor</button></span></div></div>`}
 function monitorTick(now){const c=$('#monClock');if(!c)return;c.textContent=fmtTime(now);$('#monDate').textContent=cap(fmtDayLong(now))}
 function toggleFullscreen(){if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});else document.documentElement.requestFullscreen?.().catch(()=>{})}
-function setMonitorAuto(v){try{localStorage.setItem('pl-monitor-auto',v?'1':'0')}catch{}toast(v?'Il monitor si aprirà all’avvio su questo computer':'Avvio normale ripristinato')}
+function setMonitorAuto(v){try{LS.set('pl-monitor-auto',v?'1':'0')}catch{}toast(v?'Il monitor si aprirà all’avvio su questo computer':'Avvio normale ripristinato')}
 function exitMonitor(){if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});if(location.hash==='#monitor')history.replaceState(null,'',location.pathname+location.search);go(isAdmin?'admin':(myDept===PS?'overview':myDept))}
 addEventListener('pointermove',()=>{if(!document.body.classList.contains('monitor'))return;document.body.classList.remove('idle');clearTimeout(monIdle);monIdle=setTimeout(()=>document.body.classList.add('idle'),3500)},{passive:true});
 ['online','offline'].forEach(ev=>addEventListener(ev,()=>{if(page==='monitor')render()}));
@@ -1372,10 +1485,129 @@ function exportStatsCsv(){const S=statsSeries();if(!S.some(x=>x.has))return appM
   deptStats().forEach(x=>L.push([x.name,x.avg==null?'':Math.round(x.avg),x.peak,x.act,x.minFree??'',x.zero,x.inn,x.out,x.days].map(q).join(';')));
   download('statistiche-posti-letto-'+today+'.csv','﻿'+L.join('\r\n'),'text/csv;charset=utf-8');audit('backup','','Statistiche esportate ('+statsRange+' giorni, '+scope+')')}
 
+// ================= SEGNALAZIONI =================
+// Ogni reparto (e il Pronto Soccorso) può scrivere all'amministratore. Alla segnalazione vengono allegati da soli
+// versione, computer, pagina e gli ultimi errori della finestra. Il reparto vede lo stato e la risposta.
+const REP_CATS=['Il programma non funziona','Numeri o letti sbagliati','Accesso e password','Lento o non si collega','Suggerimento','Altro'];
+const REP_ST={aperta:['Aperta','amber'],lavorazione:['In lavorazione','accent'],risolta:['Risolta','green']};
+let myReports=[],myRepState='',reportRows=[],reportsState='',reportsErr='',errorRows=[],errorsState='',errorsErr='',repFilter='open',errAll=false,repKnown=null,repEditing=null;
+const atDesc=(a,b)=>(toDate(b.at)||0)-(toDate(a.at)||0);
+const repStatusChip=s=>{const [l,c]=REP_ST[s]||REP_ST.aperta;return `<span class="chip ${c}">${l}</span>`};
+const repSeenKey=()=>'pl-rep-seen-'+myDept;
+function repUnseen(){if(isAdmin||!myDept)return 0;const seen=new Date(LS.get(repSeenKey())||0);return myReports.filter(r=>r.updatedAt&&toDate(r.updatedAt)>seen).length}
+function updateRepBadge(){const n=repUnseen();$$('.rep-badge').forEach(b=>{b.textContent=n;b.hidden=!n;b.title=n?'Risposte nuove dall’amministratore':''})}
+function startMyReports(){if(!myDept)return;myRepUnsub=onSnapshot(query(collection(db,'reports'),where('dept','==',myDept),limit(40)),s=>{const before=repUnseen();myReports=s.docs.map(rowOf).sort(atDesc);myRepState='ok';updateRepBadge();if($('#repDlg').open){LS.set(repSeenKey(),new Date().toISOString());drawMyReports()}else if(repUnseen()>before)toast('L’amministratore ha risposto a una segnalazione: apri “Segnala un problema”')},e=>{console.warn('segnalazioni',e);myRepState='error'})}
+function techInfo(){return {ver:APP_VERSION,device:DEVICE,page:pageLabel(),online:navigator.onLine,screen:innerWidth+'×'+innerHeight,app:isStandalone(),live:(live.state||'—')+(live.fromCache?' · dati non aggiornati':''),errors:ERR_BUF.slice(-5).map(x=>fmtTime(x.at,true)+' · '+x.kind+': '+x.msg)}}
+function openReport(){if(!user||isAdmin)return;$('#repCats').innerHTML=REP_CATS.map(c=>`<label class="choice"><input type="radio" name="rcat" value="${esc(c)}" onchange="$('#repErr').textContent=''"><span>${esc(c)}</span></label>`).join('');
+  $('#repText').value='';$('#repUrgent').checked=false;$('#repErr').textContent='';$('#repSend').disabled=false;drawMyReports();$('#repDlg').showModal();LS.set(repSeenKey(),new Date().toISOString());updateRepBadge()}
+function drawMyReports(){const el=$('#repMine');if(!el)return;if(!myReports.length){el.innerHTML='';return}
+  el.innerHTML='<h3 class="rep-h">Le segnalazioni del reparto</h3>'+myReports.slice(0,10).map(r=>`<div class="rep-item"><div class="rep-top">${repStatusChip(r.status)}${r.urgent?'<span class="chip red">Urgente</span>':''}<b>${esc(r.cat||'')}</b><span class="muted small">${fmtDT(r.at)}</span></div><div class="rep-text">${esc(r.text)}</div>${r.reply?`<div class="rep-reply"><b>Risposta dell’amministratore</b>${esc(r.reply)}</div>`:''}</div>`).join('')}
+async function sendReport(){const cat=$('input[name=rcat]:checked')?.value,text=$('#repText').value.trim().slice(0,1000),urgent=$('#repUrgent').checked,err=$('#repErr');err.textContent='';
+  if(!cat){err.textContent='Scegli di cosa si tratta.';return}if(text.length<5){err.textContent='Scrivi qualche parola sul problema.';$('#repText').focus();return}
+  const btn=$('#repSend');btn.disabled=true;btn.textContent='Invio in corso…';
+  try{await addDoc(collection(db,'reports'),{at:serverTimestamp(),uid:user.uid,who:myLabel,dept:myDept||'',cat,urgent,text,status:'aperta',reply:'',tech:techInfo()});
+    audit('sistema',myDept,'Segnalazione inviata all’amministratore: '+cat,[urgent?'Urgente':'']);$('#repDlg').close();toast('Segnalazione inviata all’amministratore')}
+  catch(e){err.textContent=errMsg(e)}finally{btn.disabled=false;btn.textContent='Invia segnalazione'}}
+// ---- lato amministratore ----
+function startAdminTech(){
+  reportsUnsub=onSnapshot(query(collection(db,'reports'),orderBy('at','desc'),limit(200)),s=>{const rows=s.docs.map(rowOf);if(repKnown)rows.filter(r=>!repKnown.has(r.id)).forEach(r=>toast((r.urgent?'URGENTE · ':'')+'Nuova segnalazione da '+(r.who||deptName(r.dept))));repKnown=new Set(rows.map(r=>r.id));reportRows=rows;reportsState='ok';updateTabBadges();if(page==='admin'&&adminTab==='console')updateConsole()},
+    e=>{console.warn('segnalazioni',e);reportsState='error';reportsErr=errMsg(e);if(page==='admin'&&adminTab==='console')updateConsole()});
+  errorsUnsub=onSnapshot(query(collection(db,'errors'),orderBy('at','desc'),limit(300)),s=>{errorRows=s.docs.map(rowOf);errorsState='ok';if(page==='admin'&&adminTab==='console')updateConsole()},
+    e=>{console.warn('errori',e);errorsState='error';errorsErr=errMsg(e);if(page==='admin'&&adminTab==='console')updateConsole()})}
+const openReports=()=>reportRows.filter(r=>r.status!=='risolta');
+function setRepFilter(f){repFilter=f;updateConsole()}
+function openReportAdmin(id){const r=reportRows.find(x=>x.id===id);if(!r)return;repEditing=id;const t=r.tech||{};
+  $('#raSub').textContent=(r.who||deptName(r.dept))+' · '+fmtDT(r.at);$('#raTitle').textContent=r.cat||'Segnalazione';
+  $('#raBody').innerHTML=`${r.urgent?'<span class="chip red">Urgente</span> ':''}<span class="chip">${esc(deptName(r.dept))}</span><div class="reptext">${esc(r.text)}</div>
+  <div class="techbox"><b>Dati tecnici allegati</b><br>Versione ${esc(t.ver||'—')} · ${esc(t.device||'—')}${t.app?' · app installata':''}<br>Pagina: ${esc(t.page||'—')} · Schermo ${esc(t.screen||'—')}<br>Rete: ${t.online===false?'<b style="color:var(--danger)">assente</b>':'presente'} · Collegamento dati: ${esc(t.live||'—')}${(t.errors||[]).length?'<br><b>Ultimi errori della finestra</b><br>'+t.errors.map(esc).join('<br>'):'<br>Nessun errore registrato nella finestra.'}</div>`;
+  $('#raStatus').innerHTML=Object.entries(REP_ST).map(([k,[l]])=>`<label class="choice"><input type="radio" name="rst" value="${k}" ${(r.status||'aperta')===k?'checked':''}><span>${l}</span></label>`).join('');
+  $('#raReply').value=r.reply||'';$('#raErr').textContent='';$('#repAdmDlg').showModal()}
+async function saveReportAdmin(){const r=reportRows.find(x=>x.id===repEditing);if(!r){$('#repAdmDlg').close();return}const status=$('input[name=rst]:checked')?.value||'aperta',reply=$('#raReply').value.trim().slice(0,1000);
+  if(status===(r.status||'aperta')&&reply===(r.reply||'')){$('#repAdmDlg').close();return}
+  try{await setDoc(doc(db,'reports',r.id),{status,reply,updatedAt:serverTimestamp()},{merge:true});audit('sistema',r.dept,'Segnalazione “'+(r.cat||'')+'”: '+REP_ST[status][0].toLowerCase(),[reply!==(r.reply||'')&&reply?'Risposta: '+reply:'']);$('#repAdmDlg').close();toast('Segnalazione aggiornata')}catch(e){$('#raErr').textContent=errMsg(e)}}
+async function deleteReport(){const r=reportRows.find(x=>x.id===repEditing);if(!r)return;$('#repAdmDlg').close();if(!await appMessage('Eliminare la segnalazione “'+(r.cat||'')+'” di '+(r.who||deptName(r.dept))+'?','Elimina segnalazione',true,{danger:true,yes:'Elimina'}))return;
+  await guarded(async()=>{await deleteDoc(doc(db,'reports',r.id));audit('sistema',r.dept,'Segnalazione eliminata: '+(r.cat||''));toast('Segnalazione eliminata')})}
+
+// ================= CONSOLE TECNICA =================
+let diag={running:false,at:0,items:[]};
+const latestVer=()=>pubVer&&verCmp(pubVer,APP_VERSION)>0?pubVer:APP_VERSION;
+const outdatedPcs=()=>onlineNow().filter(p=>verCmp(p.ver||'0',latestVer())<0);
+const recentErrors=(h=24)=>errorRows.filter(r=>Date.now()-(toDate(r.at)||0)<h*3600e3);
+// Controlli sui dati dei reparti: cose che fanno sbagliare i conteggi o che vanno sistemate.
+function integrityIssues(){const out=[],add=(sev,dept,text,act='')=>out.push({sev,dept,text,act}),pwBtn=`<button class="btn ghost sm" onclick="setTab('accessi')">Crea password</button>`;
+  depts.forEach(d=>{const open=`<button class="btn ghost sm" onclick="go('${esc(d.id)}')">Apri reparto</button>`;
+    if(!logins[d.id]?.email)add('media',d.id,'Il reparto non ha una password: non può entrare nel programma.',pwBtn);
+    if(!d.rooms.length)add('info',d.id,'Il reparto non ha ancora stanze.',open);
+    const age=d.updatedAt?Date.now()-new Date(d.updatedAt):Infinity,days=Math.floor(age/864e5);
+    if(age>24*3600e3)add('media',d.id,d.updatedAt?'Letti non aggiornati da '+days+(days===1?' giorno':' giorni')+' (ultima modifica '+fmtDT(d.updatedAt)+').':'I letti non sono mai stati aggiornati.',open);
+    d.rooms.forEach((r,j)=>{const rl=roomLabel(r,j);
+      if(r.iso!=='Nessuno'&&!r.beds.some(b=>PATIENT.includes(b.state)))add('alta',d.id,rl+': stanza in isolamento senza pazienti, i suoi letti non risultano disponibili.',`<button class="btn sm" onclick="fixIso('${esc(d.id)}',${j})">Termina isolamento</button>`);
+      if(!d.mixed&&roomSex(r)==='mixed')add('info',d.id,rl+': camera mista (uomini e donne).',open);
+      r.beds.forEach((b,k)=>{const bl=rl+', '+bedLabel(b,k);
+        if(PATIENT.includes(b.state)&&!b.sex)add('alta',d.id,bl+': paziente senza indicazione uomo o donna, i conteggi per sesso non sono affidabili.',open);
+        if(b.state==='reserved'&&b.date&&b.date<today)add('media',d.id,bl+': ricovero programmato per il '+itDate(b.date)+' mai confermato con “È arrivato” né annullato.',open);
+        if(['blocked','closed'].includes(b.state)&&!b.reason)add('info',d.id,bl+': '+STATE_LABEL[b.state].toLowerCase()+' senza motivo.',open)})})});
+  if(!logins[PS]?.email)add('media',PS,'Il Pronto Soccorso non ha una password.',pwBtn);
+  const o={alta:0,media:1,info:2};return out.sort((a,b)=>o[a.sev]-o[b.sev])}
+async function fixIso(id,j){const d=byId(id),r=d?.rooms[j];if(!r)return;
+  if(!await appMessage('Terminare l’isolamento di “'+roomLabel(r,j)+'” ('+d.name+')?\n\nNella stanza non ci sono pazienti: i letti tornano disponibili.','Termina isolamento',true,{yes:'Termina'}))return;
+  await guarded(async()=>{await mutate(id,f=>{const fr=f.rooms[j];if(!fr||fr.beds.some(b=>PATIENT.includes(b.state)))throw new AppError('Nel frattempo nella stanza è stato inserito un paziente: l’isolamento resta.');endIso(fr)},{type:'isolamento',action:roomLabel(r,j)+': isolamento terminato dalla console tecnica',details:['La stanza era in isolamento senza pazienti']});toast('Isolamento terminato')})}
+async function forceReloadAll(){if(!await appMessage('Chiedere a tutti i computer collegati di ricaricare il programma?\n\nOgni computer si aggiorna da solo appena è libero (nessuna finestra aperta e un minuto senza essere toccato). I dati non si perdono.\n\nFunziona sui computer che hanno già la versione 3.9.0 o successiva: quelli più vecchi vanno ricaricati a mano una volta (tasto F5).','Aggiorna tutti i computer',true,{yes:'Aggiorna tutti'}))return;
+  await guarded(async()=>{await setDoc(doc(db,'public','logins'),{reloadAt:new Date().toISOString()},{mergeFields:['reloadAt']});audit('sistema','','Richiesto l’aggiornamento di tutti i computer');toast('Richiesta inviata ai computer collegati')})}
+async function clearErrors(){if(!errorRows.length)return;if(!await appMessage('Svuotare l’elenco degli errori registrati dai computer?','Errori dei computer',true,{danger:true,yes:'Svuota'}))return;
+  await guarded(async()=>{const n=await deleteWhere(query(collection(db,'errors'),limit(400)));audit('sistema','','Elenco errori dei computer svuotato ('+n+')');toast('Elenco svuotato')})}
+function toggleErrAll(){errAll=!errAll;updateConsole()}
+// Verifica tecnica: server, regole, versione, servizio dell'app, statistiche, orologio.
+async function runDiag(){if(diag.running)return;diag.running=true;updateConsole();const items=[];
+  items.push(navigator.onLine?['ok','Connessione internet','Presente su questo computer']:['ko','Connessione internet','Assente su questo computer']);
+  const t0=performance.now();try{await getDocFromServer(doc(db,'public','logins'));const ms=Math.round(performance.now()-t0);items.push([ms<1500?'ok':'warn','Server del database (Firebase)','Risponde in '+ms+' ms'+(ms<1500?'':': collegamento lento')])}catch(e){items.push(['ko','Server del database (Firebase)','Non risponde: '+errMsg(e)])}
+  items.push(live.state==='ok'&&!live.fromCache?['ok','Dati dei reparti in tempo reale','Collegati · '+depts.length+' reparti ricevuti']:live.state==='error'?['ko','Dati dei reparti in tempo reale','Interrotto ('+live.err+'): nuovo tentativo automatico']:['warn','Dati dei reparti in tempo reale','Collegamento in corso o dati non aggiornati']);
+  const bad=[];for(const [c,l] of [['reports','segnalazioni'],['errors','errori dei computer'],['stats','statistiche'],['presence','collegati'],['audit','registro']]){try{await getDocs(query(collection(db,c),limit(1)))}catch(e){if(e?.code==='permission-denied')bad.push(l)}}
+  items.push(bad.length?['ko','Regole Firestore','Non aggiornate: mancano i permessi per '+bad.join(', ')+'. Pubblica il file firestore.rules della versione '+APP_VERSION+' (Firebase › Firestore › Regole).']:['ok','Regole Firestore','Aggiornate: tutte le sezioni sono accessibili']);
+  await checkPublished();
+  items.push(!pubVer?['warn','Versione pubblicata','Impossibile leggere version.json dal sito']:verCmp(pubVer,APP_VERSION)>0?['warn','Versione del programma','Questo computer usa la '+APP_VERSION+', sul sito c’è la '+pubVer+': ricarica la pagina']:['ok','Versione del programma',APP_VERSION+' · uguale a quella pubblicata sul sito']);
+  if(clockSkew!=null){const m=Math.round(Math.abs(clockSkew)/60000);items.push(m<2?['ok','Orologio di questo computer','Allineato all’ora esatta']:['warn','Orologio di questo computer','Spostato di circa '+m+' minuti: controlla data e ora di Windows'])}
+  try{const reg=await navigator.serviceWorker?.getRegistration();items.push(reg?.active?['ok','Servizio dell’app','Attivo: l’app si apre anche con la rete lenta ed è installabile']:['warn','Servizio dell’app','Non attivo su questo computer: ricarica la pagina con Ctrl+F5'])}catch{}
+  try{const s=await getDoc(doc(db,'stats',today)),h=Object.keys((s.exists()&&s.data().snaps)||{}).sort().pop(),now=localTimeParts(new Date()).hour;items.push(h==null?['warn','Statistiche','Nessuna rilevazione oggi: il programma deve restare aperto su almeno un computer']:now-Number(h)>2?['warn','Statistiche','Ultima rilevazione alle '+h+':00: nelle ultime ore nessun computer era aperto']:['ok','Statistiche','Ultima rilevazione alle '+h+':00'])}catch(e){items.push(['warn','Statistiche',errMsg(e)])}
+  if(auditErr)items.push(['ko','Registro attività',auditErr]);if(vaultState==='error')items.push(['warn','Archivio password','Non leggibile: controlla le regole Firestore']);
+  diag={running:false,at:Date.now(),items};updateConsole()}
+function admConsole(){return '<div id="conBody"></div>'}
+function updateConsole(){const el=$('#conBody');if(!el)return;
+  const op=openReports(),urg=op.filter(r=>r.urgent).length,err24=recentErrors(24),pcs=onlineNow(),old=outdatedPcs(),issues=integrityIssues(),high=issues.filter(x=>x.sev==='alta').length,dKo=diag.items.filter(x=>x[0]==='ko').length,dWarn=diag.items.filter(x=>x[0]==='warn').length,net=netProblem()?1:0;
+  const crit=high+dKo+net+urg,warn=issues.filter(x=>x.sev==='media').length+dWarn+op.length-urg+(err24.length?1:0)+old.length;
+  const [st,stc]=crit?['Da controllare','var(--danger)']:warn?['Qualche avviso','var(--res)']:['Tutto regolare','var(--free)'];
+  const kp=`<div class="kpis"><div class="card kpi"><small>Stato del programma</small><strong class="kstate" style="color:${stc}">● ${st}</strong><em>${crit?crit+(crit===1?' problema importante':' problemi importanti'):warn?warn+(warn===1?' avviso':' avvisi'):'Nessun problema rilevato'}</em></div>
+    <div class="card kpi"><small>Segnalazioni da gestire</small><strong style="${urg?'color:var(--danger)':''}" class="${op.length?'':'c-free'}">${op.length}</strong><em>${urg?urg+(urg===1?' urgente':' urgenti'):'Nessuna urgente'}</em></div>
+    <div class="card kpi"><small>Errori nelle ultime 24 ore</small><strong class="${err24.length?'':'c-free'}">${err24.length}</strong><em>${err24.length?new Set(err24.map(e=>e.uid)).size+' profili coinvolti':'Nessun errore'}</em></div>
+    <div class="card kpi"><small>Computer collegati</small><strong>${pcs.length}</strong><em>${old.length?'<b style="color:var(--res)">'+old.length+' con versione vecchia</b>':'Tutti con l’ultima versione'}</em></div></div>`;
+  // segnalazioni
+  const list=repFilter==='open'?op:repFilter==='done'?reportRows.filter(r=>r.status==='risolta'):reportRows;
+  const fb=(f,l)=>`<button class="btn sm ${repFilter===f?'primary':''}" onclick="setRepFilter('${f}')">${l}</button>`;
+  const repBody=reportsState==='error'?`<div class="card-b"><span class="stale">${esc(reportsErr)}</span><p class="small muted" style="margin:8px 0 0">Pubblica le regole Firestore della versione ${APP_VERSION} per attivare le segnalazioni.</p></div>`
+    :!reportsState?'<div class="card-b muted">Caricamento…</div>':!list.length?`<div class="empty" style="margin:16px">${repFilter==='open'?'Nessuna segnalazione da gestire.':'Nessuna segnalazione.'}</div>`
+    :'<div class="rep-list">'+list.slice(0,60).map(r=>`<button class="rep-row ${r.urgent&&r.status!=='risolta'?'urgent':''}" onclick="openReportAdmin('${esc(r.id)}')"><div class="rep-top">${repStatusChip(r.status)}${r.urgent?'<span class="chip red">Urgente</span>':''}<b>${esc(r.cat||'Segnalazione')}</b><span class="muted small">${esc(r.who||deptName(r.dept))} · ${ago(r.at)}</span></div><div class="rep-text">${esc(String(r.text||'').slice(0,240))}</div>${r.reply?`<div class="small muted" style="margin-top:4px">Risposta: ${esc(String(r.reply).slice(0,140))}</div>`:''}</button>`).join('')+'</div>';
+  const rep=`<section class="card conwide"><div class="card-h"><h2>Segnalazioni dei reparti</h2><div class="row-actions">${fb('open','Da gestire'+(op.length?' ('+op.length+')':''))}${fb('done','Risolte')}${fb('all','Tutte')}</div></div>${repBody}</section>`;
+  // controlli dati
+  const dot={alta:'var(--danger)',media:'var(--res)',info:'#9aa7b3'};
+  const iss=`<section class="card"><div class="card-h"><h2>Controlli sui dati</h2><span class="muted small">${issues.length?issues.length+' da vedere':'Tutto in ordine'}</span></div>${issues.length?issues.slice(0,40).map(x=>`<div class="iss"><span class="dot" style="background:${dot[x.sev]}" title="${x.sev==='alta'?'Importante':x.sev==='media'?'Da sistemare':'Informazione'}"></span><div><b>${esc(deptName(x.dept))}</b>${esc(x.text)}</div>${x.act}</div>`).join('')+(issues.length>40?`<div class="iss"><div class="muted">… e altre ${issues.length-40}</div></div>`:''):'<div class="iss"><span class="okmark">✓</span><div>Nessuna anomalia nei letti dei reparti: isolamenti, ricoveri programmati, uomo/donna e password sono in ordine.</div></div>'}</section>`;
+  // diagnostica
+  const sym={ok:'✓',warn:'!',ko:'✕',run:'…'};
+  const dg=`<section class="card"><div class="card-h"><h2>Verifica tecnica</h2><div class="row-actions"><span class="muted small">${diag.at?'Eseguita alle '+fmtTime(diag.at,true):''}</span><button class="btn sm" onclick="runDiag()" ${diag.running?'disabled':''}>${ico('refresh')}${diag.running?'Verifica in corso…':'Ripeti la verifica'}</button></div></div>${(diag.items.length?diag.items:[['run','Verifica in corso…','']]).map(([k,t,d])=>`<div class="diag"><i class="${k}">${sym[k]}</i><div><b>${esc(t)}</b><span>${esc(d)}</span></div></div>`).join('')}
+    <div class="diag"><i class="run">i</i><div><b>Consumi del piano gratuito Firebase</b><span>Letture e scritture del giorno: <a href="https://console.firebase.google.com/project/${esc(firebaseConfig.projectId)}/firestore/usage" target="_blank" rel="noopener">apri la pagina dei consumi</a> (serve l’account Google del progetto).</span></div></div></section>`;
+  // computer collegati
+  const pcRows=pcs.map(p=>{const oldv=verCmp(p.ver||'0',latestVer())<0;return `<tr><td><b>${esc(p.who||'—')}</b>${p.id===user.uid+'_'+SID?' <span class="chip accent">tu</span>':''}</td><td>${esc(p.page||'—')}</td><td>${oldv?`<span class="chip amber">${esc(p.ver||'3.8 o prec.')}</span>`:`<span class="chip green">${esc(p.ver)}</span>`}${p.online===false?' <span class="chip red">senza rete</span>':''}</td><td class="muted small">${esc(p.device||'—')}</td><td class="small">${ago(p.lastSeen)}</td></tr>`}).join('');
+  const pc=`<section class="card conwide"><div class="card-h"><h2>Computer collegati e versioni</h2><div class="row-actions"><span class="muted small">Pubblicata: ${esc(pubVer||'—')} · Questo computer: ${APP_VERSION}</span><button class="btn sm" onclick="forceReloadAll()">${ico('refresh')}Aggiorna tutti i computer</button></div></div><div class="tablewrap">${pcs.length?`<table><thead><tr><th>Profilo</th><th>Sta guardando</th><th>Versione</th><th>Dispositivo</th><th>Ultimo segnale</th></tr></thead><tbody>${pcRows}</tbody></table>`:'<div class="empty" style="margin:16px">Nessun computer collegato negli ultimi minuti.</div>'}</div></section>`;
+  // errori
+  const KIND={programma:'Programma',collegamento:'Collegamento',operazione:'Operazione'},g={};errorRows.forEach(e=>{const k=e.kind+'|'+e.msg,x=g[k]||(g[k]={kind:e.kind,msg:e.msg,where:e.where,n:0,last:null,who:new Set(),ver:new Set()});x.n++;const t=toDate(e.at);if(t&&(!x.last||t>x.last))x.last=t;x.who.add(e.who||'?');x.ver.add(e.ver||'?')});
+  const gl=Object.values(g).sort((a,b)=>(b.last||0)-(a.last||0)),shown=errAll?gl:gl.slice(0,12);
+  const er=`<section class="card conwide"><div class="card-h"><h2>Errori registrati dai computer</h2><div class="row-actions"><span class="muted small">${errorRows.length} in totale</span>${errorRows.length?'<button class="btn ghost sm" onclick="clearErrors()">Svuota elenco</button>':''}</div></div><div class="tablewrap">${errorsState==='error'?`<div class="card-b"><span class="stale">${esc(errorsErr)}</span></div>`:gl.length?`<table><thead><tr><th>Ultima volta</th><th>Tipo</th><th>Errore</th><th>Volte</th><th>Profili</th><th>Versioni</th></tr></thead><tbody>${shown.map(x=>`<tr><td class="small" style="white-space:nowrap">${x.last?fmtDT(x.last):'—'}</td><td><span class="chip">${esc(KIND[x.kind]||x.kind)}</span></td><td class="small" style="overflow-wrap:anywhere">${esc(x.msg)}${x.where?`<br><span class="muted">${esc(x.where)}</span>`:''}</td><td><b>${x.n}</b></td><td class="small">${esc([...x.who].join(', '))}</td><td class="small">${esc([...x.ver].join(', '))}</td></tr>`).join('')}</tbody></table>${gl.length>12?`<div style="padding:10px 20px"><button class="btn ghost sm" onclick="toggleErrAll()">${errAll?'Mostra meno':'Mostra tutti ('+gl.length+')'}</button></div>`:''}`:'<div class="empty" style="margin:16px">Nessun errore registrato. Gli errori dei computer compaiono qui da soli.</div>'}</div></section>`;
+  el.innerHTML=kp+rep+`<div class="congrid">${iss}${dg}</div>`+pc+er+`<div class="note">${ico('info')}<div>La console raccoglie da sola gli errori di ogni computer (senza dati dei pazienti), controlla i dati dei reparti e verifica il collegamento al server. Le segnalazioni arrivano dal pulsante <b>Segnala un problema</b> che ogni reparto ha nel menu.</div></div>`;
+  labelTables();updateTabBadges()}
+
 // ================= MODALITÀ NOTTURNA =================
 const curTheme=()=>document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light';
 function paintThemeButtons(){const dark=curTheme()==='dark';$$('.theme-btn').forEach(b=>{b.innerHTML=ico(dark?'sun':'moon')+'<span class="bl">'+(dark?'Modalità giorno':'Modalità notte')+'</span>';b.title=dark?'Passa alla modalità giorno':'Passa alla modalità notte'})}
-function toggleTheme(){const t=curTheme()==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('pl-theme',t)}catch{}const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='dark'?'#0e161d':'#f4f7f9';paintThemeButtons()}
+function toggleTheme(){const t=curTheme()==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{LS.set('pl-theme',t)}catch{}const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='dark'?'#0e161d':'#f4f7f9';paintThemeButtons()}
 addEventListener('storage',e=>{if(e.key==='pl-theme'&&e.newValue){document.documentElement.setAttribute('data-theme',e.newValue);paintThemeButtons()}});
 
 // ================= GUIDA RAPIDA =================
@@ -1402,11 +1634,11 @@ const HELP=[
   h:()=>`<div class="hs hs6"><div class="card hs6t" style="padding:10px 12px"><div style="display:flex;justify-content:space-between;align-items:baseline"><b>Posti letto disponibili</b><b style="font-size:22px">16:54</b></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">${[['Chirurgia',5],['Medicina',2],['Pediatria',0],['Geriatria',3]].map(([n,f],i)=>`<div class="r" style="display:block;border:1px solid var(--line);border-top:4px solid ${f?'var(--free)':'var(--danger)'};border-radius:10px;padding:6px 8px;animation-delay:${i*.3}s"><span class="small">${n}</span><b style="display:block;font-size:24px;color:${f?'var(--free)':'var(--danger)'}">${f}</b></div>`).join('')}</div></div></div>`},
  {t:'Il controllo delle 12 e delle 21',x:'A mezzogiorno e alle 21 compare un avviso giallo. Controlla i tuoi letti e premi <b>Ho controllato</b>.',
   h:()=>`<div class="hs hs8"><div class="reminder hs8b"><div><b>Controllo delle 12:00</b><small>Verifica i letti del reparto</small></div><span class="btn sm">${ico('check')}Ho controllato</span></div><div class="hs8ok hs-abs"><span>✓</span>Fatto!</div>${CUR}</div>`},
- {t:'Uscire e installare',x:'<b>Cambia reparto</b> ti fa uscire. <b>Installa</b> mette il programma sul desktop come un’app. Questa guida è sempre nel pulsante <b>Come funziona</b>.',
+ {t:'Uscire e installare',x:'<b>Cambia reparto</b> ti fa uscire. <b>Installa</b> mette il programma sul desktop come un’app. Questa guida è sempre nel pulsante <b>Come funziona</b>. Se qualcosa non va, premi <b>Segnala un problema</b>: l’amministratore ti risponde lì.',
   h:()=>`<div class="hs hs9"><span class="btn soft hs9a">${ico('download')}Installa</span><span class="btn hs9b">${ico('switch')}Cambia reparto</span></div>`}
 ];
 let helpStep=0,helpList=HELP;
-function openHelp(){helpList=HELP;helpStep=0;drawHelp();if(!$('#helpDlg').open)$('#helpDlg').showModal();try{localStorage.setItem('pl-help-v1','1')}catch{}}
+function openHelp(){helpList=HELP;helpStep=0;drawHelp();if(!$('#helpDlg').open)$('#helpDlg').showModal();try{LS.set('pl-help-v1','1')}catch{}}
 function drawHelp(){const s=helpList[helpStep];$('#helpStage').classList.toggle('tall',!!s.tall);$('#helpStage').innerHTML=s.h();$('#helpTitle').textContent=(helpStep+1)+' di '+helpList.length+' · '+s.t;$('#helpText').innerHTML=s.x+(s.edit&&user&&!isAdmin&&myDept===PS?'<br><span class="chip" style="margin-top:8px">Il Pronto Soccorso consulta soltanto: questa operazione la fanno i reparti</span>':'');$('#helpDots').innerHTML=helpList.map((_,i)=>`<button class="hdot ${i===helpStep?'on':''}" onclick="helpGo(${i})" aria-label="Passo ${i+1}"></button>`).join('');$('#helpPrev').disabled=helpStep===0;$('#helpNext').textContent=helpStep===helpList.length-1?'Ho capito':'Avanti'}
 function helpGo(i){helpStep=i;drawHelp()}
 function helpNext(){if(helpStep>=helpList.length-1){$('#helpDlg').close();return}helpStep++;drawHelp()}
@@ -1448,7 +1680,7 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.__bip=e;ref
 addEventListener('appinstalled',()=>{window.__bip=null;toast('Bed Management è installato sul computer');if(user)audit('sistema',isAdmin?'':myDept,'Programma installato come app');setTimeout(refreshInstallBtn,500)});
 
 // ================= AVVIO =================
-Object.assign(window,{$,go,toggleTheme,toggleFullscreen,setMonitorAuto,exitMonitor,setStatsRange,setStatsDept,loadStats,exportStatsCsv,togglePasswords,copyPw,openHelp,helpGo,helpNext,helpPrev,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,saveRoom,toggleBedName,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
+Object.assign(window,{$,go,openReport,sendReport,openReportAdmin,saveReportAdmin,deleteReport,runDiag,forceReloadAll,clearErrors,fixIso,setRepFilter,toggleErrAll,toggleTheme,toggleFullscreen,setMonitorAuto,exitMonitor,setStatsRange,setStatsDept,loadStats,exportStatsCsv,togglePasswords,copyPw,openHelp,helpGo,helpNext,helpPrev,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,saveRoom,toggleBedName,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
 window.render=render;
 refreshInstallBtn();paintThemeButtons();$('#gateVer').textContent='Versione '+APP_VERSION+' · '+APP_DATE;tick();setInterval(tick,1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();beat();if(page==='monitor')keepAwake(true)}});
