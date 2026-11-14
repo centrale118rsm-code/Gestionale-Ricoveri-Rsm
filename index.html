@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- Posti letto · Ospedale di Stato RSM · versione 3.9.0 (09/11/2026)
+<!-- Posti letto · Ospedale di Stato RSM · versione 3.9.1 (15/11/2026)
      Nuova grafica chiara, accesso per reparto, registro attività completo per l'amministratore. -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<meta name="version" content="3.9.0">
+<meta name="version" content="3.9.1">
 <title>Posti letto · Ospedale di Stato RSM</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f4f7f9">
@@ -332,6 +332,7 @@ html:fullscreen .mon-tot,html:-webkit-full-screen .mon-tot{display:none}
 .mon-grid{--cols:5;--g:clamp(10px,1.2vw,16px);display:grid;grid-template-columns:repeat(auto-fill,minmax(max(230px,calc((100% - (var(--cols) - 1) * var(--g)) / var(--cols))),1fr));grid-auto-rows:auto;column-gap:var(--g);row-gap:var(--g);flex:1;align-content:start}
 .mt{background:var(--surface);border:1px solid var(--line);border-top:7px solid var(--free);border-radius:18px;padding:clamp(12px,1.2vw,18px);display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:clamp(6px,.7vw,10px);align-content:start;box-shadow:var(--shadow)}
 .mt.zero{border-top-color:var(--danger);background:var(--zerobg)}
+.mt.old .mt-big,.mt.old .mt-sex{opacity:.45}
 .mt-h{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .mt-h b{font-size:clamp(16px,1.45vw,24px);line-height:1.2;letter-spacing:-.3px}
 .mt-big{font-size:clamp(48px,5.2vw,92px);font-weight:800;letter-spacing:-3px;line-height:.95;color:var(--free)}
@@ -685,7 +686,7 @@ html[data-theme="dark"] .tile.off{background:var(--s2)}
 </div>
 
 <!-- ===================== FINESTRE ===================== -->
-<dialog id="bedDlg"><form class="dlg" onsubmit="event.preventDefault();saveBed()">
+<dialog id="bedDlg"><form class="dlg" novalidate onsubmit="event.preventDefault();saveBed()">
   <div class="dlg-h"><div><small id="bedSub"></small><h2 id="bedTitle">Letto</h2><button type="button" class="linkbtn" style="margin-top:2px;font-size:12.5px" onclick="toggleBedName()">Rinomina letto</button></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
   <div class="field" id="fBedName" hidden><label for="bedName">Nome del letto</label><input id="bedName" maxlength="30"><p class="small">Lascia vuoto per usare il nome automatico.</p></div>
   <div class="field"><span class="lbl">Com’è il letto adesso?</span>
@@ -812,7 +813,7 @@ const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomai
 // Deve coincidere con l'email scritta in firestore.rules.
 const ADMIN_EMAIL='admin@ospedale.local';
 const ACCOUNT_DOMAIN='ospedale.local';
-const APP_VERSION='3.9.0',APP_DATE='09/11/2026';
+const APP_VERSION='3.9.1',APP_DATE='15/11/2026';
 const PS='__ps',PS_LABEL='Pronto Soccorso',ADMIN='__admin',LEGACY_KEY='beds-rsm-configurable-v3';
 const ADMIN_IDLE_MIN=30;
 const TZ='Europe/San_Marino';
@@ -971,6 +972,7 @@ function renderGate(){
     <p class="hint">${adm?'La sessione amministratore si chiude chiudendo il browser e dopo '+ADMIN_IDLE_MIN+' minuti di inattività.':'Sul computer del reparto l’accesso resta attivo. Per uscire usa “Cambia reparto” in alto a destra.'}</p>
   </form>`;
   setTimeout(()=>$('#gatePw')?.focus(),40)}
+function waitScreen(e){$('#gate').hidden=false;$('#shell').hidden=true;$('#gateBody').innerHTML=`<h2>Collegamento in corso…</h2><p class="sub">${navigator.onLine?'Il server non risponde.':'Il computer non è ancora collegato a internet.'} Il programma si apre da solo appena torna la connessione: <b>non serve inserire di nuovo la password</b>.</p><div class="tiles"><div class="skel"></div></div><p class="small muted">${esc(errMsg(e))}</p>`}
 function gatePick(id){if(id&&id!==ADMIN&&!logins[id]?.email){gateSel=null;gateErr='Il reparto “'+(publicDepts[id]?.label||id)+'” non ha ancora una password. Chiedi all’amministratore di crearla.';renderGate();return}gateSel=id;gateErr='';renderGate()}
 function togglePw(){const i=$('#gatePw');i.type=i.type==='password'?'text':'password';i.focus()}
 async function doLogin(){const t=gateSel,pw=$('#gatePw').value,err=$('#gateErr');err.textContent='';if(!pw){err.textContent='Inserisci la password.';return}
@@ -989,16 +991,18 @@ let loginsSlow=false;setTimeout(()=>{if(loginsState==='loading'){loginsSlow=true
 let reloadBase;
 onSnapshot(doc(db,'public','logins'),s=>{const data=s.exists()?s.data():{};logins=data.entries||{};publicDepts=data.depts||{};loginsState='ok';
   // “Aggiorna tutti i computer” dalla Console tecnica: ogni finestra si ricarica appena è libera.
-  const ra=data.reloadAt||'';if(reloadBase===undefined)reloadBase=ra;else if(ra!==reloadBase){reloadBase=ra;if(ra&&!isAdmin)askUpdate('L’amministratore ha chiesto di aggiornare il programma.')}syncPublicDepts();if(authReady&&!user)renderGate();else if(page==='admin')render({soft:true})},e=>{console.warn('logins',e);loginsState='error';if(authReady&&!user)renderGate()});
+  const ra=data.reloadAt||'';if(reloadBase===undefined)reloadBase=ra;else if(ra!==reloadBase){reloadBase=ra;if(ra&&!isAdmin)askUpdate('L’amministratore ha chiesto di aggiornare il programma.','r'+(Date.parse(ra)||Date.now()).toString(36))}syncPublicDepts();if(authReady&&!user)renderGate();else if(page==='admin')render({soft:true})},e=>{console.warn('logins',e);loginsState='error';if(authReady&&!user)renderGate()});
 
 onAuthStateChanged(auth,async u=>{
   authReady=true;stopListeners();user=u;isAdmin=false;myDept=null;myLabel='';depts=[];deptsLoaded=false;viewed=new Set();auditRows=[];todayRows=[];presenceRows=[];auditLoaded=false;
   if(!u){document.body.classList.remove('monitor');keepAwake(false);renderGate();return}
   if(u.email===ADMIN_EMAIL){isAdmin=true;myLabel='Amministratore'}
-  else{try{const s=await getDoc(doc(db,'accounts',u.uid));if(s.exists()){myDept=s.data().dept;myLabel=s.data().label||'Reparto'}}catch(e){console.warn(e)}
+  else{// Se il computer si accende senza rete (o il server non risponde) non si esce dal profilo: si aspetta e si riprova.
+    let s=null;for(let i=0;!s;i++){try{s=await getDoc(doc(db,'accounts',u.uid))}catch(e){console.warn('profilo',e);if(auth.currentUser!==u)return;waitScreen(e);await new Promise(r=>setTimeout(r,Math.min(30,3*(i+1))*1000));if(auth.currentUser!==u)return}}
+    if(s.exists()){myDept=s.data().dept;myLabel=s.data().label||'Reparto'}
     if(!myDept){pendingLogin=null;gateErr='Accesso non più valido: la password di questo profilo è stata cambiata o revocata.';await signOut(auth);return}
     unsubs.push(onSnapshot(doc(db,'accounts',u.uid),s=>{if(!s.exists()){gateErr='La password di questo profilo è stata cambiata dall’amministratore. Accedi con quella nuova.';signOut(auth)}else if(s.data().label&&s.data().label!==myLabel){myLabel=s.data().label;render({soft:true})}},()=>{}))}
-  sessionSince=new Date().toISOString();lastActivity=Date.now();date=today;
+  sessionSince=new Date().toISOString();lastActivity=Date.now();date=today;cleanReminderKeys();
   let autoMon=false;try{autoMon=LS.get('pl-monitor-auto')==='1'}catch{}
   page=!seesAll()?myDept:location.hash==='#monitor'||autoMon?'monitor':isAdmin?'admin':'overview';adminTab='attivita';gateSel=null;gateErr='';
   $('#gate').hidden=true;$('#shell').hidden=false;
@@ -1037,11 +1041,16 @@ function updateNetBar(){const b=$('#netbar');if(!b)return;const m=netProblem();
 // ---- aggiornamenti del programma ----
 // Ogni 30 minuti si controlla la versione pubblicata (version.json). Se è più nuova, o se l'amministratore lo chiede,
 // compare una barra blu e la pagina si ricarica da sola appena nessuno la sta usando: i dati sono sul server e non si perdono.
-let pubVer='',clockSkew=null,updPending='';
+let pubVer='',clockSkew=null,updPending='',updTag='';
 const verCmp=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d}return 0};
-async function checkPublished(){try{const t0=Date.now(),r=await fetch('version.json?t='+t0,{cache:'no-store'});if(!r.ok)return;const hd=Date.parse(r.headers.get('date')||'');if(hd)clockSkew=hd-(t0+Date.now())/2;const j=await r.json();pubVer=String(j.version||'');if(pubVer&&verCmp(pubVer,APP_VERSION)>0)askUpdate('È disponibile la versione '+pubVer+' del programma.')}catch{}}
-function askUpdate(msg){updPending=msg;const b=$('#updbar');if(!b)return;b.innerHTML=ico('refresh')+'<span><b>'+esc(msg)+'</b> Si aggiorna da solo appena il computer è libero.</span><button class="btn sm primary" onclick="location.reload()">Aggiorna ora</button>';b.hidden=false}
-function maybeReload(){if(!updPending)return;const a=document.activeElement,busy=document.querySelector('dialog[open]')||(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&a.id!=='search');if(busy)return;if(page==='monitor'||!user||Date.now()-lastActivity>60e3)location.reload()}
+async function checkPublished(){try{const t0=Date.now(),r=await fetch('version.json?t='+t0,{cache:'no-store'});if(!r.ok)return;const hd=Date.parse(r.headers.get('date')||'');if(hd)clockSkew=hd-(t0+Date.now())/2;const j=await r.json();pubVer=String(j.version||'');if(pubVer&&verCmp(pubVer,APP_VERSION)>0){
+    // Se abbiamo appena ricaricato per questa versione e il sito ci ha dato ancora quella vecchia, non insistiamo: riproviamo tra 12 minuti.
+    const [v,t]=(SS.get('pl-upd-try')||'').split('|');if(v===pubVer&&Date.now()-Number(t)<12*60e3){lastPubCheck=Date.now()-18*60e3;return}
+    askUpdate('È disponibile la versione '+pubVer+' del programma.','v'+pubVer)}}catch{}}
+// Ricarica con un indirizzo nuovo (?u=…): così il sito consegna di sicuro la versione appena pubblicata.
+function hardReload(){if(updTag.startsWith('v'))SS.set('pl-upd-try',updTag.slice(1)+'|'+Date.now());location.replace(location.pathname+'?u='+encodeURIComponent(updTag||Date.now().toString(36))+location.hash)}
+function askUpdate(msg,tag){updPending=msg;updTag=tag||Date.now().toString(36);const b=$('#updbar');if(!b)return;b.innerHTML=ico('refresh')+'<span><b>'+esc(msg)+'</b> Si aggiorna da solo appena il computer è libero.</span><button class="btn sm primary" onclick="hardReload()">Aggiorna ora</button>';b.hidden=false}
+function maybeReload(){if(!updPending)return;const a=document.activeElement,busy=document.querySelector('dialog[open]')||(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&a.id!=='search');if(busy)return;if(page==='monitor'||!user||Date.now()-lastActivity>60e3)hardReload()}
 setTimeout(checkPublished,15000);
 
 // ---- sessioni aperte ----
@@ -1095,8 +1104,11 @@ function emptyRooms(d){return d.rooms.filter(r=>r.iso==='Nessuno'&&!r.beds.some(
 function sexAvail(d){const b=psBreakdown(d),free=b.male+b.female+b.neutral+b.mixed;if(d.mixed)return {free,men:free,women:free,neutral:free,mixed:0,all:true};return {free,men:b.male+b.neutral,women:b.female+b.neutral,neutral:b.neutral,mixed:b.mixed,all:false}}
 const nz=(n,cls='')=>n?`<b class="${cls}">${n}</b>`:'<span class="nomark">0</span>';
 function availTable(highlight){const rows=depts.map(d=>({d,a:sexAvail(d),e:emptyRooms(d)}));const tm=rows.reduce((x,r)=>x+r.a.men,0),tw=rows.reduce((x,r)=>x+r.a.women,0),tf=rows.reduce((x,r)=>x+r.a.free,0),te=rows.reduce((x,r)=>x+r.e,0);
-  return `<div class="tablewrap"><table class="avail"><thead><tr><th>Reparto</th><th>Letti disponibili</th><th>♂ Per uomo</th><th>♀ Per donna</th><th>Stanze vuote<br><span style="text-transform:none;letter-spacing:0;font-weight:500">uomo o donna</span></th><th>Aggiornato</th></tr></thead><tbody>${rows.map(({d,a,e})=>`<tr class="${d.id===highlight?'mine':''}" onclick="go('${esc(d.id)}')" title="Apri ${esc(d.name)}"><td><b>${esc(d.name)}</b>${d.id===highlight?' <span class="chip accent">il tuo</span>':''}${a.all?' <span class="chip">camere miste</span>':''}${isoRooms(d)?` <span class="chip red">${isoRooms(d)} in isolamento</span>`:''}</td><td>${a.free?`<span class="pillnum free">${a.free}</span>`:'<span class="pillnum zero">0</span>'}</td><td class="sexcell">${nz(a.men,'c-occ')}</td><td class="sexcell">${nz(a.women,'c-pink')}</td><td class="sexcell">${nz(e)} <span class="muted small">${e===1?'stanza':e?'stanze':''}</span></td><td class="small">${updatedText(d)}</td></tr>`).join('')}</tbody><tfoot><tr><td><b>Totale ospedale</b></td><td><b>${tf}</b></td><td class="sexcell"><b class="c-occ">${tm}</b></td><td class="sexcell"><b class="c-pink">${tw}</b></td><td class="sexcell"><b>${te}</b> <span class="muted small">${te===1?'stanza':'stanze'}</span></td><td class="muted small">Un letto in una stanza vuota vale sia per uomo sia per donna, quindi uomo + donna può superare il totale.</td></tr></tfoot></table></div>`}
+  return `<div class="tablewrap"><table class="avail"><thead><tr><th>Reparto</th><th>Letti disponibili</th><th>♂ Per uomo</th><th>♀ Per donna</th><th>Stanze vuote<br><span style="text-transform:none;letter-spacing:0;font-weight:500">uomo o donna</span></th><th>Aggiornato</th></tr></thead><tbody>${rows.map(({d,a,e})=>`<tr class="${d.id===highlight?'mine':''}" onclick="go('${esc(d.id)}')" title="Apri ${esc(d.name)}"><td><b>${esc(d.name)}</b>${d.id===highlight?' <span class="chip accent">il tuo</span>':''}${a.all?' <span class="chip">camere miste</span>':''}${staleChip(d)}${isoRooms(d)?` <span class="chip red">${isoRooms(d)} in isolamento</span>`:''}</td><td>${a.free?`<span class="pillnum free">${a.free}</span>`:'<span class="pillnum zero">0</span>'}</td><td class="sexcell">${nz(a.men,'c-occ')}</td><td class="sexcell">${nz(a.women,'c-pink')}</td><td class="sexcell">${nz(e)} <span class="muted small">${e===1?'stanza':e?'stanze':''}</span></td><td class="small">${updatedText(d)}</td></tr>`).join('')}</tbody><tfoot><tr><td><b>Totale ospedale</b></td><td><b>${tf}</b></td><td class="sexcell"><b class="c-occ">${tm}</b></td><td class="sexcell"><b class="c-pink">${tw}</b></td><td class="sexcell"><b>${te}</b> <span class="muted small">${te===1?'stanza':'stanze'}</span></td><td class="muted small">Un letto in una stanza vuota vale sia per uomo sia per donna, quindi uomo + donna può superare il totale.</td></tr></tfoot></table></div>`}
 const isoRooms=d=>d.rooms.filter(r=>r.iso!=='Nessuno').length;
+// Reparto con stanze ma senza aggiornamenti da più di 24 ore: probabilmente non usa il programma, i suoi numeri non sono affidabili.
+const staleDept=d=>d.rooms.length>0&&(!d.updatedAt||Date.now()-new Date(d.updatedAt)>24*3600e3);
+const staleChip=d=>staleDept(d)?' <span class="chip amber" title="Nessun aggiornamento da più di 24 ore: i numeri potrebbero non essere reali">Dati non aggiornati</span>':'';
 const kpiHtml=c=>`<div class="kpis"><div class="card kpi"><small>Letti disponibili</small><strong class="c-free">${c.free}</strong><em>Pronti per un ricovero</em></div><div class="card kpi"><small>Letti occupati</small><strong>${c.occupied}<span> / ${c.active}</span></strong><em>Su ${c.active} letti attivi</em></div><div class="card kpi"><small>Ricoveri previsti domani</small><strong class="c-res">${c.tomorrow}</strong><em>Già tolti dai disponibili</em></div><div class="card kpi"><small>Bloccati · chiusi</small><strong class="c-blk">${c.blocked}<span> · ${c.closed}</span></strong><em>Isolamento · non utilizzabili</em></div></div>`;
 
 function overviewHtml(){
@@ -1104,7 +1116,7 @@ function overviewHtml(){
   const q=searchText.trim().toLowerCase();
   const cards=depts.map((d,i)=>{if(q&&!d.name.toLowerCase().includes(q))return '';const c=all[i],own=!isAdmin&&d.id===myDept,sa=sexAvail(d),act=c.active||1;
     return `<article class="card dcard ${own?'own':''}" tabindex="0" role="button" onclick="go('${esc(d.id)}')" onkeydown="if(event.key==='Enter')go('${esc(d.id)}')">
-      <div class="dcard-h"><h3>${esc(d.name)}</h3>${own?'<span class="chip accent">Il tuo reparto</span>':d.mixed?'<span class="chip">Camere miste</span>':''}</div>
+      <div class="dcard-h"><h3>${esc(d.name)}</h3>${own?'<span class="chip accent">Il tuo reparto</span>':d.mixed?'<span class="chip">Camere miste</span>':''}${staleDept(d)&&!own?staleChip(d):''}</div>
       <div class="dbig"><strong class="${c.free?'c-free':''}" style="${c.free?'':'color:var(--danger)'}">${c.free}</strong><span>${c.free===1?'letto disponibile':'letti disponibili'}</span></div>
       <div class="meter" title="Occupati, programmati, bloccati"><i style="width:${c.occupied/act*100}%;background:#7ea5ea"></i><i style="width:${(c.reserved+c.tomorrow)/act*100}%;background:#ecc565"></i><i style="width:${c.blocked/act*100}%;background:#b39ef0"></i></div>
       <div class="dline"><span>Occupati <b>${c.occupied}/${c.active}</b></span><span>Domani <b>${c.tomorrow}</b></span><span>Bloccati <b>${c.blocked}</b></span></div>
@@ -1131,7 +1143,7 @@ function bedTile(d,r,b,j,k,ce){
   const click=ce?` click" role="button" tabindex="0" title="Tocca per modificare" onclick="editBed(${j},${k})" onkeydown="if(event.key==='Enter')editBed(${j},${k})`:'';
   return `<div class="bed s-${s}${click}"><div class="bed-h"><span>${esc(bedLabel(b,k))}</span>${b.state==='reserved'&&b.date<=today?'<span title="Ingresso da confermare">●</span>':''}</div><div class="bed-s">${STATE_LABEL[s]}</div><div class="bed-d">${info.join('<br>')}</div>${acts.length?'<div class="bed-a">'+acts.join('')+'</div>':''}</div>`}
 function othersPanel(d){let tm=0,tw=0,tf=0;depts.forEach(x=>{const a=sexAvail(x);tm+=a.men;tw+=a.women;tf+=a.free});let open=false;try{open=LS.get('pl-others-open')==='1'}catch{}
-  return `<details class="card others" ${open?'open':''} ontoggle="try{LS.set('pl-others-open',this.open?'1':'0')}catch{}"><summary>Posti disponibili in tutti i reparti <span class="pillnum ${tf?'free':'zero'}">${tf}</span><span class="chip">♂ Per uomo ${tm}</span><span class="chip" style="color:#c2417a">♀ Per donna ${tw}</span></summary>${availTable(d.id)}</details>`}
+  return `<details class="card others" ${open?'open':''} ontoggle="try{localStorage.setItem('pl-others-open',this.open?'1':'0')}catch{}"><summary>Posti disponibili in tutti i reparti <span class="pillnum ${tf?'free':'zero'}">${tf}</span><span class="chip">♂ Per uomo ${tm}</span><span class="chip" style="color:#c2417a">♀ Per donna ${tw}</span></summary>${availTable(d.id)}</details>`}
 function deptHtml(d){
   const ce=canEdit(d.id),c=counts(d),a=dailyAdmissions(d),ni=isoRooms(d);
   const rooms=d.rooms.map((r,j)=>{const sx=roomSex(r),iso=r.iso!=='Nessuno';return `<article class="card room ${iso?'iso':''}"><div class="room-h"><h3>${esc(roomLabel(r,j))}</h3>${ce?`<button class="btn ghost sm" onclick="editRoom(${j})">${ico('sliders')}Modifica</button>`:''}</div>
@@ -1152,7 +1164,7 @@ function editBed(j,k){const d=byId(page);if(!d||!canEdit(d.id))return;const r=d.
   $('#bedName').value=b.name||'';$('#bedName').placeholder='Letto '+(k+1);$('#fBedName').hidden=true;
   $('#stateChoices').innerHTML=STATES.map(s=>`<label class="choice"><input type="radio" name="st" value="${s}" ${b.state===s?'checked':''} onchange="bedFields()"><span><i class="l-${s}"></i><span class="ct"><b>${STATE_LABEL[s]}</b><small>${STATE_HINT[s]}</small></span></span></label>`).join('');
   $$('input[name=sex]').forEach(x=>x.checked=x.value===b.sex);
-  $('#bedDate').value=b.date||'';$('#bedDate').min=today;$('#bedReason').value=b.reason||'';$('#bedNotes').value=b.notes||'';
+  $('#bedDate').value=b.date||'';$('#bedDate').min=b.date&&b.date<today?b.date:today;$('#bedReason').value=b.reason||'';$('#bedNotes').value=b.notes||'';
   const iso=r.iso!=='Nessuno',legacy=iso&&!r.beds.some(x=>x.isoSource),others=isoPatients(r,k),isPat=PATIENT.includes(b.state);
   $('#bedIso').checked=isPat?(!!b.isoSource||legacy):iso;
   $('#isoInfo').textContent=!iso?'':!isPat?(others?`In questa stanza ${others===1?'c’è già un paziente':'ci sono già '+others+' pazienti'} in isolamento: il nuovo ricovero è già segnato in isolamento. Togli la spunta solo se il paziente non è infetto.`:'La stanza è in isolamento: il nuovo ricovero è già segnato in isolamento.'):others?`Nella stanza ${others===1?'c’è un altro paziente':'ci sono altri '+others+' pazienti'} in isolamento: la stanza resta in isolamento finché non vengono dimessi tutti.`:'Se togli la spunta, la stanza torna normale.';
@@ -1229,6 +1241,7 @@ async function saveStructure(){if(!structDraft)return;const {id,rows,snap}=struc
 function reminderSlot(now){const p=localTimeParts(now);return p.hour>=21?{day:p.day,time:'21:00'}:p.hour>=12?{day:p.day,time:'12:00'}:null}
 const reminderKey=s=>'pl-check-'+s.day+'-'+s.time+'-'+(isAdmin?'admin':myDept);
 let lastReminder='';
+function cleanReminderKeys(){try{const old=new Date(Date.now()-7*864e5).toISOString().slice(0,10),ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i),m=/^pl-check-(\d{4}-\d{2}-\d{2})-/.exec(k||'');if(m&&m[1]<old)ks.push(k)}ks.forEach(k=>localStorage.removeItem(k))}catch{}}
 function updateReminder(now=new Date()){const slot=signedInOk()&&!isAdmin?reminderSlot(now):null,ack=slot&&LS.get(reminderKey(slot)),own=myDept&&myDept!==PS&&byId(myDept);
   const m=slot&&!ack?`<div class="reminder"><div><b>Controllo delle ${slot.time}</b><small>${own?'Verifica occupazioni, dimissioni, prenotazioni e isolamenti di '+esc(own.name)+'.':'È l’ora del controllo dei posti letto in tutti i reparti.'}</small></div><button class="btn" onclick="acknowledgeCheck()">${ico('check')}${own?'Ho controllato':'Ho letto'}</button></div>`:'';
   if(m!==lastReminder){$('#reminder').innerHTML=m;lastReminder=m}}
@@ -1236,15 +1249,17 @@ async function acknowledgeCheck(){const slot=reminderSlot(new Date());if(!slot)r
   if(myDept&&myDept!==PS&&byId(myDept))await guarded(()=>mutate(myDept,()=>{},{type:'controllo',action:'Controllo posti letto delle '+slot.time+' confermato'}));else audit('controllo',myDept,'Promemoria delle '+slot.time+' letto')}
 
 // ================= OROLOGIO =================
+let lastStatsTick=0,lastNetTick=0,lastPubCheck=Date.now(),lastPresTick=0;
 function tick(now=new Date()){$('#clock').textContent=cap(new Intl.DateTimeFormat('it-IT',{timeZone:TZ,weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(now).replace(' alle ore ',' · '));
   const day=localTimeParts(now).day;if(day!==today){const old=today;today=day;if(date===old)date=day;if(isAdmin)startToday();render({soft:true})}
   updateReminder(now);
   if(isAdmin&&user&&page!=='monitor'&&Date.now()-lastActivity>ADMIN_IDLE_MIN*60e3){lastActivity=Date.now();logout(true)}
-  if(page==='admin'&&adminTab==='collegati'&&now.getSeconds()%15===0)updatePresence()
+  const ms=now.getTime();
+  if(page==='admin'&&adminTab==='collegati'&&ms-lastPresTick>=15e3){lastPresTick=ms;updatePresence()}
   if(page==='monitor')monitorTick(now);
-  if(user&&now.getSeconds()===7)scheduleStats();
-  if(now.getSeconds()%5===0){updateNetBar();maybeReload()}
-  if(now.getMinutes()%30===11&&now.getSeconds()===23)checkPublished()}
+  if(user&&ms-lastStatsTick>=60e3){lastStatsTick=ms;scheduleStats()}
+  if(ms-lastNetTick>=5e3){lastNetTick=ms;updateNetBar();maybeReload()}
+  if(ms-lastPubCheck>=30*60e3){lastPubCheck=ms;checkPublished()}}
 ['pointerdown','keydown','wheel','touchstart'].forEach(e=>addEventListener(e,()=>{lastActivity=Date.now()},{passive:true}));
 
 // ================= AREA AMMINISTRATORE =================
@@ -1394,7 +1409,7 @@ function monitorHtml(){
   const T=rows.reduce((t,r)=>({f:t.f+r.a.free,m:t.m+r.a.men,w:t.w+r.a.women,e:t.e+r.e,t:t.t+r.c.tomorrow,i:t.i+r.i}),{f:0,m:0,w:0,e:0,t:0,i:0});
   const last=depts.filter(d=>d.updatedAt).sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt))[0];
   let auto=false;try{auto=LS.get('pl-monitor-auto')==='1'}catch{}
-  const tiles=rows.map(({d,c,a,e,i})=>{const stale=d.updatedAt&&Date.now()-new Date(d.updatedAt)>12*3600e3;return `<div class="mt ${a.free?'':'zero'}"><div class="mt-h"><b>${esc(d.name)}</b>${i?`<span class="chip red">● ${i} in isolamento</span>`:''}</div>
+  const tiles=rows.map(({d,c,a,e,i})=>{const stale=d.updatedAt&&Date.now()-new Date(d.updatedAt)>12*3600e3;return `<div class="mt ${a.free?'':'zero'} ${staleDept(d)?'old':''}"><div class="mt-h"><b>${esc(d.name)}</b>${staleDept(d)?'<span class="chip amber">Dati non aggiornati</span>':''}${i?`<span class="chip red">● ${i} in isolamento</span>`:''}</div>
     <div class="mt-big">${a.free}<small>${a.free===1?'letto libero':'letti liberi'}</small></div>
     <div class="mt-sex"><span class="m">♂ Uomo<b>${a.men}</b></span><span class="w">♀ Donna<b>${a.women}</b></span><span>Stanze vuote<b>${e}</b></span></div>
     <div class="mt-f"><span>${c.tomorrow?'Domani in arrivo: <b>'+c.tomorrow+'</b>':'Occupati '+c.occupied+'/'+c.active}</span><span class="${stale?'stale':''}">${d.updatedAt?'agg. '+(dayKey(d.updatedAt)===today?fmtTime(d.updatedAt):fmtDT(d.updatedAt)):'mai aggiornato'}</span></div></div>`}).join('');
@@ -1417,7 +1432,8 @@ addEventListener('pointermove',()=>{if(!document.body.classList.contains('monito
 const dayOffset=n=>{const d=new Date(today+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)};
 const dm=d=>d.slice(8,10)+'/'+d.slice(5,7);
 let statsTimer=null,statsLast={slot:'',key:'',at:0},statsDocs=null,statsState='',statsErr='',statsRange=30,statsDept='',statsLoadedFor=0;
-function snapAll(){const o={};depts.forEach(d=>{const c=counts(d),a=sexAvail(d);o[d.id]={n:d.name.slice(0,40),a:c.active,o:c.occupied,f:c.free,t:c.tomorrow,b:c.blocked,m:a.men,w:a.women,e:emptyRooms(d),i:isoRooms(d)}});return o}
+function snapAll(){const keep=date;date=today;try{return snapAllNow()}finally{date=keep}}
+function snapAllNow(){const o={};depts.forEach(d=>{const c=counts(d),a=sexAvail(d);o[d.id]={n:d.name.slice(0,40),a:c.active,o:c.occupied,f:c.free,t:c.tomorrow,b:c.blocked,m:a.men,w:a.women,e:emptyRooms(d),i:isoRooms(d)}});return o}
 function scheduleStats(){if(!user||!deptsLoaded)return;clearTimeout(statsTimer);statsTimer=setTimeout(recordStats,3000)}
 async function recordStats(){if(!user||!deptsLoaded||!depts.length)return;const p=localTimeParts(new Date()),hh=String(p.hour).padStart(2,'0'),slot=p.day+'-'+hh,snap=snapAll(),key=JSON.stringify(snap);
   if(slot===statsLast.slot)return; // una fotografia per ora per computer: contiene pochi dati e costa pochissime scritture
@@ -1680,7 +1696,7 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.__bip=e;ref
 addEventListener('appinstalled',()=>{window.__bip=null;toast('Bed Management è installato sul computer');if(user)audit('sistema',isAdmin?'':myDept,'Programma installato come app');setTimeout(refreshInstallBtn,500)});
 
 // ================= AVVIO =================
-Object.assign(window,{$,go,openReport,sendReport,openReportAdmin,saveReportAdmin,deleteReport,runDiag,forceReloadAll,clearErrors,fixIso,setRepFilter,toggleErrAll,toggleTheme,toggleFullscreen,setMonitorAuto,exitMonitor,setStatsRange,setStatsDept,loadStats,exportStatsCsv,togglePasswords,copyPw,openHelp,helpGo,helpNext,helpPrev,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,saveRoom,toggleBedName,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
+Object.assign(window,{$,go,hardReload,openReport,sendReport,openReportAdmin,saveReportAdmin,deleteReport,runDiag,forceReloadAll,clearErrors,fixIso,setRepFilter,toggleErrAll,toggleTheme,toggleFullscreen,setMonitorAuto,exitMonitor,setStatsRange,setStatsDept,loadStats,exportStatsCsv,togglePasswords,copyPw,openHelp,helpGo,helpNext,helpPrev,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,saveRoom,toggleBedName,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
 window.render=render;
 refreshInstallBtn();paintThemeButtons();$('#gateVer').textContent='Versione '+APP_VERSION+' · '+APP_DATE;tick();setInterval(tick,1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();beat();if(page==='monitor')keepAwake(true)}});
