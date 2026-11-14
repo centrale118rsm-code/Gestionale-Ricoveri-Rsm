@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- Posti letto · Ospedale di Stato RSM · versione 3.9.1 (15/11/2026)
+<!-- Posti letto · Ospedale di Stato RSM · versione 3.9.2 (15/11/2026)
      Nuova grafica chiara, accesso per reparto, registro attività completo per l'amministratore. -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<meta name="version" content="3.9.1">
+<meta name="version" content="3.9.2">
 <title>Posti letto · Ospedale di Stato RSM</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f4f7f9">
@@ -333,6 +333,7 @@ html:fullscreen .mon-tot,html:-webkit-full-screen .mon-tot{display:none}
 .mt{background:var(--surface);border:1px solid var(--line);border-top:7px solid var(--free);border-radius:18px;padding:clamp(12px,1.2vw,18px);display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:clamp(6px,.7vw,10px);align-content:start;box-shadow:var(--shadow)}
 .mt.zero{border-top-color:var(--danger);background:var(--zerobg)}
 .mt.old .mt-big,.mt.old .mt-sex{opacity:.45}
+.mon-ex{margin:-4px 0 14px;font-size:14px;font-weight:600;color:var(--res)}
 .mt-h{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .mt-h b{font-size:clamp(16px,1.45vw,24px);line-height:1.2;letter-spacing:-.3px}
 .mt-big{font-size:clamp(48px,5.2vw,92px);font-weight:800;letter-spacing:-3px;line-height:.95;color:var(--free)}
@@ -813,7 +814,7 @@ const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomai
 // Deve coincidere con l'email scritta in firestore.rules.
 const ADMIN_EMAIL='admin@ospedale.local';
 const ACCOUNT_DOMAIN='ospedale.local';
-const APP_VERSION='3.9.1',APP_DATE='15/11/2026';
+const APP_VERSION='3.9.2',APP_DATE='15/11/2026';
 const PS='__ps',PS_LABEL='Pronto Soccorso',ADMIN='__admin',LEGACY_KEY='beds-rsm-configurable-v3';
 const ADMIN_IDLE_MIN=30;
 const TZ='Europe/San_Marino';
@@ -1103,16 +1104,18 @@ function setDate(v){date=isDate(v)||today;render()}
 function emptyRooms(d){return d.rooms.filter(r=>r.iso==='Nessuno'&&!r.beds.some(b=>b.state==='occupied'||b.state==='reserved'&&b.date<=nextDate())&&r.beds.some(b=>b.state==='free'||b.state==='reserved')).length}
 function sexAvail(d){const b=psBreakdown(d),free=b.male+b.female+b.neutral+b.mixed;if(d.mixed)return {free,men:free,women:free,neutral:free,mixed:0,all:true};return {free,men:b.male+b.neutral,women:b.female+b.neutral,neutral:b.neutral,mixed:b.mixed,all:false}}
 const nz=(n,cls='')=>n?`<b class="${cls}">${n}</b>`:'<span class="nomark">0</span>';
-function availTable(highlight){const rows=depts.map(d=>({d,a:sexAvail(d),e:emptyRooms(d)}));const tm=rows.reduce((x,r)=>x+r.a.men,0),tw=rows.reduce((x,r)=>x+r.a.women,0),tf=rows.reduce((x,r)=>x+r.a.free,0),te=rows.reduce((x,r)=>x+r.e,0);
-  return `<div class="tablewrap"><table class="avail"><thead><tr><th>Reparto</th><th>Letti disponibili</th><th>♂ Per uomo</th><th>♀ Per donna</th><th>Stanze vuote<br><span style="text-transform:none;letter-spacing:0;font-weight:500">uomo o donna</span></th><th>Aggiornato</th></tr></thead><tbody>${rows.map(({d,a,e})=>`<tr class="${d.id===highlight?'mine':''}" onclick="go('${esc(d.id)}')" title="Apri ${esc(d.name)}"><td><b>${esc(d.name)}</b>${d.id===highlight?' <span class="chip accent">il tuo</span>':''}${a.all?' <span class="chip">camere miste</span>':''}${staleChip(d)}${isoRooms(d)?` <span class="chip red">${isoRooms(d)} in isolamento</span>`:''}</td><td>${a.free?`<span class="pillnum free">${a.free}</span>`:'<span class="pillnum zero">0</span>'}</td><td class="sexcell">${nz(a.men,'c-occ')}</td><td class="sexcell">${nz(a.women,'c-pink')}</td><td class="sexcell">${nz(e)} <span class="muted small">${e===1?'stanza':e?'stanze':''}</span></td><td class="small">${updatedText(d)}</td></tr>`).join('')}</tbody><tfoot><tr><td><b>Totale ospedale</b></td><td><b>${tf}</b></td><td class="sexcell"><b class="c-occ">${tm}</b></td><td class="sexcell"><b class="c-pink">${tw}</b></td><td class="sexcell"><b>${te}</b> <span class="muted small">${te===1?'stanza':'stanze'}</span></td><td class="muted small">Un letto in una stanza vuota vale sia per uomo sia per donna, quindi uomo + donna può superare il totale.</td></tr></tfoot></table></div>`}
+function availTable(highlight){const rows=depts.map(d=>({d,a:sexAvail(d),e:emptyRooms(d)})),ok=rows.filter(r=>!staleDept(r.d));const tm=ok.reduce((x,r)=>x+r.a.men,0),tw=ok.reduce((x,r)=>x+r.a.women,0),tf=ok.reduce((x,r)=>x+r.a.free,0),te=ok.reduce((x,r)=>x+r.e,0);
+  return `<div class="tablewrap"><table class="avail"><thead><tr><th>Reparto</th><th>Letti disponibili</th><th>♂ Per uomo</th><th>♀ Per donna</th><th>Stanze vuote<br><span style="text-transform:none;letter-spacing:0;font-weight:500">uomo o donna</span></th><th>Aggiornato</th></tr></thead><tbody>${rows.map(({d,a,e})=>`<tr class="${d.id===highlight?'mine':''}" onclick="go('${esc(d.id)}')" title="Apri ${esc(d.name)}"><td><b>${esc(d.name)}</b>${d.id===highlight?' <span class="chip accent">il tuo</span>':''}${a.all?' <span class="chip">camere miste</span>':''}${staleChip(d)}${isoRooms(d)?` <span class="chip red">${isoRooms(d)} in isolamento</span>`:''}</td><td>${a.free?`<span class="pillnum free">${a.free}</span>`:'<span class="pillnum zero">0</span>'}</td><td class="sexcell">${nz(a.men,'c-occ')}</td><td class="sexcell">${nz(a.women,'c-pink')}</td><td class="sexcell">${nz(e)} <span class="muted small">${e===1?'stanza':e?'stanze':''}</span></td><td class="small">${updatedText(d)}</td></tr>`).join('')}</tbody><tfoot><tr><td><b>Totale ospedale</b>${staleNote()?`<br><span class="small" style="color:var(--res);font-weight:600">${esc(staleNote())}</span>`:''}</td><td><b>${tf}</b></td><td class="sexcell"><b class="c-occ">${tm}</b></td><td class="sexcell"><b class="c-pink">${tw}</b></td><td class="sexcell"><b>${te}</b> <span class="muted small">${te===1?'stanza':'stanze'}</span></td><td class="muted small">Un letto in una stanza vuota vale sia per uomo sia per donna, quindi uomo + donna può superare il totale.</td></tr></tfoot></table></div>`}
 const isoRooms=d=>d.rooms.filter(r=>r.iso!=='Nessuno').length;
 // Reparto con stanze ma senza aggiornamenti da più di 24 ore: probabilmente non usa il programma, i suoi numeri non sono affidabili.
 const staleDept=d=>d.rooms.length>0&&(!d.updatedAt||Date.now()-new Date(d.updatedAt)>24*3600e3);
+const staleNames=()=>depts.filter(staleDept).map(d=>d.name);
+const staleNote=()=>{const n=staleNames();return n.length?'Esclusi dal totale perché non aggiornati da più di 24 ore: '+n.join(', '):''};
 const staleChip=d=>staleDept(d)?' <span class="chip amber" title="Nessun aggiornamento da più di 24 ore: i numeri potrebbero non essere reali">Dati non aggiornati</span>':'';
 const kpiHtml=c=>`<div class="kpis"><div class="card kpi"><small>Letti disponibili</small><strong class="c-free">${c.free}</strong><em>Pronti per un ricovero</em></div><div class="card kpi"><small>Letti occupati</small><strong>${c.occupied}<span> / ${c.active}</span></strong><em>Su ${c.active} letti attivi</em></div><div class="card kpi"><small>Ricoveri previsti domani</small><strong class="c-res">${c.tomorrow}</strong><em>Già tolti dai disponibili</em></div><div class="card kpi"><small>Bloccati · chiusi</small><strong class="c-blk">${c.blocked}<span> · ${c.closed}</span></strong><em>Isolamento · non utilizzabili</em></div></div>`;
 
 function overviewHtml(){
-  const all=depts.map(counts),zero={total:0,active:0,closed:0,occupied:0,reserved:0,tomorrow:0,blocked:0,free:0},tot=all.reduce((a,x)=>{for(const k in x)a[k]+=x[k];return a},{...zero});
+  const all=depts.map(counts),zero={total:0,active:0,closed:0,occupied:0,reserved:0,tomorrow:0,blocked:0,free:0},tot=all.filter((x,i)=>!staleDept(depts[i])).reduce((a,x)=>{for(const k in x)a[k]+=x[k];return a},{...zero});
   const q=searchText.trim().toLowerCase();
   const cards=depts.map((d,i)=>{if(q&&!d.name.toLowerCase().includes(q))return '';const c=all[i],own=!isAdmin&&d.id===myDept,sa=sexAvail(d),act=c.active||1;
     return `<article class="card dcard ${own?'own':''}" tabindex="0" role="button" onclick="go('${esc(d.id)}')" onkeydown="if(event.key==='Enter')go('${esc(d.id)}')">
@@ -1122,7 +1125,7 @@ function overviewHtml(){
       <div class="dline"><span>Occupati <b>${c.occupied}/${c.active}</b></span><span>Domani <b>${c.tomorrow}</b></span><span>Bloccati <b>${c.blocked}</b></span></div>
       <div class="sexnum"><span>♂ Per uomo<b class="${sa.men?'c-occ':''}">${sa.men}</b></span><span>♀ Per donna<b class="${sa.women?'c-pink':''}">${sa.women}</b></span></div>
       <div class="dfoot"><span>${d.updatedAt?'Aggiornato '+updatedText(d):'<span class="muted">Mai aggiornato</span>'}</span><span>${d.updatedBy?esc(d.updatedBy):''}</span></div></article>`}).join('');
-  return `<div class="phead"><div><h1 class="title">Quadro dei posti letto</h1><p class="sub">Tutti i reparti in un colpo d’occhio. Tocca un reparto per vedere le stanze.</p></div></div>${dateBar()}${kpiHtml(tot)}
+  return `<div class="phead"><div><h1 class="title">Quadro dei posti letto</h1><p class="sub">Tutti i reparti in un colpo d’occhio. Tocca un reparto per vedere le stanze.</p></div></div>${dateBar()}${kpiHtml(tot)}${staleNote()?`<p class="small" style="color:var(--res);font-weight:600;margin:-8px 0 16px">${esc(staleNote())}.</p>`:''}
   <section class="card" style="margin-bottom:24px"><div class="card-h"><h2>Posti disponibili in ogni reparto · uomini e donne</h2><span class="muted small">Tocca una riga per aprire il reparto</span></div>${availTable(!isAdmin?myDept:null)}</section>
   <div class="toolbar"><h2>Reparti <span class="muted small">· ${depts.length}</span></h2><div class="search">${ico('search')}<input id="search" placeholder="Cerca un reparto" value="${esc(searchText)}" oninput="setSearch(this.value)"></div></div>
   <div class="dgrid">${cards||`<div class="empty">${depts.length?'Nessun reparto trovato.':'Nessun reparto configurato.'+(isAdmin?' Crealo dall’Area amministratore.':'')}</div>`}</div>
@@ -1406,7 +1409,7 @@ let wakeLock=null,monIdle=null;
 async function keepAwake(on){try{if(on&&'wakeLock'in navigator&&!wakeLock&&document.visibilityState==='visible'){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null})}else if(!on&&wakeLock){const w=wakeLock;wakeLock=null;await w.release()}}catch(e){}}
 function monitorHtml(){
   const rows=depts.map(d=>({d,c:counts(d),a:sexAvail(d),e:emptyRooms(d),i:isoRooms(d)}));
-  const T=rows.reduce((t,r)=>({f:t.f+r.a.free,m:t.m+r.a.men,w:t.w+r.a.women,e:t.e+r.e,t:t.t+r.c.tomorrow,i:t.i+r.i}),{f:0,m:0,w:0,e:0,t:0,i:0});
+  const T=rows.filter(r=>!staleDept(r.d)).reduce((t,r)=>({f:t.f+r.a.free,m:t.m+r.a.men,w:t.w+r.a.women,e:t.e+r.e,t:t.t+r.c.tomorrow,i:t.i+r.i}),{f:0,m:0,w:0,e:0,t:0,i:0});
   const last=depts.filter(d=>d.updatedAt).sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt))[0];
   let auto=false;try{auto=LS.get('pl-monitor-auto')==='1'}catch{}
   const tiles=rows.map(({d,c,a,e,i})=>{const stale=d.updatedAt&&Date.now()-new Date(d.updatedAt)>12*3600e3;return `<div class="mt ${a.free?'':'zero'} ${staleDept(d)?'old':''}"><div class="mt-h"><b>${esc(d.name)}</b>${staleDept(d)?'<span class="chip amber">Dati non aggiornati</span>':''}${i?`<span class="chip red">● ${i} in isolamento</span>`:''}</div>
@@ -1416,6 +1419,7 @@ function monitorHtml(){
   return `<div class="mon">
   <div class="mon-h"><div class="mon-brand"><img src="icons/icon-192.png" alt=""><div><b>Posti letto disponibili</b><span>Ospedale di Stato · Repubblica di San Marino</span></div></div><div class="mon-clock"><b id="monClock">${fmtTime(new Date())}</b><span id="monDate">${cap(fmtDayLong(new Date()))}</span></div></div>
   <div class="mon-tot"><div><small>Letti liberi</small><b class="c-free">${T.f}</b></div><div><small>♂ Per uomo</small><b class="c-occ">${T.m}</b></div><div><small>♀ Per donna</small><b class="c-pink">${T.w}</b></div><div><small>Stanze vuote</small><b>${T.e}</b></div><div><small>Ricoveri domani</small><b class="c-res">${T.t}</b></div><div><small>Stanze in isolamento</small><b style="color:#c53030">${T.i}</b></div></div>
+  ${staleNote()?`<div class="mon-ex">${esc(staleNote())}</div>`:''}
   <div class="mon-grid" style="--cols:${rows.length<=6?Math.max(rows.length,1):Math.min(6,Math.ceil(rows.length/2))}">${tiles||'<div class="empty">Nessun reparto configurato.</div>'}</div>
   <div class="mon-foot"><span><span class="conn ${navigator.onLine?'ok':'off'}" id="monConn">${navigator.onLine?'● Collegato · dati in tempo reale':'● Connessione assente · i numeri potrebbero non essere aggiornati'}</span>${last?` · Ultima modifica alle ${fmtTime(last.updatedAt)} (${esc(last.name)})`:''}</span>
   <span class="mon-ctrl"><label class="chk"><input type="checkbox" ${auto?'checked':''} onchange="setMonitorAuto(this.checked)">Apri il monitor all’avvio su questo computer</label><button class="btn sm theme-btn" onclick="toggleTheme()"></button><button class="btn sm" onclick="toggleFullscreen()">${ico('expand')}Schermo intero</button><button class="btn sm" onclick="exitMonitor()">${ico('back')}Esci dal monitor</button></span></div></div>`}
