@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- Posti letto · Ospedale di Stato RSM · versione 3.10.1 (16/11/2026)
+<!-- Posti letto · Ospedale di Stato RSM · versione 3.11.0 (16/11/2026)
      Nuova grafica chiara, accesso per reparto, registro attività completo per l'amministratore. -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<meta name="version" content="3.10.1">
+<meta name="version" content="3.11.0">
 <title>Posti letto · Ospedale di Stato RSM</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f4f7f9">
@@ -584,6 +584,19 @@ html[data-theme="dark"] .tile.off{background:var(--s2)}
 @media (max-width:760px){.iss,.diag,.rep-row{padding-left:16px;padding-right:16px}.iss{flex-wrap:wrap}.iss .btn{margin-left:19px}.choices.c3{grid-template-columns:1fr}}
 
 /* ---- fuori territorio ---- */
+.trback{background:var(--free-bg,#e3f5ec);color:var(--free);border-color:var(--free-bd,#bfe6d1);font-weight:700}
+.trback:hover{filter:brightness(.97)}
+.chip .ico{width:13px;height:13px;margin-right:3px;vertical-align:-2px}
+.trout{display:flex;flex-direction:column}
+.trout-r{display:grid;grid-template-columns:130px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 20px;border-top:1px solid var(--line2)}
+.trout-r:first-child{border-top:0}
+.trout-d{font-size:13.5px;line-height:1.7}
+.trout-m{display:flex;flex-direction:column;gap:3px;min-width:0;font-size:13.5px}.trout-m b{font-size:14.5px}
+.trout-m span{display:flex;align-items:center;gap:5px;color:var(--text2);overflow-wrap:anywhere}.trout-m .ico{width:15px;height:15px;color:var(--muted)}
+.trout-a{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+tr.trclosed td{background:var(--s2)}
+@media (max-width:760px){.trout-r{grid-template-columns:minmax(0,1fr);gap:8px;padding:12px 16px}.trout-a{justify-content:flex-start}}
+
 .trdt{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .combo{position:relative}
 .combo input{width:100%;padding-right:40px}
@@ -815,6 +828,15 @@ html[data-theme="dark"] .tile.off{background:var(--s2)}
   <div class="actions"><button type="button" class="btn danger" id="trDel" style="margin-right:auto" onclick="deleteTransfer()">Elimina</button><button type="button" class="btn" onclick="closeDlg(this)">Annulla</button><button class="btn primary" id="trSave">Salva</button></div>
 </form></dialog>
 
+<dialog id="trbDlg"><form class="dlg" novalidate onsubmit="event.preventDefault();saveReturn()">
+  <div class="dlg-h"><div><small>Fuori territorio</small><h2 id="trbTitle">Rientro a San Marino</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <div id="trbInfo"></div>
+  <div class="trdt" style="margin-top:14px"><div class="field"><label for="trbDate">Data del rientro</label><input type="date" id="trbDate"></div><div class="field"><label for="trbTime">Ora</label><input type="time" id="trbTime"></div></div>
+  <div class="field"><label for="trbNote">Note sul rientro <span class="muted small">(facoltative)</span></label><input id="trbNote" maxlength="300" placeholder="Es. rientrato in Pronto Soccorso, in reparto, a domicilio"><p class="small">Non scrivere nomi o dati dei pazienti.</p></div>
+  <div class="err" id="trbErr" role="alert"></div>
+  <div class="actions"><button type="button" class="btn ghost" id="trbUndo" style="margin-right:auto" onclick="undoReturn()">È ancora fuori</button><button type="button" class="btn" onclick="closeDlg(this)">Annulla</button><button class="btn primary" id="trbSave">Conferma il rientro</button></div>
+</form></dialog>
+
 <dialog id="trlDlg"><div class="dlg">
   <div class="dlg-h"><div><small>Fuori territorio</small><h2>Elenchi di ospedali e prestazioni</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
   <div id="trlBody"></div>
@@ -861,7 +883,7 @@ const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomai
 // Deve coincidere con l'email scritta in firestore.rules.
 const ADMIN_EMAIL='admin@ospedale.local';
 const ACCOUNT_DOMAIN='ospedale.local';
-const APP_VERSION='3.10.1',APP_DATE='16/11/2026';
+const APP_VERSION='3.11.0',APP_DATE='16/11/2026';
 const PS='__ps',PS_LABEL='Pronto Soccorso',ADMIN='__admin',LEGACY_KEY='beds-rsm-configurable-v3';
 const ADMIN_IDLE_MIN=30;
 const TZ='Europe/San_Marino';
@@ -899,7 +921,7 @@ function randomId(n=10){const cs='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwx
 const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 const DEVICE=(()=>{const u=navigator.userAgent;const b=/Edg\//.test(u)?'Edge':/OPR\//.test(u)?'Opera':/Firefox\/|FxiOS/.test(u)?'Firefox':/Chrome\/|CriOS/.test(u)?'Chrome':/Safari\//.test(u)?'Safari':'Browser';const o=/Windows/.test(u)?'Windows':/Android/.test(u)?'Android':/iPhone|iPad|iPod/.test(u)?'iOS':/Mac OS X/.test(u)?'macOS':/Linux/.test(u)?'Linux':'';return b+(o?' · '+o:'')+(isStandalone()?' · app':'')})();
 const SID=(()=>{let s=SS.get('pl-sid');if(!s){s=randomId(10);SS.set('pl-sid',s)}return s})();
-const ICONS={route:'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3.5 3.5 0 0 0 0-7H8a3.5 3.5 0 0 1 0-7h7.5"/>',cpu:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9.5 9.5h5v5h-5zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',alert:'<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.1"/>',flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',tv:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',trend:'<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',expand:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',eyeoff:'<path d="M3 3l18 18M10.6 6.2A9.8 9.8 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.3 4M6.5 7.6C3.7 9.4 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>',bed:'<path d="M3 6v13M3 14h18v5M21 14v-2.5A2.5 2.5 0 0 0 18.5 9H11v5"/><circle cx="7" cy="11" r="2"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',activity:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.5 3.5 5.2"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 21v-4h6v4M12 7v4M10 9h4"/>',sliders:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',logout:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11"/>',download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',upload:'<path d="M12 16V5M7 10l5-5 5 5M5 20h14"/>',chart:'<path d="M4 20V11M10 20V5M16 20v-6M2 20h20"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M15 18l-6-6 6-6"/>',lock:'<rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/>',switch:'<path d="M7 7h11l-3-3M17 17H6l3 3"/>',door:'<path d="M5 21V4a1 1 0 0 1 1-1h9l4 2v16M3 21h18"/><circle cx="12.5" cy="12" r=".8"/>',refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>'};
+const ICONS={home:'<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M14.5 15h-5m0 0 2-2m-2 2 2 2"/>',route:'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3.5 3.5 0 0 0 0-7H8a3.5 3.5 0 0 1 0-7h7.5"/>',cpu:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9.5 9.5h5v5h-5zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',alert:'<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.1"/>',flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',tv:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',trend:'<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',expand:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',eyeoff:'<path d="M3 3l18 18M10.6 6.2A9.8 9.8 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.3 4M6.5 7.6C3.7 9.4 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>',bed:'<path d="M3 6v13M3 14h18v5M21 14v-2.5A2.5 2.5 0 0 0 18.5 9H11v5"/><circle cx="7" cy="11" r="2"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',activity:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.5 3.5 5.2"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 21v-4h6v4M12 7v4M10 9h4"/>',sliders:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',logout:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11"/>',download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',upload:'<path d="M12 16V5M7 10l5-5 5 5M5 20h14"/>',chart:'<path d="M4 20V11M10 20V5M16 20v-6M2 20h20"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M15 18l-6-6 6-6"/>',lock:'<rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/>',switch:'<path d="M7 7h11l-3-3M17 17H6l3 3"/>',door:'<path d="M5 21V4a1 1 0 0 1 1-1h9l4 2v16M3 21h18"/><circle cx="12.5" cy="12" r=".8"/>',refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>'};
 const ico=n=>`<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]||''}</svg>`;
 const AV=['#0f9b8e','#2c6bd8','#c7820f','#7650d3','#c84a7c','#1d88b0','#4f8a2a','#b8571a','#0d7a8a'];
 function avColor(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return AV[h%AV.length]}
@@ -1687,7 +1709,7 @@ const TR_PREST=[
   ['Terapie intensive e altro',['Terapia intensiva – posto letto non disponibile','Dialisi urgente','Camera iperbarica (CO, embolia gassosa)','Malattie infettive – isolamento','Psichiatria – SPDC','Ematologia / oncologia urgente','Diagnostica non disponibile (TC, RM, angiografia)']]];
 const TR_MEZZI=['Ambulanza','Elisoccorso','Auto medica','Altro'];
 let trRows=[],trState='',trErr='',trCfg=null,trUnsub=null,trCfgUnsub=null,trEditing=null;
-const tf={per:'30',hosp:'',prest:'',q:''};
+const tf={per:'30',hosp:'',prest:'',q:'',stato:''};
 const trHosps=()=>trCfg?.hosp?.length?trCfg.hosp:TR_HOSP;
 const trPrests=()=>trCfg?.prest?.length?trCfg.prest:TR_PREST.flatMap(([g,l])=>l.map(n=>({n,g})));
 const normTxt=t=>String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
@@ -1697,30 +1719,56 @@ function startTransfers(){if(trUnsub||!seesAll())return;trState='loading';
   trCfgUnsub=onSnapshot(doc(db,'config','transfers'),s=>{trCfg=s.exists()?s.data():null},e=>console.warn('elenchi',e))}
 function stopTransfers(){[trUnsub,trCfgUnsub].forEach(u=>{try{u&&u()}catch{}});trUnsub=trCfgUnsub=null;trRows=[];trState='';trCfg=null}
 function trPeriodRows(){const from=tf.per==='all'?'':tf.per==='month'?today.slice(0,8)+'01':tf.per==='year'?today.slice(0,5)+'01-01':addDays(today,-(Number(tf.per)-1));
-  const q=normTxt(tf.q.trim());return trRows.filter(r=>(!from||r.date>=from)&&(!tf.hosp||r.hosp===tf.hosp)&&(!tf.prest||r.prest===tf.prest)&&(!q||normTxt(r.prest+' '+r.hosp+' '+(r.mezzo||'')+' '+(r.note||'')+' '+(r.who||'')).includes(q)))}
+  const q=normTxt(tf.q.trim());return trRows.filter(r=>(!from||r.date>=from)&&(!tf.hosp||r.hosp===tf.hosp)&&(!tf.prest||r.prest===tf.prest)&&(!tf.stato||(tf.stato==='back')===!!r.back)&&(!q||normTxt(r.prest+' '+r.hosp+' '+(r.mezzo||'')+' '+(r.note||'')+' '+(r.backNote||'')+' '+(r.who||'')).includes(q)))}
 function setTf(k,v){tf[k]=v;render()}
+// Giorni passati fuori territorio: dal giorno dell'invio al rientro (o a oggi se il paziente è ancora fuori).
+const trDays=r=>Math.max(0,Math.round((new Date((r.back?r.backDate:today)+'T12:00:00Z')-new Date(r.date+'T12:00:00Z'))/864e5));
+const trDaysTxt=n=>n===0?'in giornata':n===1?'1 giorno':n+' giorni';
+function trStatus(r){return r.back?`<span class="chip green">${ico('home')}Rientrato</span><br><span class="small muted">${itDate(r.backDate)} ${esc(r.backTime||'')} · ${trDaysTxt(trDays(r))}</span>`
+  :`<span class="chip amber">Fuori territorio</span><br><span class="small muted">${trDays(r)?'da '+trDaysTxt(trDays(r)):'da oggi'}</span>`}
+function trBackBtn(r,big){return r.back?`<button class="btn ghost sm" onclick="openReturn('${esc(r.id)}')" title="Modifica il rientro">${ico('home')}Rientro</button>`
+  :`<button class="btn ${big?'':'sm'} trback" onclick="openReturn('${esc(r.id)}')" title="Segna il rientro a San Marino">${ico('home')}Rientro a San Marino</button>`}
 function trBars(rows,key,empty){const m={};rows.forEach(r=>{m[r[key]]=(m[r[key]]||0)+1});const l=Object.entries(m).sort((a,b)=>b[1]-a[1]),max=l[0]?.[1]||1;
   return l.length?'<div class="trbars">'+l.slice(0,12).map(([k,n])=>`<button class="trbar" onclick="setTf('${key}',${esc(JSON.stringify(k))})" title="Mostra solo ${esc(k)}"><span class="trbar-l">${esc(k)}</span><span class="trbar-t"><i style="width:${Math.max(3,n/max*100)}%"></i></span><b>${n}</b></button>`).join('')+(l.length>12?`<div class="muted small" style="padding:6px 0">… e altre ${l.length-12} voci</div>`:'')+'</div>':`<div class="empty" style="margin:0">${empty}</div>`}
 function trasfHtml(){
-  const rows=trPeriodRows(),cnt=f=>trRows.filter(r=>r.date>=f).length;
-  const per={7:'Ultimi 7 giorni',30:'Ultimi 30 giorni',month:'Questo mese',year:'Quest’anno',all:'Tutto il registro'};
-  const head=`<div class="phead"><div><h1 class="title">Fuori territorio</h1><p class="sub">Pazienti inviati dal Pronto Soccorso ad altri ospedali: quale prestazione e dove. Non si scrivono dati dei pazienti.</p></div><div class="row-actions"><button class="btn" onclick="openTrLists()">${ico('sliders')}Elenchi</button><button class="btn primary" onclick="openTransfer()">${ico('route')}Inserisci fuori territorio</button></div></div>`;
-  if(trState==='error')return head+`<div class="card card-b"><span class="stale">${esc(trErr)}</span><p class="small muted" style="margin:8px 0 0">Se il messaggio parla di permessi, vanno pubblicate le regole Firestore della versione ${APP_VERSION}.</p></div>`;
+  const rows=trPeriodRows(),cnt=f=>trRows.filter(r=>r.date>=f).length,out=trRows.filter(r=>!r.back).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+  const per={7:'Ultimi 7 giorni',30:'Ultimi 30 giorni',month:'Questo mese',year:'Quest’anno',all:'Tutto lo storico'};
+  const head=`<div class="phead"><div><h1 class="title">Fuori territorio</h1><p class="sub">Pazienti inviati dal Pronto Soccorso ad altri ospedali: quale prestazione, dove e quando sono rientrati a San Marino. Non si scrivono dati dei pazienti.</p></div><div class="row-actions"><button class="btn" onclick="openTrLists()">${ico('sliders')}Elenchi</button><button class="btn primary" onclick="openTransfer()">${ico('route')}Inserisci fuori territorio</button></div></div>`;
+  if(trState==='error')return head+`<div class="card card-b"><span class="stale">${esc(trErr)}</span><p class="small muted" style="margin:8px 0 0">Se il messaggio parla di permessi, vanno pubblicate su Firebase le regole aggiornate (file firestore.rules).</p></div>`;
   if(trState!=='ok')return head+'<div class="kpis"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>';
-  const kp=`<div class="kpis"><div class="card kpi"><small>Oggi</small><strong>${cnt(today)}</strong><em>invii fuori territorio</em></div><div class="card kpi"><small>Ultimi 7 giorni</small><strong>${cnt(addDays(today,-6))}</strong><em>dal ${itDate(addDays(today,-6))}</em></div><div class="card kpi"><small>Questo mese</small><strong>${cnt(today.slice(0,8)+'01')}</strong><em>${MONTHS[Number(today.slice(5,7))-1]}</em></div><div class="card kpi"><small>Quest’anno</small><strong>${cnt(today.slice(0,5)+'01-01')}</strong><em>dal 1° gennaio</em></div></div>`;
+  const kp=`<div class="kpis"><div class="card kpi"><small>Ancora fuori territorio</small><strong class="${out.length?'c-res':'c-free'}">${out.length}</strong><em>${out.length?'in attesa di rientro':'tutti rientrati'}</em></div><div class="card kpi"><small>Inviati oggi</small><strong>${cnt(today)}</strong><em>fuori territorio</em></div><div class="card kpi"><small>Questo mese</small><strong>${cnt(today.slice(0,8)+'01')}</strong><em>${MONTHS[Number(today.slice(5,7))-1]}</em></div><div class="card kpi"><small>Quest’anno</small><strong>${cnt(today.slice(0,5)+'01-01')}</strong><em>dal 1° gennaio</em></div></div>`;
+  // pazienti ancora fuori: sempre in alto, a prescindere dai filtri
+  const outCard=`<section class="card" style="margin-bottom:16px"><div class="card-h"><h2>Ancora fuori territorio <span class="muted small">· ${out.length}</span></h2><span class="muted small">Quando il paziente torna premi “Rientro a San Marino”</span></div>${out.length?'<div class="trout">'+out.map(r=>`<div class="trout-r"><div class="trout-d"><b>${itDate(r.date)}</b> ${esc(r.time||'')}<br><span class="chip amber">${trDays(r)?'da '+trDaysTxt(trDays(r)):'da oggi'}</span></div><div class="trout-m"><b>${esc(r.prest)}</b><span>${ico('route')}${esc(r.hosp)}${r.mezzo?' · '+esc(r.mezzo):''}</span>${r.note?`<span class="muted small">${esc(r.note)}</span>`:''}</div><div class="trout-a"><button class="btn ghost sm" onclick="openTransfer('${esc(r.id)}')">Modifica</button>${trBackBtn(r)}</div></div>`).join('')+'</div>':'<div class="empty" style="margin:16px">Nessun paziente fuori territorio in questo momento.</div>'}</section>`;
   const hs=[...new Set([...trHosps(),...trRows.map(r=>r.hosp)])].sort((a,b)=>a.localeCompare(b,'it')),ps=[...new Set([...trPrests().map(p=>p.n),...trRows.map(r=>r.prest)])].sort((a,b)=>a.localeCompare(b,'it'));
   const filt=`<div class="filters"><select onchange="setTf('per',this.value)" aria-label="Periodo">${Object.entries(per).map(([k,l])=>`<option value="${k}" ${tf.per===k?'selected':''}>${l}</option>`).join('')}</select>
+    <select onchange="setTf('stato',this.value)" aria-label="Stato"><option value="">Rientrati e ancora fuori</option><option value="back" ${tf.stato==='back'?'selected':''}>Solo rientrati (chiusi)</option><option value="out" ${tf.stato==='out'?'selected':''}>Solo ancora fuori</option></select>
     <select onchange="setTf('prest',this.value)" aria-label="Prestazione"><option value="">Tutte le prestazioni</option>${ps.map(p=>`<option ${tf.prest===p?'selected':''}>${esc(p)}</option>`).join('')}</select>
     <select onchange="setTf('hosp',this.value)" aria-label="Ospedale"><option value="">Tutti gli ospedali</option>${hs.map(h=>`<option ${tf.hosp===h?'selected':''}>${esc(h)}</option>`).join('')}</select>
     <div class="search">${ico('search')}<input id="tfq" placeholder="Cerca" value="${esc(tf.q)}" oninput="setTf('q',this.value)"></div>
-    ${tf.prest||tf.hosp||tf.q?`<button class="btn ghost sm" onclick="tf.prest=tf.hosp=tf.q='';render()">Togli i filtri</button>`:''}</div>`;
-  const list=rows.length?`<div class="tablewrap"><table><thead><tr><th>Data e ora</th><th>Prestazione</th><th>Ospedale</th><th>Mezzo</th><th>Note</th><th>Inserito da</th><th></th></tr></thead><tbody>${rows.slice(0,300).map(r=>`<tr><td style="white-space:nowrap"><b>${itDate(r.date)}</b> ${esc(r.time||'')}</td><td><b>${esc(r.prest)}</b>${r.pgroup?`<br><span class="muted small">${esc(r.pgroup)}</span>`:''}</td><td>${esc(r.hosp)}</td><td>${esc(r.mezzo||'—')}</td><td class="small" style="overflow-wrap:anywhere">${esc(r.note||'')}</td><td class="small muted">${esc(r.who||'')}</td><td style="text-align:right"><button class="btn ghost sm" onclick="openTransfer('${esc(r.id)}')">Modifica</button></td></tr>`).join('')}</tbody></table>${rows.length>300?`<p class="small muted" style="padding:10px 20px">Mostrati i 300 più recenti su ${rows.length}: usa i filtri o esporta il file.</p>`:''}</div>`
-    :`<div class="empty" style="margin:16px">${trRows.length?'Nessun invio con questi filtri.':'Ancora nessun invio registrato. Premi “Inserisci fuori territorio” per inserire il primo.'}</div>`;
-  return head+kp+`<section class="card" style="margin-bottom:16px">${filt}<div class="congrid" style="padding:16px 20px;margin:0"><div><h3 class="trh">Per prestazione <span class="muted small">· ${per[tf.per].toLowerCase()}</span></h3>${trBars(rows,'prest','Nessun dato nel periodo')}</div><div><h3 class="trh">Per ospedale <span class="muted small">· ${per[tf.per].toLowerCase()}</span></h3>${trBars(rows,'hosp','Nessun dato nel periodo')}</div></div></section>
-  <section class="card"><div class="card-h"><h2>Invii <span class="muted small">· ${rows.length}</span></h2><button class="btn sm" onclick="exportTransfers()">${ico('download')}Esporta (Excel)</button></div>${list}</section>`}
-function exportTransfers(){const rows=trPeriodRows();if(!rows.length)return appMessage('Non ci sono invii da esportare con questi filtri.');const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
-  const L=[['Data','Ora','Prestazione','Gruppo','Ospedale','Mezzo','Note','Inserito da'].map(q).join(';'),...rows.map(r=>[itDate(r.date),r.time,r.prest,r.pgroup,r.hosp,r.mezzo,r.note,r.who].map(q).join(';'))];
-  download('fuori-territorio-'+today+'.csv','﻿'+L.join('\r\n'),'text/csv;charset=utf-8');audit('backup','','Invii fuori territorio esportati ('+rows.length+')')}
+    ${tf.prest||tf.hosp||tf.q||tf.stato?`<button class="btn ghost sm" onclick="tf.prest=tf.hosp=tf.q=tf.stato='';render()">Togli i filtri</button>`:''}</div>`;
+  const back=rows.filter(r=>r.back),avg=back.length?Math.round(back.reduce((a,r)=>a+trDays(r),0)/back.length*10)/10:null;
+  const list=rows.length?`<div class="tablewrap"><table><thead><tr><th>Invio</th><th>Prestazione</th><th>Ospedale</th><th>Stato</th><th>Note</th><th>Inserito da</th><th></th></tr></thead><tbody>${rows.slice(0,300).map(r=>`<tr class="${r.back?'trclosed':''}"><td style="white-space:nowrap"><b>${itDate(r.date)}</b> ${esc(r.time||'')}<br><span class="small muted">${esc(r.mezzo||'')}</span></td><td><b>${esc(r.prest)}</b>${r.pgroup?`<br><span class="muted small">${esc(r.pgroup)}</span>`:''}</td><td>${esc(r.hosp)}</td><td style="white-space:nowrap">${trStatus(r)}</td><td class="small" style="overflow-wrap:anywhere">${esc(r.note||'')}${r.backNote?`${r.note?'<br>':''}<span class="muted">Rientro: ${esc(r.backNote)}</span>`:''}</td><td class="small muted">${esc(r.who||'')}${r.backBy?`<br>Rientro: ${esc(r.backBy)}`:''}</td><td style="text-align:right;white-space:nowrap">${trBackBtn(r)} <button class="btn ghost sm" onclick="openTransfer('${esc(r.id)}')">Modifica</button></td></tr>`).join('')}</tbody></table>${rows.length>300?`<p class="small muted" style="padding:10px 20px">Mostrati i 300 più recenti su ${rows.length}: usa i filtri o esporta il file.</p>`:''}</div>`
+    :`<div class="empty" style="margin:16px">${trRows.length?'Nessun viaggio con questi filtri.':'Ancora nessun invio registrato. Premi “Inserisci fuori territorio” per inserire il primo.'}</div>`;
+  return head+kp+outCard+`<section class="card" style="margin-bottom:16px"><div class="card-h"><h2>Storico dei viaggi <span class="muted small">· ${rows.length} · ${back.length} rientrati${avg!=null?' · durata media '+String(avg).replace('.',',')+' giorni':''}</span></h2><button class="btn sm" onclick="exportTransfers()">${ico('download')}Esporta (Excel)</button></div>${filt}<div class="congrid" style="padding:16px 20px;margin:0;border-bottom:1px solid var(--line2)"><div><h3 class="trh">Per prestazione <span class="muted small">· ${per[tf.per].toLowerCase()}</span></h3>${trBars(rows,'prest','Nessun dato nel periodo')}</div><div><h3 class="trh">Per ospedale <span class="muted small">· ${per[tf.per].toLowerCase()}</span></h3>${trBars(rows,'hosp','Nessun dato nel periodo')}</div></div>${list}</section>`}
+function exportTransfers(){const rows=trPeriodRows();if(!rows.length)return appMessage('Non ci sono viaggi da esportare con questi filtri.');const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const L=[['Data invio','Ora invio','Prestazione','Gruppo','Ospedale','Mezzo','Note','Inserito da','Stato','Data rientro','Ora rientro','Giorni fuori','Note rientro','Rientro segnato da'].map(q).join(';'),...rows.map(r=>[itDate(r.date),r.time,r.prest,r.pgroup,r.hosp,r.mezzo,r.note,r.who,r.back?'Rientrato a San Marino':'Fuori territorio',r.back?itDate(r.backDate):'',r.back?r.backTime:'',trDays(r),r.backNote,r.backBy].map(q).join(';'))];
+  download('fuori-territorio-'+today+'.csv','﻿'+L.join('\r\n'),'text/csv;charset=utf-8');audit('backup','','Viaggi fuori territorio esportati ('+rows.length+')')}
+// ---- rientro a San Marino ----
+let trBackId=null;
+function openReturn(id){const r=trRows.find(x=>x.id===id);if(!r)return;trBackId=id;const now=new Date(),hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  $('#trbInfo').innerHTML=`<div class="reptext"><b>${esc(r.prest)}</b><br>${esc(r.hosp)}<br><span class="muted small">Inviato il ${itDate(r.date)} ${esc(r.time||'')}${r.mezzo?' · '+esc(r.mezzo):''}</span></div>`;
+  $('#trbDate').value=r.back?r.backDate:today;$('#trbDate').min=r.date;$('#trbDate').max=today;$('#trbTime').value=r.back?(r.backTime||''):hm;$('#trbNote').value=r.backNote||'';$('#trbErr').textContent='';
+  $('#trbTitle').textContent=r.back?'Modifica il rientro':'Rientro a San Marino';$('#trbUndo').hidden=!r.back;$('#trbDlg').showModal()}
+async function saveReturn(){const r=trRows.find(x=>x.id===trBackId);if(!r)return $('#trbDlg').close();const err=$('#trbErr');err.textContent='';
+  const d=isDate($('#trbDate').value),t=/^\d{2}:\d{2}$/.test($('#trbTime').value)?$('#trbTime').value:'',note=$('#trbNote').value.trim().slice(0,300);
+  if(!d||d>today){err.textContent='Indica una data di rientro valida (non nel futuro).';return}
+  if(d<r.date||(d===r.date&&t&&r.time&&t<r.time)){err.textContent='Il rientro non può essere prima dell’invio ('+itDate(r.date)+' '+(r.time||'')+').';return}
+  const btn=$('#trbSave');btn.disabled=true;
+  try{await setDoc(doc(db,'transfers',r.id),{back:true,backDate:d,backTime:t,backNote:note,backBy:myLabel,backAt:serverTimestamp()},{merge:true});
+    audit('trasferimento','',(r.back?'Rientro modificato: ':'Rientro a San Marino: ')+r.prest+' da '+r.hosp,[itDate(d)+' '+t,'Fuori '+trDaysTxt(trDays({...r,back:true,backDate:d}))]);
+    $('#trbDlg').close();toast(r.back?'Rientro aggiornato':'Rientro a San Marino registrato')}catch(e){err.textContent=errMsg(e)}finally{btn.disabled=false}}
+async function undoReturn(){const r=trRows.find(x=>x.id===trBackId);if(!r)return;$('#trbDlg').close();if(!await appMessage('Il paziente risulta di nuovo fuori territorio ('+r.prest+' → '+r.hosp+')?','Annulla il rientro',true,{yes:'Sì, è ancora fuori'}))return;
+  await guarded(async()=>{await setDoc(doc(db,'transfers',r.id),{back:false,backDate:'',backTime:'',backNote:'',backBy:'',backAt:null},{merge:true});audit('trasferimento','','Rientro annullato: '+r.prest+' da '+r.hosp);toast('Il paziente risulta di nuovo fuori territorio')})}
 
 // ---- menu a tendina con ricerca ----
 // items(): [{label, group}] · scrivendo si filtra (anche senza accenti); frecce, Invio ed Esc funzionano.
@@ -1857,7 +1905,7 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.__bip=e;ref
 addEventListener('appinstalled',()=>{window.__bip=null;toast('Bed Management è installato sul computer');if(user)audit('sistema',isAdmin?'':myDept,'Programma installato come app');setTimeout(refreshInstallBtn,500)});
 
 // ================= AVVIO =================
-Object.assign(window,{$,go,openTransfer,saveTransfer,deleteTransfer,openTrLists,trListAdd,trListDel,trListEdit,setTf,tf,exportTransfers,hardReload,openReport,sendReport,openReportAdmin,saveReportAdmin,deleteReport,runDiag,forceReloadAll,clearErrors,fixIso,setRepFilter,toggleErrAll,toggleTheme,toggleFullscreen,setMonitorAuto,exitMonitor,setStatsRange,setStatsDept,loadStats,exportStatsCsv,togglePasswords,copyPw,openHelp,helpGo,helpNext,helpPrev,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,saveRoom,toggleBedName,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
+Object.assign(window,{$,go,openReturn,saveReturn,undoReturn,openTransfer,saveTransfer,deleteTransfer,openTrLists,trListAdd,trListDel,trListEdit,setTf,tf,exportTransfers,hardReload,openReport,sendReport,openReportAdmin,saveReportAdmin,deleteReport,runDiag,forceReloadAll,clearErrors,fixIso,setRepFilter,toggleErrAll,toggleTheme,toggleFullscreen,setMonitorAuto,exitMonitor,setStatsRange,setStatsDept,loadStats,exportStatsCsv,togglePasswords,copyPw,openHelp,helpGo,helpNext,helpPrev,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,saveRoom,toggleBedName,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
 window.render=render;
 refreshInstallBtn();paintThemeButtons();$('#gateVer').textContent='Versione '+APP_VERSION+' · '+APP_DATE;tick();setInterval(tick,1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();beat();if(page==='monitor')keepAwake(true)}});
