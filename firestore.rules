@@ -1,5 +1,5 @@
 rules_version = '2';
-// Regole Firestore · Posti letto · Ospedale di Stato RSM · versione 3.9.0
+// Regole Firestore · Posti letto · Ospedale di Stato RSM · versione 3.10.0
 // Da pubblicare in Firebase Console › Firestore Database › Regole.
 // L'email dell'amministratore deve coincidere con ADMIN_EMAIL in index.html.
 service cloud.firestore {
@@ -11,6 +11,7 @@ service cloud.firestore {
     function hasAccount() { return signedIn() && exists(accountPath()); }
     function myDept() { return get(accountPath()).data.dept; }
     function member() { return isAdmin() || hasAccount(); }
+    function isPS() { return hasAccount() && myDept() == '__ps'; }
 
     // Elenco dei profili mostrato nella schermata di accesso (solo nomi ed email tecniche).
     match /public/logins {
@@ -83,6 +84,25 @@ service cloud.firestore {
         && request.resource.data.at == request.time;
       allow read, delete: if isAdmin();
       allow update: if false;
+    }
+
+    // Fuori territorio: pazienti inviati dal Pronto Soccorso ad altri ospedali (prestazione e ospedale, senza dati dei pazienti).
+    // Li leggono e li scrivono solo il Pronto Soccorso e l'amministratore.
+    match /transfers/{id} {
+      allow read, delete: if isAdmin() || isPS();
+      allow create: if (isAdmin() || isPS())
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.at == request.time
+        && request.resource.data.prest is string && request.resource.data.prest.size() <= 120
+        && request.resource.data.hosp is string && request.resource.data.hosp.size() <= 120;
+      allow update: if (isAdmin() || isPS())
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.at == resource.data.at;
+    }
+
+    // Elenchi di ospedali e prestazioni usati nel menu del Fuori territorio.
+    match /config/transfers {
+      allow read, write: if isAdmin() || isPS();
     }
 
     // Archivio delle password dei reparti, consultabile con l'occhio nell'area amministratore.

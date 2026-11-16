@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- Posti letto · Ospedale di Stato RSM · versione 3.9.2 (15/11/2026)
+<!-- Posti letto · Ospedale di Stato RSM · versione 3.10.0 (16/11/2026)
      Nuova grafica chiara, accesso per reparto, registro attività completo per l'amministratore. -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<meta name="version" content="3.9.2">
+<meta name="version" content="3.10.0">
 <title>Posti letto · Ospedale di Stato RSM</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f4f7f9">
@@ -583,6 +583,36 @@ html[data-theme="dark"] .tile.off{background:var(--s2)}
 @media (max-width:1100px){.congrid{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:760px){.iss,.diag,.rep-row{padding-left:16px;padding-right:16px}.iss{flex-wrap:wrap}.iss .btn{margin-left:19px}.choices.c3{grid-template-columns:1fr}}
 
+/* ---- fuori territorio ---- */
+.trdt{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.combo{position:relative}
+.combo input{width:100%;padding-right:40px}
+.combo-btn{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--muted);font-size:15px;width:34px;height:34px;cursor:pointer;border-radius:8px}
+.combo-list{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;max-height:290px;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 34px rgba(16,40,60,.18);padding:6px}
+.combo-g{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding:9px 10px 4px}
+.combo-o{padding:9px 10px;border-radius:8px;cursor:pointer;font-size:14px;line-height:1.35}
+.combo-o:hover,.combo-o.on{background:var(--accent-50);color:var(--accent-d)}
+.combo-add{color:var(--accent-d);font-weight:600;border-top:1px solid var(--line2);margin-top:4px}
+.trsugs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+.trsug{cursor:pointer;border:1px solid var(--line)}
+.choices.c4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.trh{font-size:14px;margin:0 0 10px}
+.trbars{display:flex;flex-direction:column;gap:2px}
+.trbar{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(60px,1fr) 34px;gap:10px;align-items:center;background:none;border:0;padding:6px 6px;border-radius:8px;cursor:pointer;text-align:left;color:inherit;font:inherit}
+.trbar:hover{background:var(--s2)}
+.trbar-l{font-size:13px;line-height:1.3;overflow-wrap:anywhere}
+.trbar-t{height:10px;border-radius:5px;background:var(--s2);overflow:hidden}
+.trbar-t i{display:block;height:100%;background:#2a78d6;border-radius:5px}
+.trbar b{text-align:right;font-variant-numeric:tabular-nums}
+.trl{border:1px solid var(--line);border-radius:12px;max-height:260px;overflow:auto}
+.trl-r{display:flex;align-items:center;gap:8px;padding:8px 10px;border-top:1px solid var(--line2);font-size:13.5px}
+.trl-r:first-child{border-top:0}
+.trl-r>span:first-child{flex:1;min-width:0;overflow-wrap:anywhere}
+.trl-add{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.trl-add input{flex:1;min-width:180px}
+.trl-add select{max-width:220px}
+@media (max-width:760px){.choices.c4{grid-template-columns:repeat(2,minmax(0,1fr))}.trbar{grid-template-columns:minmax(0,1fr) 70px 30px}.trl-r{flex-wrap:wrap}}
+
 @media (max-width:980px){
   .shell{grid-template-columns:minmax(0,1fr)}
   .main,.side{min-width:0;max-width:100vw}
@@ -774,6 +804,23 @@ html[data-theme="dark"] .tile.off{background:var(--s2)}
   <div class="help-foot"><div class="hdots" id="helpDots"></div><div class="row-actions"><button class="btn" id="helpPrev" onclick="helpPrev()">Indietro</button><button class="btn primary" id="helpNext" onclick="helpNext()">Avanti</button></div></div>
 </div></dialog>
 
+<dialog id="trDlg"><form class="dlg" novalidate onsubmit="event.preventDefault();saveTransfer()">
+  <div class="dlg-h"><div><small>Pronto Soccorso · fuori territorio</small><h2 id="trTitle">Nuovo invio fuori territorio</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <div class="trdt"><div class="field"><label for="trDate">Data</label><input type="date" id="trDate"></div><div class="field"><label for="trTime">Ora</label><input type="time" id="trTime"></div></div>
+  <div class="field"><label for="trPrest">Prestazione</label><div class="combo" id="cbPrest"><input id="trPrest" autocomplete="off" maxlength="120" placeholder="Scrivi per cercare, es. stroke" role="combobox" aria-expanded="false" aria-autocomplete="list"><button type="button" class="combo-btn" tabindex="-1" aria-label="Apri l’elenco">▾</button><div class="combo-list" role="listbox" hidden></div></div></div>
+  <div class="field"><label for="trHosp">Ospedale di destinazione</label><div class="combo" id="cbHosp"><input id="trHosp" autocomplete="off" maxlength="120" placeholder="Scrivi per cercare, es. Cesena" role="combobox" aria-expanded="false" aria-autocomplete="list"><button type="button" class="combo-btn" tabindex="-1" aria-label="Apri l’elenco">▾</button><div class="combo-list" role="listbox" hidden></div></div><div id="trSug" class="trsugs"></div></div>
+  <div class="field"><span class="lbl">Mezzo</span><div class="choices c4" id="trMezzo"></div></div>
+  <div class="field"><label for="trNote">Note <span class="muted small">(facoltative)</span></label><input id="trNote" maxlength="300" placeholder="Es. rientro previsto, accordi presi"><p class="small">Non scrivere nomi o dati dei pazienti.</p></div>
+  <div class="err" id="trErr" role="alert"></div>
+  <div class="actions"><button type="button" class="btn danger" id="trDel" style="margin-right:auto" onclick="deleteTransfer()">Elimina</button><button type="button" class="btn" onclick="closeDlg(this)">Annulla</button><button class="btn primary" id="trSave">Salva</button></div>
+</form></dialog>
+
+<dialog id="trlDlg"><div class="dlg">
+  <div class="dlg-h"><div><small>Fuori territorio</small><h2>Elenchi di ospedali e prestazioni</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <div id="trlBody"></div>
+  <div class="actions"><button type="button" class="btn primary" onclick="closeDlg(this)">Fatto</button></div>
+</div></dialog>
+
 <dialog id="repDlg"><form class="dlg" onsubmit="event.preventDefault();sendReport()">
   <div class="dlg-h"><div><small>Assistenza</small><h2>Segnala un problema</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
   <div class="field"><span class="lbl">Di cosa si tratta?</span><div class="choices c2" id="repCats"></div></div>
@@ -814,7 +861,7 @@ const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomai
 // Deve coincidere con l'email scritta in firestore.rules.
 const ADMIN_EMAIL='admin@ospedale.local';
 const ACCOUNT_DOMAIN='ospedale.local';
-const APP_VERSION='3.9.2',APP_DATE='15/11/2026';
+const APP_VERSION='3.10.0',APP_DATE='16/11/2026';
 const PS='__ps',PS_LABEL='Pronto Soccorso',ADMIN='__admin',LEGACY_KEY='beds-rsm-configurable-v3';
 const ADMIN_IDLE_MIN=30;
 const TZ='Europe/San_Marino';
@@ -827,7 +874,7 @@ const PATIENT=['occupied','reserved'];
 const STATE_LABEL={free:'Libero',occupied:'Occupato',reserved:'Programmato',blocked:'Bloccato',closed:'Chiuso'};
 const STATE_HINT={free:'Pronto per un ricovero',occupied:'C’è un paziente',reserved:'Ricovero in arrivo',blocked:'Non assegnabile per ora',closed:'Non utilizzabile'};
 const REASONS={blocked:['In attesa di sanificazione','In attesa di esito tampone','Riservato per urgenze'],closed:['Carenza personale','Manutenzione','Sanificazione','Guasto']};
-const TYPES={accesso:['Accesso','#0b9467'],uscita:['Uscita','#66727e'],letto:['Posto letto','#2c6bd8'],ricovero:['Ingresso','#0f9b8e'],isolamento:['Isolamento','#7650d3'],struttura:['Struttura','#b9740b'],controllo:['Controllo','#0b7d72'],consultazione:['Consultazione','#8a98a6'],password:['Password','#a8457a'],reparto:['Reparto','#b8571a'],backup:['Backup e dati','#3a4a58'],sistema:['Sistema','#3a4a58'],altro:['Altro','#8a98a6']};
+const TYPES={accesso:['Accesso','#0b9467'],uscita:['Uscita','#66727e'],letto:['Posto letto','#2c6bd8'],ricovero:['Ingresso','#0f9b8e'],isolamento:['Isolamento','#7650d3'],struttura:['Struttura','#b9740b'],controllo:['Controllo','#0b7d72'],consultazione:['Consultazione','#8a98a6'],password:['Password','#a8457a'],reparto:['Reparto','#b8571a'],backup:['Backup e dati','#3a4a58'],sistema:['Sistema','#3a4a58'],trasferimento:['Fuori territorio','#c2410c'],altro:['Altro','#8a98a6']};
 
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 let secAuth=null;
@@ -852,7 +899,7 @@ function randomId(n=10){const cs='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwx
 const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 const DEVICE=(()=>{const u=navigator.userAgent;const b=/Edg\//.test(u)?'Edge':/OPR\//.test(u)?'Opera':/Firefox\/|FxiOS/.test(u)?'Firefox':/Chrome\/|CriOS/.test(u)?'Chrome':/Safari\//.test(u)?'Safari':'Browser';const o=/Windows/.test(u)?'Windows':/Android/.test(u)?'Android':/iPhone|iPad|iPod/.test(u)?'iOS':/Mac OS X/.test(u)?'macOS':/Linux/.test(u)?'Linux':'';return b+(o?' · '+o:'')+(isStandalone()?' · app':'')})();
 const SID=(()=>{let s=SS.get('pl-sid');if(!s){s=randomId(10);SS.set('pl-sid',s)}return s})();
-const ICONS={cpu:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9.5 9.5h5v5h-5zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',alert:'<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.1"/>',flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',tv:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',trend:'<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',expand:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',eyeoff:'<path d="M3 3l18 18M10.6 6.2A9.8 9.8 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.3 4M6.5 7.6C3.7 9.4 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>',bed:'<path d="M3 6v13M3 14h18v5M21 14v-2.5A2.5 2.5 0 0 0 18.5 9H11v5"/><circle cx="7" cy="11" r="2"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',activity:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.5 3.5 5.2"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 21v-4h6v4M12 7v4M10 9h4"/>',sliders:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',logout:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11"/>',download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',upload:'<path d="M12 16V5M7 10l5-5 5 5M5 20h14"/>',chart:'<path d="M4 20V11M10 20V5M16 20v-6M2 20h20"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M15 18l-6-6 6-6"/>',lock:'<rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/>',switch:'<path d="M7 7h11l-3-3M17 17H6l3 3"/>',door:'<path d="M5 21V4a1 1 0 0 1 1-1h9l4 2v16M3 21h18"/><circle cx="12.5" cy="12" r=".8"/>',refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>'};
+const ICONS={route:'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3.5 3.5 0 0 0 0-7H8a3.5 3.5 0 0 1 0-7h7.5"/>',cpu:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9.5 9.5h5v5h-5zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',alert:'<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.1"/>',flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',tv:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',trend:'<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',expand:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',eyeoff:'<path d="M3 3l18 18M10.6 6.2A9.8 9.8 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.3 4M6.5 7.6C3.7 9.4 2 12 2 12s3.6 7 10 7a9.6 9.6 0 0 0 4.3-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',grid:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>',bed:'<path d="M3 6v13M3 14h18v5M21 14v-2.5A2.5 2.5 0 0 0 18.5 9H11v5"/><circle cx="7" cy="11" r="2"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',activity:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.5 3.5 5.2"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/>',building:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 21v-4h6v4M12 7v4M10 9h4"/>',sliders:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',logout:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11"/>',download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',upload:'<path d="M12 16V5M7 10l5-5 5 5M5 20h14"/>',chart:'<path d="M4 20V11M10 20V5M16 20v-6M2 20h20"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M15 18l-6-6 6-6"/>',lock:'<rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/>',switch:'<path d="M7 7h11l-3-3M17 17H6l3 3"/>',door:'<path d="M5 21V4a1 1 0 0 1 1-1h9l4 2v16M3 21h18"/><circle cx="12.5" cy="12" r=".8"/>',refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>'};
 const ico=n=>`<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]||''}</svg>`;
 const AV=['#0f9b8e','#2c6bd8','#c7820f','#7650d3','#c84a7c','#1d88b0','#4f8a2a','#b8571a','#0d7a8a'];
 function avColor(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return AV[h%AV.length]}
@@ -986,7 +1033,7 @@ async function logout(auto=false){if(!user)return;
   await audit('uscita',isAdmin?'':myDept,auto?'Uscita automatica dopo '+ADMIN_IDLE_MIN+' minuti di inattività':'Uscita dal profilo');
   try{await deleteDoc(doc(db,'presence',user.uid+'_'+SID))}catch{}
   SS.del('pl-open-'+user.uid);gateSel=null;if(auto)gateErr='Sessione chiusa per inattività.';await signOut(auth)}
-function stopListeners(){[...unsubs,auditUnsub,todayUnsub,presenceUnsub,vaultUnsub,deptUnsub,myRepUnsub,reportsUnsub,errorsUnsub].forEach(u=>{try{u&&u()}catch{}});unsubs=[];auditUnsub=todayUnsub=presenceUnsub=vaultUnsub=deptUnsub=myRepUnsub=reportsUnsub=errorsUnsub=null;clearTimeout(deptRetryTimer);live.state='';live.fromCache=false;lastDeptKey='';myReports=[];myRepState='';reportRows=[];errorRows=[];reportsState=errorsState='';repKnown=null;diag.items=[];diag.at=0;updateNetBar();vault={};vaultState='';pwShown=false;clearTimeout(pwShownTimer);clearInterval(presenceTimer);presenceTimer=null}
+function stopListeners(){stopTransfers();[...unsubs,auditUnsub,todayUnsub,presenceUnsub,vaultUnsub,deptUnsub,myRepUnsub,reportsUnsub,errorsUnsub].forEach(u=>{try{u&&u()}catch{}});unsubs=[];auditUnsub=todayUnsub=presenceUnsub=vaultUnsub=deptUnsub=myRepUnsub=reportsUnsub=errorsUnsub=null;clearTimeout(deptRetryTimer);live.state='';live.fromCache=false;lastDeptKey='';myReports=[];myRepState='';reportRows=[];errorRows=[];reportsState=errorsState='';repKnown=null;diag.items=[];diag.at=0;updateNetBar();vault={};vaultState='';pwShown=false;clearTimeout(pwShownTimer);clearInterval(presenceTimer);presenceTimer=null}
 
 let loginsSlow=false;setTimeout(()=>{if(loginsState==='loading'){loginsSlow=true;if(!user)renderGate()}},8000);
 let reloadBase;
@@ -1056,11 +1103,11 @@ setTimeout(checkPublished,15000);
 
 // ---- sessioni aperte ----
 let lastBeat=0;
-function pageLabel(){return page==='overview'?'Quadro generale':page==='admin'?'Area amministratore':page==='monitor'?'Schermo monitor':deptName(page)}
+function pageLabel(){return page==='trasf'?'Fuori territorio':page==='overview'?'Quadro generale':page==='admin'?'Area amministratore':page==='monitor'?'Schermo monitor':deptName(page)}
 async function beat(force){if(!user)return;if(!force&&Date.now()-lastBeat<60000)return;lastBeat=Date.now();try{await setDoc(doc(db,'presence',user.uid+'_'+SID),{uid:user.uid,who:myLabel,dept:isAdmin?'':myDept,page:pageLabel(),device:DEVICE,since:sessionSince,ver:APP_VERSION,online:navigator.onLine,app:isStandalone(),errs:errSent,lastSeen:serverTimestamp()})}catch(e){}}
 
 // ================= NAVIGAZIONE E RENDER =================
-function go(p){if(!seesAll()&&p!=='admin')p=myDept;if(p!=='overview'&&p!=='admin'&&p!=='monitor'&&!byId(p))return;page=p;if(!isAdmin&&byId(p)&&p!==myDept&&!viewed.has(p)){viewed.add(p);audit('consultazione',p,'Consultato il reparto '+deptName(p))}beat();render();window.scrollTo(0,0)}
+function go(p){if(!seesAll()&&p!=='admin')p=myDept;if(p!=='overview'&&p!=='admin'&&p!=='monitor'&&p!=='trasf'&&!byId(p))return;page=p;if(p==='trasf')startTransfers();if(!isAdmin&&byId(p)&&p!==myDept&&!viewed.has(p)){viewed.add(p);audit('consultazione',p,'Consultato il reparto '+deptName(p))}beat();render();window.scrollTo(0,0)}
 function freeCnt(d){return counts(d).free}
 function navItem(p,icon,label,cnt){return `<button class="nav-i ${page===p?'on':''}" onclick="go('${esc(p)}')">${icon?ico(icon):'<span class="ndot"></span>'}<span class="nl">${esc(label)}</span>${cnt!=null?`<span class="cnt ${cnt?'':'z'}" title="Letti disponibili">${cnt}</span>`:''}</button>`}
 function renderSide(){
@@ -1068,13 +1115,14 @@ function renderSide(){
   if(!seesAll()){$('#nav').innerHTML=own?navItem(own.id,'bed','Il mio reparto',freeCnt(own)):'<div class="small muted" style="padding:6px 10px">'+(deptsLoaded?'Reparto non trovato: rivolgiti all’amministratore.':'Caricamento…')+'</div>'}
   else{let h=navItem('overview','grid','Quadro generale');
   h+=navItem('monitor','tv','Schermo monitor');
+  h+=navItem('trasf','route','Fuori territorio');
   if(isAdmin)h+=navItem('admin','shield','Area amministratore');
   h+='<div class="nav-l">Reparti</div>'+(deptsLoaded?depts.map(d=>navItem(d.id,null,d.name,freeCnt(d))).join(''):'<div class="small muted" style="padding:6px 10px">Caricamento…</div>');
   $('#nav').innerHTML=h}
-  $('#who').innerHTML=`<span class="avatar" style="background:${isAdmin?'#3a4a58':avColor(myLabel)}">${isAdmin?ico('shield'):esc(initials(myLabel))}</span><div><b>${esc(myLabel)}</b><small>${isAdmin?'Accesso completo':myDept===PS?'Sola consultazione':'Modifica il proprio reparto'}</small></div>`;
+  $('#who').innerHTML=`<span class="avatar" style="background:${isAdmin?'#3a4a58':avColor(myLabel)}">${isAdmin?ico('shield'):esc(initials(myLabel))}</span><div><b>${esc(myLabel)}</b><small>${isAdmin?'Accesso completo':myDept===PS?'Consultazione · fuori territorio':'Modifica il proprio reparto'}</small></div>`;
   $('#sidefoot').innerHTML=(seesAll()?'I numeri accanto ai reparti sono i letti disponibili.':'Il numero accanto al reparto indica i letti disponibili. Vedi solo i letti del tuo reparto.')+'<br>Dati condivisi in tempo reale, senza dati dei pazienti.<br><br>Versione '+APP_VERSION+' · '+APP_DATE;
   $('#logoutBtn').innerHTML=isAdmin?ico('logout')+'<span class="bl">Esci</span>':ico('switch')+'<span class="bl">Cambia reparto</span>';
-  $('#crumb').textContent=page==='overview'?'Quadro generale':page==='admin'?'Area amministratore':page==='monitor'?'Schermo monitor':'Reparti / '+deptName(page);
+  $('#crumb').textContent=page==='trasf'?'Pronto Soccorso / Fuori territorio':page==='overview'?'Quadro generale':page==='admin'?'Area amministratore':page==='monitor'?'Schermo monitor':'Reparti / '+deptName(page);
   $$('[data-noadmin]').forEach(b=>b.hidden=isAdmin);updateRepBadge();
   refreshInstallBtn();paintThemeButtons()}
 function render(opts={}){
@@ -1088,9 +1136,9 @@ function render(opts={}){
   if(page!=='admin'){
     if(!deptsLoaded){c.innerHTML='<div class="kpis"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>';return}
     if(!seesAll()&&page!==myDept)page=myDept;
-    if(page!=='overview'&&page!=='monitor'&&!byId(page))page=seesAll()?'overview':myDept;
+    if(page!=='overview'&&page!=='monitor'&&page!=='trasf'&&!byId(page))page=seesAll()?'overview':myDept;
     if(!seesAll()&&!byId(page)){c.innerHTML='<div class="empty">Il tuo reparto non è ancora configurato. Rivolgiti all’amministratore.</div>';return}
-    c.innerHTML=page==='overview'?overviewHtml():page==='monitor'?monitorHtml():deptHtml(byId(page))}
+    c.innerHTML=page==='trasf'?trasfHtml():page==='overview'?overviewHtml():page==='monitor'?monitorHtml():deptHtml(byId(page))}
   labelTables();paintThemeButtons();
   if(fid){const el=document.getElementById(fid);if(el){el.focus();try{sel&&el.setSelectionRange(...sel)}catch{}}}}
 
@@ -1582,7 +1630,7 @@ async function runDiag(){if(diag.running)return;diag.running=true;updateConsole(
   items.push(navigator.onLine?['ok','Connessione internet','Presente su questo computer']:['ko','Connessione internet','Assente su questo computer']);
   const t0=performance.now();try{await getDocFromServer(doc(db,'public','logins'));const ms=Math.round(performance.now()-t0);items.push([ms<1500?'ok':'warn','Server del database (Firebase)','Risponde in '+ms+' ms'+(ms<1500?'':': collegamento lento')])}catch(e){items.push(['ko','Server del database (Firebase)','Non risponde: '+errMsg(e)])}
   items.push(live.state==='ok'&&!live.fromCache?['ok','Dati dei reparti in tempo reale','Collegati · '+depts.length+' reparti ricevuti']:live.state==='error'?['ko','Dati dei reparti in tempo reale','Interrotto ('+live.err+'): nuovo tentativo automatico']:['warn','Dati dei reparti in tempo reale','Collegamento in corso o dati non aggiornati']);
-  const bad=[];for(const [c,l] of [['reports','segnalazioni'],['errors','errori dei computer'],['stats','statistiche'],['presence','collegati'],['audit','registro']]){try{await getDocs(query(collection(db,c),limit(1)))}catch(e){if(e?.code==='permission-denied')bad.push(l)}}
+  const bad=[];for(const [c,l] of [['reports','segnalazioni'],['errors','errori dei computer'],['transfers','fuori territorio'],['stats','statistiche'],['presence','collegati'],['audit','registro']]){try{await getDocs(query(collection(db,c),limit(1)))}catch(e){if(e?.code==='permission-denied')bad.push(l)}}
   items.push(bad.length?['ko','Regole Firestore','Non aggiornate: mancano i permessi per '+bad.join(', ')+'. Pubblica il file firestore.rules della versione '+APP_VERSION+' (Firebase › Firestore › Regole).']:['ok','Regole Firestore','Aggiornate: tutte le sezioni sono accessibili']);
   await checkPublished();
   items.push(!pubVer?['warn','Versione pubblicata','Impossibile leggere version.json dal sito']:verCmp(pubVer,APP_VERSION)>0?['warn','Versione del programma','Questo computer usa la '+APP_VERSION+', sul sito c’è la '+pubVer+': ricarica la pagina']:['ok','Versione del programma',APP_VERSION+' · uguale a quella pubblicata sul sito']);
@@ -1623,6 +1671,115 @@ function updateConsole(){const el=$('#conBody');if(!el)return;
   const er=`<section class="card conwide"><div class="card-h"><h2>Errori registrati dai computer</h2><div class="row-actions"><span class="muted small">${errorRows.length} in totale</span>${errorRows.length?'<button class="btn ghost sm" onclick="clearErrors()">Svuota elenco</button>':''}</div></div><div class="tablewrap">${errorsState==='error'?`<div class="card-b"><span class="stale">${esc(errorsErr)}</span></div>`:gl.length?`<table><thead><tr><th>Ultima volta</th><th>Tipo</th><th>Errore</th><th>Volte</th><th>Profili</th><th>Versioni</th></tr></thead><tbody>${shown.map(x=>`<tr><td class="small" style="white-space:nowrap">${x.last?fmtDT(x.last):'—'}</td><td><span class="chip">${esc(KIND[x.kind]||x.kind)}</span></td><td class="small" style="overflow-wrap:anywhere">${esc(x.msg)}${x.where?`<br><span class="muted">${esc(x.where)}</span>`:''}</td><td><b>${x.n}</b></td><td class="small">${esc([...x.who].join(', '))}</td><td class="small">${esc([...x.ver].join(', '))}</td></tr>`).join('')}</tbody></table>${gl.length>12?`<div style="padding:10px 20px"><button class="btn ghost sm" onclick="toggleErrAll()">${errAll?'Mostra meno':'Mostra tutti ('+gl.length+')'}</button></div>`:''}`:'<div class="empty" style="margin:16px">Nessun errore registrato. Gli errori dei computer compaiono qui da soli.</div>'}</div></section>`;
   el.innerHTML=kp+rep+`<div class="congrid">${iss}${dg}</div>`+pc+er+`<div class="note">${ico('info')}<div>La console raccoglie da sola gli errori di ogni computer (senza dati dei pazienti), controlla i dati dei reparti e verifica il collegamento al server. Le segnalazioni arrivano dal pulsante <b>Segnala un problema</b> che ogni reparto ha nel menu.</div></div>`;
   labelTables();updateTabBadges()}
+
+const addDays=(d,n)=>{const x=new Date(d+'T12:00:00Z');x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10)};
+const MONTHS=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+// ================= FUORI TERRITORIO (Pronto Soccorso) =================
+// Registro dei pazienti inviati dal Pronto Soccorso ad altri ospedali: data, prestazione, ospedale, mezzo.
+// Nessun dato dei pazienti. Lo vedono e lo compilano il Pronto Soccorso e l'amministratore.
+const TR_HOSP=['Rimini · Ospedale Infermi','Riccione · Ospedale Ceccarini','Cesena · Ospedale Bufalini','Bologna · Ospedale Maggiore','Bologna · Policlinico Sant’Orsola','Bologna · Ospedale Bellaria','Bologna · Istituto Ortopedico Rizzoli','Cotignola · Maria Cecilia Hospital'];
+const TR_PREST=[
+  ['Neurologia e neurochirurgia',['Stroke ischemico – trombolisi','Stroke ischemico – trombectomia meccanica','Emorragia cerebrale','Emorragia subaracnoidea / aneurisma cerebrale','Trauma cranico – neurochirurgia','Trauma vertebro-midollare','Idrocefalo / derivazione','Stato epilettico refrattario']],
+  ['Cuore e vasi',['STEMI – angioplastica primaria','NSTEMI / coronarografia urgente','Dissezione aortica / sindrome aortica acuta','Aneurisma aortico rotto','Cardiochirurgia urgente','Aritmia – elettrofisiologia / pacemaker','Shock cardiogeno / ECMO','Embolia polmonare – trattamento interventistico','Ischemia acuta di un arto – chirurgia vascolare']],
+  ['Trauma',['Politrauma – Trauma Center','Grandi ustioni – Centro ustioni','Frattura del bacino complessa','Chirurgia della mano / reimpianto','Trauma maxillo-facciale','Trauma oculare','Trauma toracico – chirurgia toracica']],
+  ['Chirurgia e specialità',['Emorragia digestiva – endoscopia operativa','Chirurgia addominale urgente','Urologia urgente','Otorinolaringoiatria urgente','Oculistica urgente','Radiologia interventistica','Chirurgia pediatrica']],
+  ['Donna e bambino',['Gravidanza a rischio / parto pretermine','Terapia intensiva neonatale (TIN)','Terapia intensiva pediatrica','Pediatria specialistica']],
+  ['Terapie intensive e altro',['Terapia intensiva – posto letto non disponibile','Dialisi urgente','Camera iperbarica (CO, embolia gassosa)','Malattie infettive – isolamento','Psichiatria – SPDC','Ematologia / oncologia urgente','Diagnostica non disponibile (TC, RM, angiografia)']]];
+const TR_MEZZI=['Ambulanza','Elisoccorso','Auto medica','Altro'];
+let trRows=[],trState='',trErr='',trCfg=null,trUnsub=null,trCfgUnsub=null,trEditing=null;
+const tf={per:'30',hosp:'',prest:'',q:''};
+const trHosps=()=>trCfg?.hosp?.length?trCfg.hosp:TR_HOSP;
+const trPrests=()=>trCfg?.prest?.length?trCfg.prest:TR_PREST.flatMap(([g,l])=>l.map(n=>({n,g})));
+const normTxt=t=>String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+function startTransfers(){if(trUnsub||!seesAll())return;trState='loading';
+  trUnsub=onSnapshot(query(collection(db,'transfers'),orderBy('date','desc'),limit(3000)),s=>{trRows=s.docs.map(rowOf).sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));trState='ok';if(page==='trasf')render({soft:true})},
+    e=>{console.warn('trasferimenti',e);trState='error';trErr=errMsg(e);trUnsub=null;if(page==='trasf')render({soft:true})});
+  trCfgUnsub=onSnapshot(doc(db,'config','transfers'),s=>{trCfg=s.exists()?s.data():null},e=>console.warn('elenchi',e))}
+function stopTransfers(){[trUnsub,trCfgUnsub].forEach(u=>{try{u&&u()}catch{}});trUnsub=trCfgUnsub=null;trRows=[];trState='';trCfg=null}
+function trPeriodRows(){const from=tf.per==='all'?'':tf.per==='month'?today.slice(0,8)+'01':tf.per==='year'?today.slice(0,5)+'01-01':addDays(today,-(Number(tf.per)-1));
+  const q=normTxt(tf.q.trim());return trRows.filter(r=>(!from||r.date>=from)&&(!tf.hosp||r.hosp===tf.hosp)&&(!tf.prest||r.prest===tf.prest)&&(!q||normTxt(r.prest+' '+r.hosp+' '+(r.mezzo||'')+' '+(r.note||'')+' '+(r.who||'')).includes(q)))}
+function setTf(k,v){tf[k]=v;render()}
+function trBars(rows,key,empty){const m={};rows.forEach(r=>{m[r[key]]=(m[r[key]]||0)+1});const l=Object.entries(m).sort((a,b)=>b[1]-a[1]),max=l[0]?.[1]||1;
+  return l.length?'<div class="trbars">'+l.slice(0,12).map(([k,n])=>`<button class="trbar" onclick="setTf('${key}',${esc(JSON.stringify(k))})" title="Mostra solo ${esc(k)}"><span class="trbar-l">${esc(k)}</span><span class="trbar-t"><i style="width:${Math.max(3,n/max*100)}%"></i></span><b>${n}</b></button>`).join('')+(l.length>12?`<div class="muted small" style="padding:6px 0">… e altre ${l.length-12} voci</div>`:'')+'</div>':`<div class="empty" style="margin:0">${empty}</div>`}
+function trasfHtml(){
+  const rows=trPeriodRows(),cnt=f=>trRows.filter(r=>r.date>=f).length;
+  const per={7:'Ultimi 7 giorni',30:'Ultimi 30 giorni',month:'Questo mese',year:'Quest’anno',all:'Tutto il registro'};
+  const head=`<div class="phead"><div><h1 class="title">Fuori territorio</h1><p class="sub">Pazienti inviati dal Pronto Soccorso ad altri ospedali: quale prestazione e dove. Non si scrivono dati dei pazienti.</p></div><div class="row-actions"><button class="btn" onclick="openTrLists()">${ico('sliders')}Elenchi</button><button class="btn primary" onclick="openTransfer()">${ico('route')}Nuovo invio</button></div></div>`;
+  if(trState==='error')return head+`<div class="card card-b"><span class="stale">${esc(trErr)}</span><p class="small muted" style="margin:8px 0 0">Se il messaggio parla di permessi, vanno pubblicate le regole Firestore della versione ${APP_VERSION}.</p></div>`;
+  if(trState!=='ok')return head+'<div class="kpis"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>';
+  const kp=`<div class="kpis"><div class="card kpi"><small>Oggi</small><strong>${cnt(today)}</strong><em>invii fuori territorio</em></div><div class="card kpi"><small>Ultimi 7 giorni</small><strong>${cnt(addDays(today,-6))}</strong><em>dal ${itDate(addDays(today,-6))}</em></div><div class="card kpi"><small>Questo mese</small><strong>${cnt(today.slice(0,8)+'01')}</strong><em>${MONTHS[Number(today.slice(5,7))-1]}</em></div><div class="card kpi"><small>Quest’anno</small><strong>${cnt(today.slice(0,5)+'01-01')}</strong><em>dal 1° gennaio</em></div></div>`;
+  const hs=[...new Set([...trHosps(),...trRows.map(r=>r.hosp)])].sort((a,b)=>a.localeCompare(b,'it')),ps=[...new Set([...trPrests().map(p=>p.n),...trRows.map(r=>r.prest)])].sort((a,b)=>a.localeCompare(b,'it'));
+  const filt=`<div class="filters"><select onchange="setTf('per',this.value)" aria-label="Periodo">${Object.entries(per).map(([k,l])=>`<option value="${k}" ${tf.per===k?'selected':''}>${l}</option>`).join('')}</select>
+    <select onchange="setTf('prest',this.value)" aria-label="Prestazione"><option value="">Tutte le prestazioni</option>${ps.map(p=>`<option ${tf.prest===p?'selected':''}>${esc(p)}</option>`).join('')}</select>
+    <select onchange="setTf('hosp',this.value)" aria-label="Ospedale"><option value="">Tutti gli ospedali</option>${hs.map(h=>`<option ${tf.hosp===h?'selected':''}>${esc(h)}</option>`).join('')}</select>
+    <div class="search">${ico('search')}<input id="tfq" placeholder="Cerca" value="${esc(tf.q)}" oninput="setTf('q',this.value)"></div>
+    ${tf.prest||tf.hosp||tf.q?`<button class="btn ghost sm" onclick="tf.prest=tf.hosp=tf.q='';render()">Togli i filtri</button>`:''}</div>`;
+  const list=rows.length?`<div class="tablewrap"><table><thead><tr><th>Data e ora</th><th>Prestazione</th><th>Ospedale</th><th>Mezzo</th><th>Note</th><th>Inserito da</th><th></th></tr></thead><tbody>${rows.slice(0,300).map(r=>`<tr><td style="white-space:nowrap"><b>${itDate(r.date)}</b> ${esc(r.time||'')}</td><td><b>${esc(r.prest)}</b>${r.pgroup?`<br><span class="muted small">${esc(r.pgroup)}</span>`:''}</td><td>${esc(r.hosp)}</td><td>${esc(r.mezzo||'—')}</td><td class="small" style="overflow-wrap:anywhere">${esc(r.note||'')}</td><td class="small muted">${esc(r.who||'')}</td><td style="text-align:right"><button class="btn ghost sm" onclick="openTransfer('${esc(r.id)}')">Modifica</button></td></tr>`).join('')}</tbody></table>${rows.length>300?`<p class="small muted" style="padding:10px 20px">Mostrati i 300 più recenti su ${rows.length}: usa i filtri o esporta il file.</p>`:''}</div>`
+    :`<div class="empty" style="margin:16px">${trRows.length?'Nessun invio con questi filtri.':'Ancora nessun invio registrato. Premi “Nuovo invio” per inserire il primo.'}</div>`;
+  return head+kp+`<section class="card" style="margin-bottom:16px">${filt}<div class="congrid" style="padding:16px 20px;margin:0"><div><h3 class="trh">Per prestazione <span class="muted small">· ${per[tf.per].toLowerCase()}</span></h3>${trBars(rows,'prest','Nessun dato nel periodo')}</div><div><h3 class="trh">Per ospedale <span class="muted small">· ${per[tf.per].toLowerCase()}</span></h3>${trBars(rows,'hosp','Nessun dato nel periodo')}</div></div></section>
+  <section class="card"><div class="card-h"><h2>Invii <span class="muted small">· ${rows.length}</span></h2><button class="btn sm" onclick="exportTransfers()">${ico('download')}Esporta (Excel)</button></div>${list}</section>`}
+function exportTransfers(){const rows=trPeriodRows();if(!rows.length)return appMessage('Non ci sono invii da esportare con questi filtri.');const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const L=[['Data','Ora','Prestazione','Gruppo','Ospedale','Mezzo','Note','Inserito da'].map(q).join(';'),...rows.map(r=>[itDate(r.date),r.time,r.prest,r.pgroup,r.hosp,r.mezzo,r.note,r.who].map(q).join(';'))];
+  download('fuori-territorio-'+today+'.csv','﻿'+L.join('\r\n'),'text/csv;charset=utf-8');audit('backup','','Invii fuori territorio esportati ('+rows.length+')')}
+
+// ---- menu a tendina con ricerca ----
+// items(): [{label, group}] · scrivendo si filtra (anche senza accenti); frecce, Invio ed Esc funzionano.
+function comboSetup(root,items,onPick){const inp=root.querySelector('input'),list=root.querySelector('.combo-list');let act=-1,shown=[];
+  const close=()=>{list.hidden=true;inp.setAttribute('aria-expanded','false');act=-1};
+  const pick=v=>{inp.value=v;close();onPick&&onPick(v)};
+  const draw=()=>{const q=normTxt(inp.value.trim()),all=items();shown=all.filter(x=>!q||normTxt(x.label+' '+(x.group||'')).includes(q));
+    const exact=all.some(x=>normTxt(x.label)===q);let h='',g=null;shown.forEach((x,i)=>{if(x.group!==g){g=x.group;if(g)h+=`<div class="combo-g">${esc(g)}</div>`}h+=`<div class="combo-o ${i===act?'on':''}" data-i="${i}" role="option">${esc(x.label)}</div>`});
+    if(q&&!exact)h+=`<div class="combo-o combo-add ${act===shown.length?'on':''}" data-i="${shown.length}" role="option">＋ Usa «${esc(inp.value.trim())}» e aggiungilo all’elenco</div>`;
+    list.innerHTML=h||'<div class="combo-g">Nessuna voce</div>';list.hidden=false;inp.setAttribute('aria-expanded','true');list.querySelector('.on')?.scrollIntoView({block:'nearest'})};
+  const choose=i=>{if(i<shown.length)pick(shown[i].label);else if(inp.value.trim())pick(inp.value.trim())};
+  inp.addEventListener('input',()=>{act=0;draw()});inp.addEventListener('focus',()=>{act=-1;draw()});inp.addEventListener('click',()=>{if(list.hidden)draw()});
+  inp.addEventListener('blur',()=>setTimeout(close,150));
+  inp.addEventListener('keydown',e=>{const n=shown.length+(inp.value.trim()&&!items().some(x=>normTxt(x.label)===normTxt(inp.value.trim()))?1:0);
+    if(e.key==='ArrowDown'){e.preventDefault();if(list.hidden)draw();act=Math.min(n-1,act+1);draw()}else if(e.key==='ArrowUp'){e.preventDefault();act=Math.max(0,act-1);draw()}
+    else if(e.key==='Enter'){if(!list.hidden&&act>=0&&act<n){e.preventDefault();choose(act)}}else if(e.key==='Escape'&&!list.hidden){e.preventDefault();e.stopPropagation();close()}});
+  list.addEventListener('pointerdown',e=>{const o=e.target.closest('.combo-o');if(!o)return;e.preventDefault();choose(Number(o.dataset.i))});
+  root.querySelector('.combo-btn')?.addEventListener('pointerdown',e=>{e.preventDefault();if(list.hidden){inp.focus();act=-1;draw()}else close()})}
+const hospItems=()=>trHosps().map(h=>({label:h,group:h.includes(' · ')?h.split(' · ')[0]:'Altri ospedali'})).sort((a,b)=>a.group.localeCompare(b.group,'it'));
+const prestItems=()=>{const o=[],seen=new Set();trPrests().forEach(p=>{if(!seen.has(p.n)){seen.add(p.n);o.push({label:p.n,group:p.g||'Altre prestazioni'})}});const order=[...new Set(o.map(x=>x.group))];return o.sort((a,b)=>order.indexOf(a.group)-order.indexOf(b.group))};
+function trSuggest(){const p=$('#trPrest').value.trim(),el=$('#trSug');if(!el)return;const m={};trRows.filter(r=>r.prest===p).forEach(r=>{m[r.hosp]=(m[r.hosp]||0)+1});const l=Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,4);
+  el.innerHTML=l.length?'<span class="muted small">Già inviati per questa prestazione:</span> '+l.map(([h,n])=>`<button type="button" class="chip trsug" onclick="$('#trHosp').value=${esc(JSON.stringify(h))}">${esc(h)} · ${n}</button>`).join(' '):''}
+let combosReady=false;
+function openTransfer(id){if(!seesAll())return;if(!combosReady){combosReady=true;comboSetup($('#cbPrest'),prestItems,trSuggest);comboSetup($('#cbHosp'),hospItems)}
+  const r=id?trRows.find(x=>x.id===id):null;trEditing=r?r.id:null;const now=new Date(),hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  $('#trTitle').textContent=r?'Modifica invio':'Nuovo invio fuori territorio';$('#trDate').value=r?.date||today;$('#trDate').max=today;$('#trTime').value=r?.time||hm;
+  $('#trPrest').value=r?.prest||'';$('#trHosp').value=r?.hosp||'';$('#trNote').value=r?.note||'';$('#trErr').textContent='';$('#trDel').hidden=!r;
+  $('#trMezzo').innerHTML=TR_MEZZI.map(m=>`<label class="choice"><input type="radio" name="trm" value="${m}" ${(r?.mezzo||'Ambulanza')===m?'checked':''}><span>${m}</span></label>`).join('');
+  trSuggest();$('#trDlg').showModal();if(!r)setTimeout(()=>$('#trPrest').focus(),50)}
+async function saveTrCfg(fn){const c={hosp:[...trHosps()],prest:trPrests().map(p=>({n:p.n,g:p.g||'Altre prestazioni'}))};fn(c);await setDoc(doc(db,'config','transfers'),{...c,updatedAt:serverTimestamp(),updatedBy:myLabel});trCfg=c}
+async function saveTransfer(){const err=$('#trErr');err.textContent='';const dt=isDate($('#trDate').value),tm=/^\d{2}:\d{2}$/.test($('#trTime').value)?$('#trTime').value:'',prest=$('#trPrest').value.trim().slice(0,120),hosp=$('#trHosp').value.trim().slice(0,120),mezzo=$('input[name=trm]:checked')?.value||'',note=$('#trNote').value.trim().slice(0,300);
+  if(!dt||dt>today){err.textContent='Indica una data valida (non nel futuro).';return}if(!prest){err.textContent='Scegli la prestazione.';$('#trPrest').focus();return}if(!hosp){err.textContent='Scegli l’ospedale.';$('#trHosp').focus();return}
+  const newP=!trPrests().some(p=>p.n===prest),newH=!trHosps().includes(hosp);
+  if(newP||newH){if(!await appMessage('Aggiungere all’elenco '+(newP&&newH?'la prestazione «'+prest+'» e l’ospedale «'+hosp+'»':newP?'la prestazione «'+prest+'»':'l’ospedale «'+hosp+'»')+'?\n\nCosì la prossima volta si trova nel menu.','Nuova voce',true,{yes:'Aggiungi e salva'}))return}
+  const g=trPrests().find(p=>p.n===prest)?.g||'Altre prestazioni',btn=$('#trSave');btn.disabled=true;
+  try{if(newP||newH)await saveTrCfg(c=>{if(newP)c.prest.push({n:prest,g:'Altre prestazioni'});if(newH)c.hosp.push(hosp)});
+    const data={date:dt,time:tm,prest,pgroup:g,hosp,mezzo,note,who:myLabel};
+    if(trEditing){const old=trRows.find(x=>x.id===trEditing);await setDoc(doc(db,'transfers',trEditing),{...data,editedAt:serverTimestamp(),editedBy:myLabel},{merge:true});audit('trasferimento','','Invio fuori territorio modificato: '+prest+' → '+hosp,[itDate(dt)+' '+tm,old&&old.prest!==prest?'Prima: '+old.prest:'',old&&old.hosp!==hosp?'Prima: '+old.hosp:''])}
+    else{await addDoc(collection(db,'transfers'),{...data,at:serverTimestamp(),uid:user.uid});audit('trasferimento','','Invio fuori territorio: '+prest+' → '+hosp,[itDate(dt)+' '+tm,mezzo])}
+    $('#trDlg').close();toast(trEditing?'Invio aggiornato':'Invio registrato')}catch(e){err.textContent=errMsg(e)}finally{btn.disabled=false}}
+async function deleteTransfer(){const r=trRows.find(x=>x.id===trEditing);if(!r)return;$('#trDlg').close();if(!await appMessage('Eliminare l’invio del '+itDate(r.date)+' ('+r.prest+' → '+r.hosp+')?','Elimina invio',true,{danger:true,yes:'Elimina'}))return;
+  await guarded(async()=>{await deleteDoc(doc(db,'transfers',r.id));audit('trasferimento','','Invio fuori territorio eliminato: '+r.prest+' → '+r.hosp,[itDate(r.date)+' '+(r.time||'')]);toast('Invio eliminato')})}
+// ---- gestione degli elenchi (ospedali e prestazioni) ----
+function openTrLists(){drawTrLists();$('#trlDlg').showModal()}
+function drawTrLists(){const used=k=>v=>trRows.filter(r=>r[k]===v).length;const uh=used('hosp'),up=used('prest');
+  $('#trlBody').innerHTML=`<h3 class="trh">Ospedali <span class="muted small">· ${trHosps().length}</span></h3><p class="small muted" style="margin:0 0 8px">Scrivi “Città · Struttura”, ad esempio “Ravenna · Ospedale Santa Maria delle Croci”: nel menu gli ospedali sono raggruppati per città.</p>
+  <div class="trl">${trHosps().map((h,i)=>`<div class="trl-r"><span>${esc(h)}</span><span class="muted small">${uh(h)} invii</span><button type="button" class="btn ghost sm" onclick="trListEdit('hosp',${i})">Rinomina</button><button type="button" class="btn ghost sm" onclick="trListDel('hosp',${i})">Togli</button></div>`).join('')}</div>
+  <div class="trl-add"><input id="trlNewH" maxlength="120" placeholder="Nuovo ospedale (Città · Struttura)"><button type="button" class="btn sm" onclick="trListAdd('hosp')">Aggiungi</button></div>
+  <h3 class="trh" style="margin-top:22px">Prestazioni <span class="muted small">· ${trPrests().length}</span></h3>
+  <div class="trl">${trPrests().map((p,i)=>`<div class="trl-r"><span>${esc(p.n)}<br><span class="muted small">${esc(p.g||'Altre prestazioni')}</span></span><span class="muted small">${up(p.n)} invii</span><button type="button" class="btn ghost sm" onclick="trListEdit('prest',${i})">Rinomina</button><button type="button" class="btn ghost sm" onclick="trListDel('prest',${i})">Togli</button></div>`).join('')}</div>
+  <div class="trl-add"><input id="trlNewP" maxlength="120" placeholder="Nuova prestazione"><select id="trlNewG" aria-label="Gruppo">${[...new Set([...TR_PREST.map(x=>x[0]),...trPrests().map(p=>p.g||'Altre prestazioni'),'Altre prestazioni'])].map(g=>`<option>${esc(g)}</option>`).join('')}</select><button type="button" class="btn sm" onclick="trListAdd('prest')">Aggiungi</button></div>
+  <p class="small muted" style="margin:14px 0 0">Togliere una voce non cancella gli invii già registrati: smette solo di comparire nel menu.</p>`}
+async function trListAdd(k){const inp=$(k==='hosp'?'#trlNewH':'#trlNewP'),v=inp.value.trim().replace(/\s+/g,' ').slice(0,120);if(!v)return inp.focus();
+  if(k==='hosp'?trHosps().includes(v):trPrests().some(p=>p.n===v))return appMessage('«'+v+'» è già nell’elenco.');
+  await guarded(async()=>{await saveTrCfg(c=>{if(k==='hosp')c.hosp.push(v);else c.prest.push({n:v,g:$('#trlNewG').value})});audit('trasferimento','',(k==='hosp'?'Ospedale':'Prestazione')+' aggiunto all’elenco: '+v);drawTrLists();toast('Aggiunto all’elenco')})}
+async function trListDel(k,i){const v=k==='hosp'?trHosps()[i]:trPrests()[i]?.n;if(v==null)return;if(!await appMessage('Togliere «'+v+'» dal menu?','Elenchi',true,{yes:'Togli'}))return;
+  await guarded(async()=>{await saveTrCfg(c=>{c[k].splice(i,1)});audit('trasferimento','',(k==='hosp'?'Ospedale':'Prestazione')+' tolto dall’elenco: '+v);drawTrLists()})}
+async function trListEdit(k,i){const v=k==='hosp'?trHosps()[i]:trPrests()[i]?.n;if(v==null)return;const n=prompt('Nuovo nome per «'+v+'»',v);const nv=(n||'').trim().replace(/\s+/g,' ').slice(0,120);if(!nv||nv===v)return;
+  await guarded(async()=>{await saveTrCfg(c=>{if(k==='hosp')c.hosp[i]=nv;else c.prest[i].n=nv});audit('trasferimento','',(k==='hosp'?'Ospedale':'Prestazione')+' rinominato: '+v+' → '+nv);drawTrLists()})}
 
 // ================= MODALITÀ NOTTURNA =================
 const curTheme=()=>document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light';
@@ -1700,7 +1857,7 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.__bip=e;ref
 addEventListener('appinstalled',()=>{window.__bip=null;toast('Bed Management è installato sul computer');if(user)audit('sistema',isAdmin?'':myDept,'Programma installato come app');setTimeout(refreshInstallBtn,500)});
 
 // ================= AVVIO =================
-Object.assign(window,{$,go,hardReload,openReport,sendReport,openReportAdmin,saveReportAdmin,deleteReport,runDiag,forceReloadAll,clearErrors,fixIso,setRepFilter,toggleErrAll,toggleTheme,toggleFullscreen,setMonitorAuto,exitMonitor,setStatsRange,setStatsDept,loadStats,exportStatsCsv,togglePasswords,copyPw,openHelp,helpGo,helpNext,helpPrev,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,saveRoom,toggleBedName,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
+Object.assign(window,{$,go,openTransfer,saveTransfer,deleteTransfer,openTrLists,trListAdd,trListDel,trListEdit,setTf,tf,exportTransfers,hardReload,openReport,sendReport,openReportAdmin,saveReportAdmin,deleteReport,runDiag,forceReloadAll,clearErrors,fixIso,setRepFilter,toggleErrAll,toggleTheme,toggleFullscreen,setMonitorAuto,exitMonitor,setStatsRange,setStatsDept,loadStats,exportStatsCsv,togglePasswords,copyPw,openHelp,helpGo,helpNext,helpPrev,setDate,editBed,bedFields,showNote,saveBed,confirmAdmission,discharge,editRoom,saveRoom,toggleBedName,openStructure,structStep,structAdd,structRemove,saveStructure,acknowledgeCheck,gatePick,togglePw,doLogin,logout,closeDlg,installApp,setTab,setLf,resetLf,toggleLog,moreLog,exportCsv,openPassword,genPassword,savePassword,revokeAccess,openDeptSettings,saveDeptSettings,clearDept,deleteDept,seedDefaults,exportBackup,handleImport,importLegacy,purgeLogs,clearAudit,openAdminPw,saveAdminPw,lf,setSearch:v=>{searchText=v;render()}});
 window.render=render;
 refreshInstallBtn();paintThemeButtons();$('#gateVer').textContent='Versione '+APP_VERSION+' · '+APP_DATE;tick();setInterval(tick,1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){tick();beat();if(page==='monitor')keepAwake(true)}});
