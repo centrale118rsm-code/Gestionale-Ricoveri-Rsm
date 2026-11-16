@@ -1,12 +1,12 @@
 <!doctype html>
-<!-- Posti letto · Ospedale di Stato RSM · versione 3.10.0 (16/11/2026)
+<!-- Posti letto · Ospedale di Stato RSM · versione 3.10.1 (16/11/2026)
      Nuova grafica chiara, accesso per reparto, registro attività completo per l'amministratore. -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<meta name="version" content="3.10.0">
+<meta name="version" content="3.10.1">
 <title>Posti letto · Ospedale di Stato RSM</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f4f7f9">
@@ -805,7 +805,7 @@ html[data-theme="dark"] .tile.off{background:var(--s2)}
 </div></dialog>
 
 <dialog id="trDlg"><form class="dlg" novalidate onsubmit="event.preventDefault();saveTransfer()">
-  <div class="dlg-h"><div><small>Pronto Soccorso · fuori territorio</small><h2 id="trTitle">Nuovo invio fuori territorio</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
+  <div class="dlg-h"><div><small>Pronto Soccorso · fuori territorio</small><h2 id="trTitle">Inserisci fuori territorio</h2></div><button type="button" class="x" onclick="closeDlg(this)" aria-label="Chiudi">✕</button></div>
   <div class="trdt"><div class="field"><label for="trDate">Data</label><input type="date" id="trDate"></div><div class="field"><label for="trTime">Ora</label><input type="time" id="trTime"></div></div>
   <div class="field"><label for="trPrest">Prestazione</label><div class="combo" id="cbPrest"><input id="trPrest" autocomplete="off" maxlength="120" placeholder="Scrivi per cercare, es. stroke" role="combobox" aria-expanded="false" aria-autocomplete="list"><button type="button" class="combo-btn" tabindex="-1" aria-label="Apri l’elenco">▾</button><div class="combo-list" role="listbox" hidden></div></div></div>
   <div class="field"><label for="trHosp">Ospedale di destinazione</label><div class="combo" id="cbHosp"><input id="trHosp" autocomplete="off" maxlength="120" placeholder="Scrivi per cercare, es. Cesena" role="combobox" aria-expanded="false" aria-autocomplete="list"><button type="button" class="combo-btn" tabindex="-1" aria-label="Apri l’elenco">▾</button><div class="combo-list" role="listbox" hidden></div></div><div id="trSug" class="trsugs"></div></div>
@@ -861,7 +861,7 @@ const firebaseConfig={apiKey:"AIzaSyBklcos7zd_Nu4wi5o9pukFYYA8UZGDOiA",authDomai
 // Deve coincidere con l'email scritta in firestore.rules.
 const ADMIN_EMAIL='admin@ospedale.local';
 const ACCOUNT_DOMAIN='ospedale.local';
-const APP_VERSION='3.10.0',APP_DATE='16/11/2026';
+const APP_VERSION='3.10.1',APP_DATE='16/11/2026';
 const PS='__ps',PS_LABEL='Pronto Soccorso',ADMIN='__admin',LEGACY_KEY='beds-rsm-configurable-v3';
 const ADMIN_IDLE_MIN=30;
 const TZ='Europe/San_Marino';
@@ -1704,7 +1704,7 @@ function trBars(rows,key,empty){const m={};rows.forEach(r=>{m[r[key]]=(m[r[key]]
 function trasfHtml(){
   const rows=trPeriodRows(),cnt=f=>trRows.filter(r=>r.date>=f).length;
   const per={7:'Ultimi 7 giorni',30:'Ultimi 30 giorni',month:'Questo mese',year:'Quest’anno',all:'Tutto il registro'};
-  const head=`<div class="phead"><div><h1 class="title">Fuori territorio</h1><p class="sub">Pazienti inviati dal Pronto Soccorso ad altri ospedali: quale prestazione e dove. Non si scrivono dati dei pazienti.</p></div><div class="row-actions"><button class="btn" onclick="openTrLists()">${ico('sliders')}Elenchi</button><button class="btn primary" onclick="openTransfer()">${ico('route')}Nuovo invio</button></div></div>`;
+  const head=`<div class="phead"><div><h1 class="title">Fuori territorio</h1><p class="sub">Pazienti inviati dal Pronto Soccorso ad altri ospedali: quale prestazione e dove. Non si scrivono dati dei pazienti.</p></div><div class="row-actions"><button class="btn" onclick="openTrLists()">${ico('sliders')}Elenchi</button><button class="btn primary" onclick="openTransfer()">${ico('route')}Inserisci fuori territorio</button></div></div>`;
   if(trState==='error')return head+`<div class="card card-b"><span class="stale">${esc(trErr)}</span><p class="small muted" style="margin:8px 0 0">Se il messaggio parla di permessi, vanno pubblicate le regole Firestore della versione ${APP_VERSION}.</p></div>`;
   if(trState!=='ok')return head+'<div class="kpis"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>';
   const kp=`<div class="kpis"><div class="card kpi"><small>Oggi</small><strong>${cnt(today)}</strong><em>invii fuori territorio</em></div><div class="card kpi"><small>Ultimi 7 giorni</small><strong>${cnt(addDays(today,-6))}</strong><em>dal ${itDate(addDays(today,-6))}</em></div><div class="card kpi"><small>Questo mese</small><strong>${cnt(today.slice(0,8)+'01')}</strong><em>${MONTHS[Number(today.slice(5,7))-1]}</em></div><div class="card kpi"><small>Quest’anno</small><strong>${cnt(today.slice(0,5)+'01-01')}</strong><em>dal 1° gennaio</em></div></div>`;
@@ -1715,7 +1715,7 @@ function trasfHtml(){
     <div class="search">${ico('search')}<input id="tfq" placeholder="Cerca" value="${esc(tf.q)}" oninput="setTf('q',this.value)"></div>
     ${tf.prest||tf.hosp||tf.q?`<button class="btn ghost sm" onclick="tf.prest=tf.hosp=tf.q='';render()">Togli i filtri</button>`:''}</div>`;
   const list=rows.length?`<div class="tablewrap"><table><thead><tr><th>Data e ora</th><th>Prestazione</th><th>Ospedale</th><th>Mezzo</th><th>Note</th><th>Inserito da</th><th></th></tr></thead><tbody>${rows.slice(0,300).map(r=>`<tr><td style="white-space:nowrap"><b>${itDate(r.date)}</b> ${esc(r.time||'')}</td><td><b>${esc(r.prest)}</b>${r.pgroup?`<br><span class="muted small">${esc(r.pgroup)}</span>`:''}</td><td>${esc(r.hosp)}</td><td>${esc(r.mezzo||'—')}</td><td class="small" style="overflow-wrap:anywhere">${esc(r.note||'')}</td><td class="small muted">${esc(r.who||'')}</td><td style="text-align:right"><button class="btn ghost sm" onclick="openTransfer('${esc(r.id)}')">Modifica</button></td></tr>`).join('')}</tbody></table>${rows.length>300?`<p class="small muted" style="padding:10px 20px">Mostrati i 300 più recenti su ${rows.length}: usa i filtri o esporta il file.</p>`:''}</div>`
-    :`<div class="empty" style="margin:16px">${trRows.length?'Nessun invio con questi filtri.':'Ancora nessun invio registrato. Premi “Nuovo invio” per inserire il primo.'}</div>`;
+    :`<div class="empty" style="margin:16px">${trRows.length?'Nessun invio con questi filtri.':'Ancora nessun invio registrato. Premi “Inserisci fuori territorio” per inserire il primo.'}</div>`;
   return head+kp+`<section class="card" style="margin-bottom:16px">${filt}<div class="congrid" style="padding:16px 20px;margin:0"><div><h3 class="trh">Per prestazione <span class="muted small">· ${per[tf.per].toLowerCase()}</span></h3>${trBars(rows,'prest','Nessun dato nel periodo')}</div><div><h3 class="trh">Per ospedale <span class="muted small">· ${per[tf.per].toLowerCase()}</span></h3>${trBars(rows,'hosp','Nessun dato nel periodo')}</div></div></section>
   <section class="card"><div class="card-h"><h2>Invii <span class="muted small">· ${rows.length}</span></h2><button class="btn sm" onclick="exportTransfers()">${ico('download')}Esporta (Excel)</button></div>${list}</section>`}
 function exportTransfers(){const rows=trPeriodRows();if(!rows.length)return appMessage('Non ci sono invii da esportare con questi filtri.');const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
@@ -1746,7 +1746,7 @@ function trSuggest(){const p=$('#trPrest').value.trim(),el=$('#trSug');if(!el)re
 let combosReady=false;
 function openTransfer(id){if(!seesAll())return;if(!combosReady){combosReady=true;comboSetup($('#cbPrest'),prestItems,trSuggest);comboSetup($('#cbHosp'),hospItems)}
   const r=id?trRows.find(x=>x.id===id):null;trEditing=r?r.id:null;const now=new Date(),hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-  $('#trTitle').textContent=r?'Modifica invio':'Nuovo invio fuori territorio';$('#trDate').value=r?.date||today;$('#trDate').max=today;$('#trTime').value=r?.time||hm;
+  $('#trTitle').textContent=r?'Modifica invio':'Inserisci fuori territorio';$('#trDate').value=r?.date||today;$('#trDate').max=today;$('#trTime').value=r?.time||hm;
   $('#trPrest').value=r?.prest||'';$('#trHosp').value=r?.hosp||'';$('#trNote').value=r?.note||'';$('#trErr').textContent='';$('#trDel').hidden=!r;
   $('#trMezzo').innerHTML=TR_MEZZI.map(m=>`<label class="choice"><input type="radio" name="trm" value="${m}" ${(r?.mezzo||'Ambulanza')===m?'checked':''}><span>${m}</span></label>`).join('');
   trSuggest();$('#trDlg').showModal();if(!r)setTimeout(()=>$('#trPrest').focus(),50)}
